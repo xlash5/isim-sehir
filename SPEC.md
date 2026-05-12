@@ -1,47 +1,49 @@
-# İsim Şehir — Oyun Spesifikasyonu
+# İsim Şehir — Game Specification
 
-## 1. Proje Özeti
+> **Project language:** Turkish — all UI texts, categories, and in-game messages are in Turkish.
 
-**İsim Şehir**, klasik Türk kelime oyununun modern, çok oyunculu, peer-to-peer WebRTC tabanlı bir versiyonudur. Oyuncular oda oluşturup arkadaşlarını davet eder, seçtikleri kategorilerde ve belirlenen harfte kelimeler yazarak birbirlerine puan verir.
+## 1. Project Overview
+
+**İsim Şehir** is a modern, multiplayer, peer-to-peer WebRTC version of the classic Turkish word game. Players create rooms, invite friends, write words for selected categories starting with a given letter, and grade each other's answers.
 
 - **Platform:** Web (React SPA)
 - **Multiplayer:** Peer-to-peer (WebRTC) via PeerJS
-- **UI Kütüphanesi:** Material UI (MUI) v6
+- **UI Library:** Material UI (MUI) v6
 - **State Management:** Zustand v5
 - **Routing:** React Router v7
-- **Dil:** Tamamen Türkçe
-- **Kimlik:** Anonim / rumuz bazlı
+- **Language:** Completely Turkish
+- **Identity:** Anonymous / nickname-based
 
-## 2. Mimari
+## 2. Architecture
 
 ### 2.1 Deployment
 
-| Bileşen | Platform | URL |
+| Component | Platform | URL |
 |---|---|---|
-| Frontend (SPA) | Vercel | `https://isim-sehir.vercel.app` |
+| Frontend (SPA) | Vercel | `https://isim-sehir-phi.vercel.app` |
 | PeerJS Signaling Server | Render (dashboard.render.com) | `https://isim-sehir-server.onrender.com` |
 
-### 2.2 Ortam Değişkenleri (Vercel)
+### 2.2 Environment Variables (Vercel)
 
-| Değişken | Değer | Açıklama |
+| Variable | Value | Description |
 |---|---|---|
-| `VITE_PEER_HOST` | `isim-sehir-server.onrender.com` | PeerJS signaling sunucu host |
-| `VITE_PEER_PORT` | `443` | PeerJS signaling sunucu port |
-| `VITE_PEER_PATH` | `/isim-sehir` | PeerJS signaling sunucu path |
+| `VITE_PEER_HOST` | `isim-sehir-server.onrender.com` | PeerJS signaling server host |
+| `VITE_PEER_PORT` | `443` | PeerJS signaling server port |
+| `VITE_PEER_PATH` | `/isim-sehir` | PeerJS signaling server path |
 
 ### 2.3 PeerJS Signaling Server (`server/`)
 
-Özel PeerJS sunucusu `peer` npm paketi ile çalışır:
+Custom PeerJS server using the `peer` npm package:
 
 ```js
 PeerServer({ port: PORT, path: '/isim-sehir', allow_discovery: true })
 ```
 
-- Render'a deploy edilmiştir (Web Service)
-- Production: `443` port, `wss://` (WebSocket Secure)
-- Frontend `.env` ile bu sunucuya yönlendirilir
+- Deployed on Render (Web Service)
+- Production: port `443`, `wss://` (WebSocket Secure)
+- Frontend configured via environment variables
 
-### 2.4 Klasör Yapısı (Mevcut)
+### 2.4 Directory Structure
 
 ```
 isim-sehir/
@@ -93,84 +95,84 @@ isim-sehir/
 └── README.md
 ```
 
-## 3. Oyun Akışı
+## 3. Game Flow
 
-### 3.1 Giriş Ekranı (`/`)
-- Rumuz girilir (max 20 karakter, boş olamaz)
-- "Oda Oluştur" → Peer oluşturur, `/room/:roomId`'ye yönlendirir
-- "Odaya Katıl" → 6 haneli kod girilir, `/room/:roomId`'ye yönlendirir
+### 3.1 Home Screen (`/`)
+- Enter nickname (max 20 chars, cannot be empty)
+- "Oda Oluştur" → creates a Peer, redirects to `/room/:roomId`
+- "Odaya Katıl" → enter 6-digit room code, redirects to `/room/:roomId`
 
-### 3.2 Lobi (`/room/:roomId`)
-- Oyuncu listesi + hazır durumu
-- Admin için ayar paneli (kategoriler, tur sayısı, süre, harf havuzu)
-- Oda kodu gösterimi + kopyalama
-- Sohbet kutusu
-- "Hazır" butonu (admin için "Oyuna Başla")
-- Admin hazırken ayarlar devre dışı kalır
+### 3.2 Lobby (`/room/:roomId`)
+- Player list with ready status
+- Admin settings panel (categories, rounds, duration, letter pool)
+- Room code display + copy button
+- Chat box
+- "Hazır" toggle button (admin sees "Oyuna Başla" when all ready)
+- Settings disabled when admin is ready
 
-### 3.3 Harf Çarkı
-- SlotMachine bileşeni ile rastgele harf seçimi (animasyonlu)
-- 28 harf (A-Z, Ğ hariç, İ dahil)
-- Admin `round-start` mesajı ile broadcast eder
+### 3.3 Letter Wheel
+- SlotMachine component with random letter selection animation
+- 28 letters (A-Z, excluding Ğ, including İ)
+- Admin broadcasts via `round-start` message
 
-### 3.4 Cevap Aşaması
-- Seçilen kategoriler için input alanları
-- Zamanlayıcı (admin ayarına göre)
-- "Cevapları Gönder" ile erken teslim
-- Süre bitince otomatik gönderim
-- Tüm oyuncular gönderince → grading aşamasına geçer
+### 3.4 Answer Phase
+- Input fields for each selected category
+- Timer based on admin's duration setting
+- "Cevapları Gönder" for early submission
+- Auto-submit when timer expires
+- Advances to grading phase once all players submit
 
-### 3.5 Değerlendirme (Peer Grading)
-- Tüm cevaplar kategorilere göre gruplanır, tek sayfada gösterilir
-- Her cevap için diğer oyuncular 👍 Geçerli / 👎 Geçersiz oylar
-- Oylanan oyuncular ve oyları (✅/❌) herkes tarafından görülür
-- Tüm oylar tamamlanınca admin "Sonuçları Göster" butonuna basar
-- Admin dışındaki oyuncular sonucu bekler
+### 3.5 Grading (Peer Grading)
+- All answers grouped by category, displayed on a single page
+- Other players vote 👍 Geçerli (Valid) / 👎 Geçersiz (Invalid) for each answer
+- Voter list (who approved/disapproved) visible to everyone once all votes are in
+- Votes can be changed freely until admin clicks "Sonuçları Göster"
+- Non-admin players wait while admin finalizes
 
-### 3.6 Tur Sonuçları
-- Her tur sonunda puan durumu gösterilir
-- Kümülatif toplam puan + bu tur kazanılan puan gösterilir
-- Sadece admin "Sonraki Tur" butonuna basabilir
+### 3.6 Round Results
+- Scoreboard shown after each round
+- Cumulative total + round-specific score displayed
+- Only admin can click "Sonraki Tur" (Next Round)
 
-### 3.7 Oyun Sonu
-- Tüm turlar bittiğinde `game-over` fazına geçilir
-- Nihai sıralama gösterilir (🥇🥈🥉)
-- "Tekrar Oyna" ve "Lobiye Dön" butonları
+### 3.7 Game Over
+- Transitions to `game-over` phase after the final round
+- Final ranking displayed (🥇🥈🥉)
+- "Tekrar Oyna" (Play Again) and "Lobiye Dön" (Back to Lobby) buttons
 
-## 4. Puan Sistemi
+## 4. Scoring System
 
-| Durum | Puan |
+| Condition | Points |
 |---|---|
-| Geçerli ve benzersiz cevap | 10 |
-| Geçerli ama başkasıyla aynı cevap | 5 |
-| Geçersiz / oylanarak reddedilmiş | 0 |
-| Boş bırakılmış | 0 |
+| Valid and unique answer | 10 |
+| Valid but duplicate answer | 5 |
+| Invalid / rejected by vote | 0 |
+| Left blank | 0 |
 
-Aynı cevap kontrolü `normalizeAnswer()` ile yapılır (tr-TR lowercasing, non-alphanumeric strip).
+Duplicate detection uses `normalizeAnswer()` (tr-TR lowercase, strip non-alphanumeric).
 
 ## 5. Peer-to-Peer (WebRTC)
 
-- **Kütüphane:** PeerJS (`peerjs` npm)
-- **Topoloji:** Mesh (6-8 oyuncuya kadar ideal)
-- **Signaling:** Özel PeerJS sunucusu (`server/index.js`)
+- **Library:** PeerJS (`peerjs` npm)
+- **Topology:** Mesh (ideal for 6-8 players)
+- **Signaling:** Custom PeerJS server (`server/index.js`)
 
-### Mesaj Tipleri
+### Message Types
 
-| Mesaj | Açıklama | Gönderen |
+| Message | Description | Sender |
 |---|---|---|
-| `join-room` | Oyuncu odaya katıldı | Katılan |
-| `room-state-sync` | Tam oda durumu senkronizasyonu | Admin |
-| `player-ready` | Oyuncu hazır | Herkes |
-| `settings-update` | Oyun ayarları güncellendi | Admin |
-| `game-start` | Oyun başladı | Admin |
-| `round-start` | Yeni tur, harf seçildi | Admin |
-| `answers-submit` | Cevaplar gönderildi | Herkes |
-| `vote` | Oyuncu oylaması | Herkes |
-| `round-end` | Tur sonuçları | Admin |
-| `chat-message` | Sohbet mesajı | Herkes |
-| `player-disconnected` | Oyuncu ayrıldı | Sistem |
+| `join-room` | Player joined the room | Joiner |
+| `room-state-sync` | Full room state sync | Admin |
+| `player-ready` | Player ready status | Anyone |
+| `settings-update` | Game settings updated | Admin |
+| `game-start` | Game started | Admin |
+| `round-start` | New round, letter selected | Admin |
+| `answers-submit` | Answers submitted | Anyone |
+| `vote` | Player vote | Anyone |
+| `round-end` | Round results | Admin |
+| `chat-message` | Chat message | Anyone |
+| `player-disconnected` | Player left | System |
 
-## 6. Veri Yapıları
+## 6. Data Structures
 
 ```ts
 type GamePhase = 'lobby' | 'wheel' | 'answering' | 'grading' | 'round-results' | 'game-over'
@@ -178,10 +180,10 @@ type GamePhase = 'lobby' | 'wheel' | 'answering' | 'grading' | 'round-results' |
 interface Player { id: string; nickname: string; isAdmin: boolean; isReady: boolean; score: number }
 
 interface GameSettings {
-  categories: string[]       // seçilen kategori isimleri (2-10)
+  categories: string[]       // selected category names (2-10)
   totalRounds: number        // 1-15
-  roundDuration: number|null // saniye, null=limitsiz
-  letterPool: string[]       // seçilen harfler (Ğ hariç)
+  roundDuration: number|null // seconds, null=unlimited
+  letterPool: string[]       // selected letters (excluding Ğ)
 }
 
 interface GameRoom {
@@ -205,10 +207,10 @@ interface GradingItem {
 }
 ```
 
-## 7. Kategori Listesi (33)
+## 7. Category List (33)
 
 1. İsim (Erkek)
-2. İsin (Kadın)
+2. İsim (Kadın)
 3. Şehir (Türkiye)
 4. Şehir (Dünya)
 5. Ülke (Dünya)
@@ -241,88 +243,88 @@ interface GradingItem {
 32. Mitolojik Karakter
 33. Peri Bacaları / Turistik Yer
 
-## 8. Kurallar ve Kısıtlamalar
+## 8. Rules & Constraints
 
-- **Ğ** harfi asla seçilmez
-- Oyuncu sayısı: min 2, max 8
-- Aynı odada aynı rumuz kullanılamaz
-- Cevap gönderildikten sonra geri alınamaz
-- Oy admin "Sonuçları Göster" butonuna basana kadar değiştirilebilir
-- Rumuz max 20 karakter
-- Cevap max 50 karakter
-- Oda kodu 6 haneli sayı
+- **Ğ** is never selected (virtually no Turkish words start with Ğ)
+- Player count: min 2, max 8
+- Duplicate nicknames not allowed in the same room
+- Answers cannot be retracted after submission
+- Votes can be changed until admin clicks "Sonuçları Göster"
+- Nickname max 20 characters
+- Answer max 50 characters
+- Room code: 6-digit number
 
-## 9. Görsel Tasarım
+## 9. Visual Design
 
-- **Tema:** Dark + Light tema desteği (`localStorage`'a kaydedilir)
-- **Dark renkler:** Lacivert arka plan (#0a1929), açık mavi primary (#90caf9), mor secondary (#ce93d8)
-- **Light renkler:** Açık gri arka plan (#f5f7fa), mavi primary (#1976d2), mor secondary (#9c27b0)
-- **Toggle:** Sağ üst köşede 🌙/☀️ ikonu ile anlık geçiş
+- **Theme:** Dark + Light mode support (persisted to `localStorage`)
+- **Dark colors:** Navy background (#0a1929), light blue primary (#90caf9), purple secondary (#ce93d8)
+- **Light colors:** Light gray background (#f5f7fa), blue primary (#1976d2), purple secondary (#9c27b0)
+- **Toggle:** 🌙/☀️ icon at top-right corner, instant switch
 - **Font:** Inter + Roboto
-- **Border radius:** 16px genel, 12px butonlar
-- **Glassmorphism:** Kartlarda `backdrop-filter: blur(12px)`
-- **İkonlar:** `@mui/icons-material` + Unicode emojiler
+- **Border radius:** 16px default, 12px buttons
+- **Glassmorphism:** Cards use `backdrop-filter: blur(12px)`
+- **Icons:** `@mui/icons-material` + Unicode emojis
 
-## 10. Mevcut Durum (v1.0)
+## 10. Current Status (v1.0)
 
-- [x] Giriş ekranı (rumuz + oda oluştur/katıl)
-- [x] Lobi (oyuncu listesi, ayarlar, hazır durumu, sohbet)
-- [x] SlotMachine (harf çarkı animasyonu)
-- [x] Cevap tablosu (kategori inputları, zamanlayıcı)
-- [x] Değerlendirme (kategori bazlı, tüm oyuncular tek sayfada)
-- [x] Oylama şeffaflığı (kimin ne oy verdiği görünür)
-- [x] Oy admin sonuçları gösterene kadar değiştirilebilir
-- [x] Dark/light tema geçişi (sağ üst köşe, localStorage)
-- [x] Tur sonuçları (kümülatif puan + tur puanı)
-- [x] Oyun sonu (final sıralaması)
-- [x] Sohbet (lobi + oyun içi)
+- [x] Home screen (nickname + create/join room)
+- [x] Lobby (player list, settings, ready status, chat)
+- [x] SlotMachine (letter wheel animation)
+- [x] Answer table (category inputs, timer)
+- [x] Grading panel (category-based, all players on one page)
+- [x] Vote transparency (who approved/disapproved visible)
+- [x] Changeable votes (until admin finalizes)
+- [x] Dark/light theme toggle (top-right, localStorage)
+- [x] Round results (cumulative + round score)
+- [x] Game over (final ranking)
+- [x] Chat (lobby + in-game)
 - [x] PeerJS signaling server (Render)
 - [x] Vercel auto-deploy
-- [x] 33 kategori
+- [x] 33 categories
 
-### Bilinen Eksikler
+### Known Issues
 
-- Oyuncu bağlantı koptuğunda otomatik `player-disconnected` broadcast edilmiyor
-- Admin oyundan ayrılınca yetki devri yok
-- Sayfa yenilemede oyun durumu kaybolur (state persist yok)
-- "Oyuna Başla" için admin dahil tüm oyuncuların hazır olması kontrolü eksik
+- No automatic `player-disconnected` broadcast on connection loss
+- No admin transfer when admin leaves
+- Game state lost on page refresh (no state persistence)
+- "Oyuna Başla" doesn't require all players (including admin) to be ready
 
-## 11. Geliştirme
+## 11. Development
 
 ```bash
-# Bağımlılıklar
+# Install dependencies
 npm install
 cd server && npm install
 
-# Geliştirme (frontend)
+# Frontend dev server
 npm run dev                    # http://localhost:5173
 
-# Geliştirme (signaling server)
+# Signaling server
 cd server && npm start         # http://localhost:9000
 
 # Build
 npm run build
 
-# Lint (TypeScript check)
+# Type check
 npm run lint
 ```
 
-## 12. Çoklu Sekme Test
+## 12. Multi-Tab Testing
 
 ```
-Sekme 1: http://localhost:5173 → "Oyuncu1" → Oda Oluştur
-Sekme 2: http://localhost:5173 → "Oyuncu2" → Odaya Katıl (kodu gir)
-Sekme 3: http://localhost:5173 → "Oyuncu3" → Odaya Katıl
+Tab 1: http://localhost:5173 → "Oyuncu1" → Oda Oluştur
+Tab 2: http://localhost:5173 → "Oyuncu2" → Odaya Katıl (enter code)
+Tab 3: http://localhost:5173 → "Oyuncu3" → Odaya Katıl
 ...
 ```
 
-Her sekme ayrı bir Peer instance oluşturur. İnternet gereklidir (PeerJS Cloud/Render signaling).
+Each tab creates a separate Peer instance. Internet connection is required (PeerJS Cloud/Render signaling).
 
-## 13. Gelecek Özellikler (v2+)
+## 13. Future Features (v2+)
 
-- Özel kategori oluşturma
-- Oyun geçmişi / istatistik (localStorage)
-- Ses efektleri
-- Mobil responsive iyileştirmeleri
-- Oyuncu bağlantı kopması yönetimi
-- Admin yetki devri
+- Custom category creation
+- Game history / statistics (localStorage)
+- Sound effects
+- Mobile responsive improvements
+- Connection loss handling
+- Admin transfer on disconnect

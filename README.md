@@ -1,29 +1,29 @@
 # İsim Şehir
 
-Klasik Türk kelime oyununun çok oyunculu, peer-to-peer WebRTC tabanlı versiyonu.
+Multiplayer peer-to-peer WebRTC version of the classic Turkish word game.
 
-**Oyna:** [isim-sehir.vercel.app](https://isim-sehir.vercel.app)
+**Play:** [isim-sehir-phi.vercel.app](https://isim-sehir-phi.vercel.app/)
 
 ## Stack
 
 React 19 + TypeScript 5 + Vite 6 + MUI 6 + Zustand 5 + PeerJS + React Router 7
 
-## Özellikler
+## Features
 
-- Dark/light tema (sağ üst köşe toggle, localStorage)
-- Peer-to-peer WebRTC (PeerJS mesh)
-- Peer grading (kategori bazlı, oy değiştirme desteği)
-- Kümülatif puan + tur bazlı skor
-- 33 Türkçe kategori
-- Anonim rumuz tabanlı giriş
+- Dark/light theme (top-right toggle, persisted to localStorage)
+- Peer-to-peer WebRTC (PeerJS mesh topology)
+- Peer grading (category-based, changeable votes until admin finalizes)
+- Cumulative score + per-round breakdown
+- 33 Turkish categories
+- Anonymous nickname-based login
 
-## Mimari
+## Architecture
 
-- **Frontend:** Vercel'e deploy edilmiş React SPA
-- **Signaling Server:** Render'da özel PeerJS sunucusu
-- **Multiplayer:** WebRTC mesh topolojisi (PeerJS)
+- **Frontend:** React SPA deployed on Vercel
+- **Signaling Server:** Custom PeerJS server on Render
+- **Multiplayer:** WebRTC mesh topology (PeerJS)
 
-## Geliştirme
+## Development
 
 ```bash
 npm install
@@ -32,19 +32,19 @@ npm run build      # production build
 npm run lint       # type check
 ```
 
-Signaling server için:
+For the signaling server:
 ```bash
 cd server && npm install && npm start   # http://localhost:9000
 ```
 
-## Ortam Değişkenleri
+## Environment Variables
 
-Vercel'de tanımlıdır:
+Set on Vercel:
 
-| Değişken | Örnek |
+| Variable | Example |
 |---|---|
 | `VITE_PEER_HOST` | `isim-sehir-server.onrender.com` |
 | `VITE_PEER_PORT` | `443` |
 | `VITE_PEER_PATH` | `/isim-sehir` |
 
-Detaylı spesifikasyon: [SPEC.md](./SPEC.md)
+Detailed specification: [SPEC.md](./SPEC.md)
