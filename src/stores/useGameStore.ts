@@ -257,8 +257,12 @@ export const useGameStore = create<GameState>((set, get) => ({
       const rounds = state.room.rounds.map((r) => ({ ...r, votes: [...r.votes] }))
       const round = rounds[rounds.length - 1]
       if (round) {
-        const alreadyVoted = round.votes.some((v) => v.voterId === vote.voterId && v.answerId === vote.answerId)
-        if (!alreadyVoted) round.votes.push(vote)
+        const existingIdx = round.votes.findIndex((v) => v.voterId === vote.voterId && v.answerId === vote.answerId)
+        if (existingIdx >= 0) {
+          round.votes[existingIdx] = vote
+        } else {
+          round.votes.push(vote)
+        }
       }
       return { room: { ...state.room, rounds } }
     }),

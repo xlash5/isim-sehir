@@ -90,13 +90,17 @@ export function GradingPanel({ onVote, onComplete }: Props) {
                       </Box>
 
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        {!isOwnAnswer && !hasVoted && (
+                        {!isOwnAnswer && !allAnswered && (
                           <>
-                            <Button size="small" variant="outlined" color="success" startIcon={<ThumbUpIcon />}
+                            <Button size="small"
+                              variant={hasVoted && myVotes[answer.answerId] ? 'contained' : 'outlined'}
+                              color="success" startIcon={<ThumbUpIcon />}
                               onClick={() => onVote(answer.answerId, true)}>
                               Geçerli
                             </Button>
-                            <Button size="small" variant="outlined" color="error" startIcon={<ThumbDownIcon />}
+                            <Button size="small"
+                              variant={hasVoted && !myVotes[answer.answerId] ? 'contained' : 'outlined'}
+                              color="error" startIcon={<ThumbDownIcon />}
                               onClick={() => onVote(answer.answerId, false)}>
                               Geçersiz
                             </Button>
@@ -104,13 +108,6 @@ export function GradingPanel({ onVote, onComplete }: Props) {
                         )}
                         {isOwnAnswer && (
                           <Chip label="Kendi cevabınız" size="small" variant="outlined" />
-                        )}
-                        {hasVoted && !allAnswered && (
-                          <Chip
-                            label={myVotes[answer.answerId] ? '✅ Geçerli' : '❌ Geçersiz'}
-                            color={myVotes[answer.answerId] ? 'success' : 'error'}
-                            size="small"
-                          />
                         )}
                       </Box>
                     </Box>
