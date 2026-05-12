@@ -8,6 +8,15 @@ Klasik Türk kelime oyununun çok oyunculu, peer-to-peer WebRTC tabanlı versiyo
 
 React 19 + TypeScript 5 + Vite 6 + MUI 6 + Zustand 5 + PeerJS + React Router 7
 
+## Özellikler
+
+- Dark/light tema (sağ üst köşe toggle, localStorage)
+- Peer-to-peer WebRTC (PeerJS mesh)
+- Peer grading (kategori bazlı, oy değiştirme desteği)
+- Kümülatif puan + tur bazlı skor
+- 33 Türkçe kategori
+- Anonim rumuz tabanlı giriş
+
 ## Mimari
 
 - **Frontend:** Vercel'e deploy edilmiş React SPA

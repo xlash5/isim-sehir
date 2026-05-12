@@ -205,40 +205,41 @@ interface GradingItem {
 }
 ```
 
-## 7. Kategori Listesi (32)
+## 7. Kategori Listesi (33)
 
 1. İsim (Erkek)
-2. İsim (Kadın)
+2. İsin (Kadın)
 3. Şehir (Türkiye)
-4. Ülke (Dünya)
-5. Başkent
-6. Hayvan
-7. Bitki / Çiçek
-8. Meyve / Sebze
-9. Eşya
-10. Marka
-11. Araba Markası
-12. Teknoloji Markası
-13. Ünlü (Sanatçı / Oyuncu)
-14. Şarkıcı / Müzik Grubu
-15. Film
-16. Dizi
-17. Çizgi Film / Animasyon Karakteri
-18. Kitap
-19. Yazar
-20. Meslek
-21. Spor Dalı
-22. Futbol Takımı
-23. Futbolcu
-24. Yemek / Tatlı
-25. İçecek
-26. Renk
-27. Giysi / Aksesuar
-28. Müzik Aleti
-29. Bilim İnsanı / Mucit
-30. Dağ / Nehir / Göl
-31. Mitolojik Karakter
-32. Peri Bacaları / Turistik Yer
+4. Şehir (Dünya)
+5. Ülke (Dünya)
+6. Başkent
+7. Hayvan
+8. Bitki / Çiçek
+9. Meyve / Sebze
+10. Eşya
+11. Marka
+12. Araba Markası
+13. Teknoloji Markası
+14. Ünlü (Sanatçı / Oyuncu)
+15. Şarkıcı / Müzik Grubu
+16. Film
+17. Dizi
+18. Çizgi Film / Animasyon Karakteri
+19. Kitap
+20. Yazar
+21. Meslek
+22. Spor Dalı
+23. Futbol Takımı
+24. Futbolcu
+25. Yemek / Tatlı
+26. İçecek
+27. Renk
+28. Giysi / Aksesuar
+29. Müzik Aleti
+30. Bilim İnsanı / Mucit
+31. Dağ / Nehir / Göl
+32. Mitolojik Karakter
+33. Peri Bacaları / Turistik Yer
 
 ## 8. Kurallar ve Kısıtlamalar
 
@@ -246,15 +247,17 @@ interface GradingItem {
 - Oyuncu sayısı: min 2, max 8
 - Aynı odada aynı rumuz kullanılamaz
 - Cevap gönderildikten sonra geri alınamaz
-- Oylama değiştirilemez (bir kere verilen oy geri alınamaz)
+- Oy admin "Sonuçları Göster" butonuna basana kadar değiştirilebilir
 - Rumuz max 20 karakter
 - Cevap max 50 karakter
 - Oda kodu 6 haneli sayı
 
 ## 9. Görsel Tasarım
 
-- **Tema:** MUI Dark Theme (`palette.mode: 'dark'`)
-- **Renkler:** Lacivert arka plan (#0a1929), açık mavi primary (#90caf9), mor secondary (#ce93d8)
+- **Tema:** Dark + Light tema desteği (`localStorage`'a kaydedilir)
+- **Dark renkler:** Lacivert arka plan (#0a1929), açık mavi primary (#90caf9), mor secondary (#ce93d8)
+- **Light renkler:** Açık gri arka plan (#f5f7fa), mavi primary (#1976d2), mor secondary (#9c27b0)
+- **Toggle:** Sağ üst köşede 🌙/☀️ ikonu ile anlık geçiş
 - **Font:** Inter + Roboto
 - **Border radius:** 16px genel, 12px butonlar
 - **Glassmorphism:** Kartlarda `backdrop-filter: blur(12px)`
@@ -268,18 +271,21 @@ interface GradingItem {
 - [x] Cevap tablosu (kategori inputları, zamanlayıcı)
 - [x] Değerlendirme (kategori bazlı, tüm oyuncular tek sayfada)
 - [x] Oylama şeffaflığı (kimin ne oy verdiği görünür)
+- [x] Oy admin sonuçları gösterene kadar değiştirilebilir
+- [x] Dark/light tema geçişi (sağ üst köşe, localStorage)
 - [x] Tur sonuçları (kümülatif puan + tur puanı)
 - [x] Oyun sonu (final sıralaması)
 - [x] Sohbet (lobi + oyun içi)
 - [x] PeerJS signaling server (Render)
 - [x] Vercel auto-deploy
+- [x] 33 kategori
 
 ### Bilinen Eksikler
 
 - Oyuncu bağlantı koptuğunda otomatik `player-disconnected` broadcast edilmiyor
 - Admin oyundan ayrılınca yetki devri yok
 - Sayfa yenilemede oyun durumu kaybolur (state persist yok)
-- Admin admin olmayan herkes ready olmasa bile "Oyuna Başla" yapabiliyor (kontrol eksik)
+- "Oyuna Başla" için admin dahil tüm oyuncuların hazır olması kontrolü eksik
 
 ## 11. Geliştirme
 
@@ -318,6 +324,5 @@ Her sekme ayrı bir Peer instance oluşturur. İnternet gereklidir (PeerJS Cloud
 - Oyun geçmişi / istatistik (localStorage)
 - Ses efektleri
 - Mobil responsive iyileştirmeleri
-- Dark/light tema geçişi
 - Oyuncu bağlantı kopması yönetimi
 - Admin yetki devri
