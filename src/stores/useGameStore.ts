@@ -17,7 +17,7 @@ interface GameState {
   scores: Record<string, number>
 
   setLocalPlayer: (id: string, nickname: string) => void
-  createRoom: () => void
+  createRoom: (code?: string) => void
   joinRoom: (code: string) => void
   addPlayer: (player: Player) => void
   removePlayer: (playerId: string) => void
@@ -63,13 +63,13 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setLocalPlayer: (id, nickname) => set({ localPlayerId: id, localNickname: nickname }),
 
-  createRoom: () => {
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
+  createRoom: (code?: string) => {
+    const roomCode = code ?? Math.floor(100000 + Math.random() * 900000).toString()
     const id = get().localPlayerId ?? crypto.randomUUID()
     const nickname = get().localNickname ?? 'Oyuncu'
     const player: Player = { id, nickname, isAdmin: true, isReady: false, score: 0 }
     const room: GameRoom = {
-      code,
+      code: roomCode,
       adminId: id,
       players: [player],
       settings: { ...defaultSettings },

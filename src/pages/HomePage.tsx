@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Box, TextField, Button, Typography, Paper, Divider, Container,
+  Box, TextField, Button, Typography, Paper, Divider, Container, Alert, CircularProgress,
 } from '@mui/material'
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
@@ -18,23 +18,47 @@ export function HomePage() {
   const [joinCode, setJoinCode] = useState('')
   const [nicknameError, setNicknameError] = useState('')
   const [codeError, setCodeError] = useState('')
-  const [pendingJoin, setPendingJoin] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [peerError, setPeerError] = useState(false)
   const peerId = usePeerStore((s) => s.peerId)
   const { createPeer, connectToPeer } = usePeer()
   const setLocalPlayer = useGameStore((s) => s.setLocalPlayer)
   const createRoom = useGameStore((s) => s.createRoom)
   const joinRoom = useGameStore((s) => s.joinRoom)
+  const roomCodeRef = useRef<string | null>(null)
+  const pendingActionRef = useRef<'create' | 'join' | null>(null)
   const navigatedRef = useRef(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    if (peerId && pendingJoin && !navigatedRef.current) {
+    if (peerId && pendingActionRef.current && !navigatedRef.current) {
       navigatedRef.current = true
-      joinRoom(pendingJoin)
-      connectToPeer(pendingJoin)
-      navigate(`/room/${pendingJoin}`)
-      setPendingJoin(null)
+      if (timerRef.current) clearTimeout(timerRef.current)
+      setLoading(false)
+      const code = roomCodeRef.current!
+      if (pendingActionRef.current === 'join') {
+        joinRoom(code)
+        connectToPeer(code)
+      } else {
+        createRoom(code)
+      }
+      setPeerError(false)
+      navigate(`/room/${code}`)
+      pendingActionRef.current = null
     }
-  }, [peerId, pendingJoin, joinRoom, connectToPeer, navigate])
+  }, [peerId, joinRoom, createRoom, connectToPeer, navigate])
+
+  const startPeerTimeout = () => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+    timerRef.current = setTimeout(() => {
+      if (!peerId && pendingActionRef.current) {
+        setLoading(false)
+        setPeerError(true)
+        pendingActionRef.current = null
+        navigatedRef.current = false
+      }
+    }, 10000)
+  }
 
   const validateNickname = (): boolean => {
     if (!nickname.trim()) {
@@ -54,9 +78,13 @@ export function HomePage() {
     const playerId = crypto.randomUUID()
     setLocalPlayer(playerId, nickname.trim())
     const code = generateRoomCode()
+    roomCodeRef.current = code
     createPeer(code)
-    createRoom()
-    navigate(`/room/${code}`)
+    pendingActionRef.current = 'create'
+    navigatedRef.current = false
+    setPeerError(false)
+    setLoading(true)
+    startPeerTimeout()
   }
 
   const handleJoinRoom = () => {
@@ -68,9 +96,13 @@ export function HomePage() {
     setCodeError('')
     const playerId = crypto.randomUUID()
     setLocalPlayer(playerId, nickname.trim())
+    roomCodeRef.current = joinCode.trim()
     createPeer()
+    pendingActionRef.current = 'join'
     navigatedRef.current = false
-    setPendingJoin(joinCode.trim())
+    setPeerError(false)
+    setLoading(true)
+    startPeerTimeout()
   }
 
   return (
@@ -120,6 +152,7 @@ export function HomePage() {
             size="large"
             startIcon={<AddCircleIcon />}
             onClick={handleCreateRoom}
+            disabled={loading}
             sx={{ mb: 1.5 }}
           >
             Oda Oluştur
@@ -149,10 +182,25 @@ export function HomePage() {
             size="large"
             startIcon={<LinkIcon />}
             onClick={handleJoinRoom}
-            disabled={joinCode.length !== 6}
+            disabled={joinCode.length !== 6 || loading}
           >
             Odaya Katıl
           </Button>
+
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 2 }}>
+              <CircularProgress size={20} />
+              <Typography variant="body2" color="text.secondary">
+                Bağlanıyor...
+              </Typography>
+            </Box>
+          )}
+
+          {peerError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              Sunucuya bağlanılamadı. Lütfen sayfayı yenileyip tekrar deneyin.
+            </Alert>
+          )}
         </Paper>
       </Box>
     </Container>

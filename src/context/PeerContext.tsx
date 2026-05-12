@@ -139,12 +139,12 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           removeConnection(conn.peer)
         })
       })
-      p.on('error', () => {
+      p.on('error', (err) => {
+        console.error(`[Peer] Error${id ? ' (id: ' + id + ')' : ''}:`, err)
         if (!id) {
           const fallback = new Peer(PEER_OPTIONS)
           fallback.on('open', (pid) => setPeerId(pid))
           setPeer(fallback)
-          return
         }
       })
       setPeer(p)
