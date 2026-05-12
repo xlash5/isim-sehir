@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Box, TextField, Button, Typography, Paper, Divider, Container,
@@ -8,6 +8,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import LinkIcon from '@mui/icons-material/Link'
 import VpnKeyIcon from '@mui/icons-material/VpnKey'
 import { useGameStore } from '../stores/useGameStore'
+import { usePeerStore } from '../stores/usePeerStore'
 import { usePeer } from '../context/PeerContext'
 import { generateRoomCode } from '../utils/letters'
 
@@ -17,11 +18,23 @@ export function HomePage() {
   const [joinCode, setJoinCode] = useState('')
   const [nicknameError, setNicknameError] = useState('')
   const [codeError, setCodeError] = useState('')
+  const [pendingJoin, setPendingJoin] = useState<string | null>(null)
+  const peerId = usePeerStore((s) => s.peerId)
   const { createPeer, connectToPeer } = usePeer()
   const setLocalPlayer = useGameStore((s) => s.setLocalPlayer)
   const createRoom = useGameStore((s) => s.createRoom)
   const joinRoom = useGameStore((s) => s.joinRoom)
-  const addPlayer = useGameStore((s) => s.addPlayer)
+  const navigatedRef = useRef(false)
+
+  useEffect(() => {
+    if (peerId && pendingJoin && !navigatedRef.current) {
+      navigatedRef.current = true
+      joinRoom(pendingJoin)
+      connectToPeer(pendingJoin)
+      navigate(`/room/${pendingJoin}`)
+      setPendingJoin(null)
+    }
+  }, [peerId, pendingJoin, joinRoom, connectToPeer, navigate])
 
   const validateNickname = (): boolean => {
     if (!nickname.trim()) {
@@ -56,11 +69,8 @@ export function HomePage() {
     const playerId = crypto.randomUUID()
     setLocalPlayer(playerId, nickname.trim())
     createPeer()
-    setTimeout(() => {
-      joinRoom(joinCode.trim())
-      connectToPeer(joinCode.trim())
-      navigate(`/room/${joinCode.trim()}`)
-    }, 500)
+    navigatedRef.current = false
+    setPendingJoin(joinCode.trim())
   }
 
   return (

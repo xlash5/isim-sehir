@@ -69,6 +69,7 @@ export type PeerMessageType =
   | 'settings-update'
   | 'player-disconnected'
   | 'admin-transfer'
+  | 'room-state-sync'
 
 export interface PeerMessage {
   type: PeerMessageType
