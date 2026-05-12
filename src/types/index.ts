@@ -47,6 +47,7 @@ export interface GameRoom {
   phase: GamePhase
   currentRound: number
   currentLetter: string | null
+  pendingLetter: string | null
   rounds: Round[]
 }
 

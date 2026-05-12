@@ -24,6 +24,7 @@ interface GameState {
   setPlayerReady: (playerId: string, ready: boolean) => void
   updateSettings: (settings: Partial<GameSettings>) => void
   setPhase: (phase: GamePhase) => void
+  setPendingLetter: (letter: string | null) => void
   startRound: (letter: string) => void
   setAnswer: (category: string, value: string) => void
   submitAnswers: () => Answer[]
@@ -68,17 +69,18 @@ export const useGameStore = create<GameState>((set, get) => ({
     const id = get().localPlayerId ?? crypto.randomUUID()
     const nickname = get().localNickname ?? 'Oyuncu'
     const player: Player = { id, nickname, isAdmin: true, isReady: false, score: 0 }
-    const room: GameRoom = {
-      code: roomCode,
-      adminId: id,
-      players: [player],
-      settings: { ...defaultSettings },
-      phase: 'lobby',
-      currentRound: 0,
-      currentLetter: null,
-      rounds: [],
-    }
-    set({ room, localPlayerId: id })
+      const room: GameRoom = {
+        code: roomCode,
+        adminId: id,
+        players: [player],
+        settings: { ...defaultSettings },
+        phase: 'lobby',
+        currentRound: 0,
+        currentLetter: null,
+        pendingLetter: null,
+        rounds: [],
+      }
+      set({ room, localPlayerId: id })
   },
 
   joinRoom: (code) => {
@@ -95,6 +97,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           phase: 'lobby',
           currentRound: 0,
           currentLetter: null,
+          pendingLetter: null,
           rounds: [],
         }
         return { room, localPlayerId: id }
@@ -155,6 +158,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((state) => {
       if (!state.room) return state
       return { room: { ...state.room, phase } }
+    }),
+
+  setPendingLetter: (letter) =>
+    set((state) => {
+      if (!state.room) return state
+      return { room: { ...state.room, pendingLetter: letter } }
     }),
 
   startRound: (letter) =>
@@ -240,6 +249,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         room: {
           ...state.room,
           currentLetter: null,
+          pendingLetter: null,
           phase: 'wheel',
         },
         answers: new Map(),
@@ -260,6 +270,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           phase: 'lobby',
           currentRound: 0,
           currentLetter: null,
+          pendingLetter: null,
           rounds: [],
           players: state.room.players.map((p) => ({ ...p, isReady: false, score: 0 })),
         },

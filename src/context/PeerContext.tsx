@@ -92,12 +92,8 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           break
         case 'round-start': {
           const p = msg.payload as { letter: string }
+          if (p.letter) store.setPendingLetter(p.letter)
           store.setPhase('wheel')
-          setTimeout(() => {
-            store.startRound(p.letter)
-            const duration = gameStore.getState().room?.settings.roundDuration ?? null
-            if (duration !== null) store.setTimer(duration)
-          }, 3000)
           break
         }
         case 'answers-submit': {

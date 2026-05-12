@@ -55,12 +55,8 @@ export function useGame() {
       senderId: store.localPlayerId!,
       payload: { letter },
     } as PeerMessage)
+    store.setPendingLetter(letter)
     store.setPhase('wheel')
-    setTimeout(() => {
-      store.startRound(letter)
-      const duration = useGameStore.getState().room?.settings.roundDuration ?? null
-      if (duration !== null) store.setTimer(duration)
-    }, 3000)
   }
 
   const submitAnswers = () => {

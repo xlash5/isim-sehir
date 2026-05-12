@@ -3,7 +3,7 @@ import { Box, Container, Typography, Paper } from '@mui/material'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeer } from '../context/PeerContext'
 import { useGame } from '../hooks/useGame'
-import { SpinningWheel } from '../components/Game/SpinningWheel'
+import { SlotMachine } from '../components/Game/SlotMachine'
 import { AnswerTable } from '../components/Game/AnswerTable'
 import { GradingPanel } from '../components/Game/GradingPanel'
 import { Scoreboard } from '../components/Game/Scoreboard'
@@ -16,7 +16,7 @@ export function GamePage() {
   const navigate = useNavigate()
   const store = useGameStore()
   const { broadcastMessage, sendMessage } = usePeer()
-  const { submitAnswers, submitVote, finalizeRound, sendChatMessage } = useGame()
+  const { startRound, submitAnswers, submitVote, finalizeRound, sendChatMessage } = useGame()
   const room = useGameStore((s) => s.room)
   const phase = useGameStore((s) => s.room?.phase)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
@@ -72,11 +72,7 @@ export function GamePage() {
 
   const handleNextRound = () => {
     store.nextRound()
-    broadcastMessage({
-      type: 'round-start',
-      senderId: localPlayerId,
-      payload: {},
-    } as PeerMessage)
+    startRound()
   }
 
   const handlePlayAgain = () => {
@@ -107,7 +103,7 @@ export function GamePage() {
         </Paper>
 
         {phase === 'wheel' && (
-          <SpinningWheel onComplete={handleWheelComplete} />
+          <SlotMachine onComplete={handleWheelComplete} />
         )}
 
         {phase === 'answering' && (
