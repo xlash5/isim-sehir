@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useCallback, useRef, type ReactNo
 import { Peer } from 'peerjs'
 import { usePeerStore } from '../stores/usePeerStore'
 import { useGameStore } from '../stores/useGameStore'
-import type { PeerMessage, GameRoom } from '../types'
+import type { PeerMessage, GameRoom, Answer } from '../types'
 
 interface PeerContextType {
   createPeer: (id?: string) => void
@@ -97,14 +97,9 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           break
         }
         case 'answers-submit': {
-          const p = msg.payload as { answers: unknown[] }
-          const currentRoom = store.room
-          if (!currentRoom) break
-          const round = currentRoom.rounds[currentRoom.rounds.length - 1]
-          if (round) {
-            round.answers.push(...(p.answers as never[]))
-            gameStore.setState({ room: { ...currentRoom, rounds: [...currentRoom.rounds] } })
-          }
+          const p = msg.payload as { answers: Answer[] }
+          store.pushAnswersToRound(p.answers)
+          store.markPlayerSubmitted(msg.senderId)
           break
         }
         case 'vote':

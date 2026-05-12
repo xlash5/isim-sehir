@@ -38,12 +38,7 @@ export function GamePage() {
   }
 
   const handleSubmitAnswers = () => {
-    const answers = submitAnswers()
-    broadcastMessage({
-      type: 'answers-submit',
-      senderId: localPlayerId,
-      payload: { answers },
-    } as PeerMessage)
+    submitAnswers()
   }
 
   const handleVote = (answerId: string, isValid: boolean) => {

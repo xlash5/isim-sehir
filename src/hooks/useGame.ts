@@ -16,17 +16,19 @@ export function useGame() {
 
     if (room.phase === 'answering' && room.settings.roundDuration !== null) {
       timerRef.current = setInterval(() => {
-        const currentTimer = useGameStore.getState().timer
-        if (currentTimer !== null && currentTimer <= 1) {
+        const gs = useGameStore.getState()
+        if (gs.timer !== null && gs.timer <= 1) {
           if (timerRef.current) clearInterval(timerRef.current)
-          const answers = useGameStore.getState().submitAnswers()
+          const answers = gs.submitAnswers()
+          gs.pushAnswersToRound(answers)
+          gs.markPlayerSubmitted(gs.localPlayerId!)
           broadcastMessage({
             type: 'answers-submit',
-            senderId: store.localPlayerId!,
+            senderId: gs.localPlayerId!,
             payload: { answers },
           } as PeerMessage)
         }
-        useGameStore.getState().tickTimer()
+        gs.tickTimer()
       }, 1000)
     }
 
@@ -61,6 +63,8 @@ export function useGame() {
 
   const submitAnswers = () => {
     const answers = store.submitAnswers()
+    store.pushAnswersToRound(answers)
+    store.markPlayerSubmitted(store.localPlayerId!)
     broadcastMessage({
       type: 'answers-submit',
       senderId: store.localPlayerId!,

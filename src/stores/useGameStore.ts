@@ -7,6 +7,7 @@ interface GameState {
   localPlayerId: string | null
   localNickname: string | null
   answers: Map<string, string>
+  submittedPlayers: string[]
   gradingItems: GradingItem[]
   currentGradingIndex: number
   currentAnswerIndex: number
@@ -28,6 +29,8 @@ interface GameState {
   startRound: (letter: string) => void
   setAnswer: (category: string, value: string) => void
   submitAnswers: () => Answer[]
+  pushAnswersToRound: (answers: Answer[]) => void
+  markPlayerSubmitted: (playerId: string) => void
   setGradingItems: (items: GradingItem[]) => void
   setVote: (answerId: string, isValid: boolean) => void
   addVote: (vote: Vote) => void
@@ -53,6 +56,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   localPlayerId: null,
   localNickname: null,
   answers: new Map(),
+  submittedPlayers: [],
   gradingItems: [],
   currentGradingIndex: 0,
   currentAnswerIndex: 0,
@@ -183,6 +187,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           rounds: [...state.room.rounds, newRound],
         },
         answers: new Map(),
+        submittedPlayers: [],
         isSubmitting: false,
       }
     }),
@@ -203,6 +208,39 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({ isSubmitting: true })
     return answers
   },
+
+  pushAnswersToRound: (answers) =>
+    set((state) => {
+      if (!state.room) return state
+      const rounds = state.room.rounds.map((r) => ({ ...r, answers: [...r.answers] }))
+      const round = rounds[rounds.length - 1]
+      if (round) round.answers.push(...answers)
+      return { room: { ...state.room, rounds } }
+    }),
+
+  markPlayerSubmitted: (playerId) =>
+    set((state) => {
+      if (!state.room || state.submittedPlayers.includes(playerId)) return state
+      const submittedPlayers = [...state.submittedPlayers, playerId]
+      if (submittedPlayers.length >= state.room.players.length) {
+        const round = state.room.rounds[state.room.rounds.length - 1]
+        if (round) {
+          const gradingItems: GradingItem[] = state.room.players.map((p) => ({
+            playerId: p.id,
+            nickname: p.nickname,
+            answers: round.answers
+              .filter((a) => a.playerId === p.id)
+              .map((a) => ({ category: a.category, value: a.value, answerId: `${a.playerId}-${a.category}` })),
+          }))
+          return {
+            submittedPlayers,
+            gradingItems,
+            room: { ...state.room, phase: 'grading' as GamePhase },
+          }
+        }
+      }
+      return { submittedPlayers }
+    }),
 
   setGradingItems: (items) =>
     set({ gradingItems: items, currentGradingIndex: 0, currentAnswerIndex: 0, myVotes: {} }),
@@ -253,6 +291,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           phase: 'wheel',
         },
         answers: new Map(),
+        submittedPlayers: [],
         isSubmitting: false,
         myVotes: {},
         gradingItems: [],
@@ -275,6 +314,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           players: state.room.players.map((p) => ({ ...p, isReady: false, score: 0 })),
         },
         answers: new Map(),
+        submittedPlayers: [],
         gradingItems: [],
         currentGradingIndex: 0,
         currentAnswerIndex: 0,
@@ -289,6 +329,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({
       room: null,
       answers: new Map(),
+      submittedPlayers: [],
       gradingItems: [],
       currentGradingIndex: 0,
       currentAnswerIndex: 0,
