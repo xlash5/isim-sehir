@@ -80,6 +80,7 @@ export function useGame() {
   const submitVote = (answerId: string, isValid: boolean) => {
     store.setVote(answerId, isValid)
     const vote: Vote = { voterId: store.localPlayerId!, answerId, isValid }
+    store.addVote(vote)
     broadcastMessage({
       type: 'vote',
       senderId: store.localPlayerId!,

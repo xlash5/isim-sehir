@@ -17,6 +17,7 @@ export function GameSettingsPanel() {
   const { broadcastMessage } = usePeer()
 
   const isAdmin = room?.adminId === localPlayerId
+  const isAdminReady = isAdmin && room?.players.find((p) => p.id === localPlayerId)?.isReady
   const settings = room?.settings
   const [editMode, setEditMode] = useState(false)
   const [categories, setCategories] = useState<string[]>(settings?.categories ?? [])
@@ -61,7 +62,7 @@ export function GameSettingsPanel() {
         <Typography variant="subtitle2">Oyun Ayarları</Typography>
       </Box>
 
-      {!editMode ? (
+      {(!editMode || isAdminReady) ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography variant="body2">
             <strong>Kategoriler:</strong> {settings.categories.length} seçili
@@ -76,7 +77,7 @@ export function GameSettingsPanel() {
             <strong>Harfler:</strong> {letterDisplay}
           </Typography>
           {isAdmin && (
-            <Button size="small" variant="outlined" onClick={() => setEditMode(true)} sx={{ mt: 1 }}>
+            <Button size="small" variant="outlined" onClick={() => setEditMode(true)} disabled={isAdminReady} sx={{ mt: 1 }}>
               Ayarları Düzenle
             </Button>
           )}
