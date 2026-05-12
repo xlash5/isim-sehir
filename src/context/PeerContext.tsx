@@ -12,6 +12,12 @@ interface PeerContextType {
   disconnectAll: () => void
 }
 
+const PEER_OPTIONS = {
+  host: import.meta.env.VITE_PEER_HOST || 'localhost',
+  port: Number(import.meta.env.VITE_PEER_PORT) || 9000,
+  path: import.meta.env.VITE_PEER_PATH || '/isim-sehir',
+}
+
 const PeerContext = createContext<PeerContextType | null>(null)
 
 export function PeerProvider({ children }: { children: ReactNode }) {
@@ -120,7 +126,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
 
   const createPeer = useCallback(
     (id?: string) => {
-      const p = id ? new Peer(id) : new Peer()
+      const p = id ? new Peer(id, PEER_OPTIONS) : new Peer(PEER_OPTIONS)
       p.on('open', (pid) => {
         setPeerId(pid)
       })
@@ -135,7 +141,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       })
       p.on('error', () => {
         if (!id) {
-          const fallback = new Peer()
+          const fallback = new Peer(PEER_OPTIONS)
           fallback.on('open', (pid) => setPeerId(pid))
           setPeer(fallback)
           return
