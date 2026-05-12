@@ -42,22 +42,16 @@ export function AnswerTable({ onSubmit }: Props) {
           ))}
         </Box>
       </Paper>
-      {timer !== null && (
+      {!isSubmitting && (
         <Button
           variant="contained"
           size="large"
           startIcon={<SendIcon />}
           onClick={onSubmit}
-          disabled={isSubmitting || !allFilled}
           sx={{ alignSelf: 'center' }}
         >
           Cevapları Gönder
         </Button>
-      )}
-      {timer === null && (
-        <Typography variant="body2" sx={{ textAlign: 'center', color: 'text.secondary' }}>
-          Tüm oyuncuların cevapları bekleniyor...
-        </Typography>
       )}
     </Box>
   )

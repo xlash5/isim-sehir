@@ -160,12 +160,18 @@ export const useGameStore = create<GameState>((set, get) => ({
   startRound: (letter) =>
     set((state) => {
       if (!state.room) return state
+      const newRound: Round = {
+        letter,
+        answers: [],
+        votes: [],
+      }
       return {
         room: {
           ...state.room,
           currentLetter: letter,
           currentRound: state.room.currentRound + 1,
           phase: 'answering',
+          rounds: [...state.room.rounds, newRound],
         },
         answers: new Map(),
         isSubmitting: false,

@@ -45,8 +45,10 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       switch (msg.type) {
         case 'join-room': {
           const payload = msg.payload as { id: string; nickname: string }
+          console.log(`[Peer] join-room from ${payload.nickname} (${payload.id})`)
           store.addPlayer({ id: payload.id, nickname: payload.nickname, isAdmin: false, isReady: false, score: 0 })
           if (store.room?.adminId === store.localPlayerId) {
+            console.log('[Peer] Admin: sending room-state-sync to joiner')
             const syncMsg: PeerMessage = {
               type: 'room-state-sync',
               senderId: store.localPlayerId!,
@@ -68,9 +70,10 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         }
         case 'room-state-sync': {
           const payload = msg.payload as { room: GameRoom }
-          const room = payload.room
-          if (room) {
-            gameStore.setState({ room })
+          const syncedRoom = payload.room
+          if (syncedRoom) {
+            console.log('[Peer] Received room-state-sync with', syncedRoom.players.length, 'players')
+            gameStore.setState({ room: syncedRoom })
           }
           break
         }
@@ -131,11 +134,26 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         setPeerId(pid)
       })
       p.on('connection', (conn) => {
+        console.log(`[Peer] New connection from ${conn.peer}`)
         conn.on('open', () => {
+          console.log(`[Peer] Incoming connection open from ${conn.peer}`)
           addConnection(conn.peer, conn)
-          conn.on('data', (data) => handleRef.current(conn.peer, data))
+          const store = gameStore.getState()
+          if (store.room?.adminId === store.localPlayerId && store.room) {
+            conn.send({
+              type: 'room-state-sync',
+              senderId: store.localPlayerId!,
+              payload: { room: store.room },
+            } as PeerMessage)
+          }
+          conn.on('data', (data) => {
+            const msg = data as PeerMessage
+            console.log(`[Peer] Data from ${conn.peer}: ${msg.type}`)
+            handleRef.current(conn.peer, data)
+          })
         })
         conn.on('close', () => {
+          console.log(`[Peer] Connection closed from ${conn.peer}`)
           removeConnection(conn.peer)
         })
       })
@@ -155,9 +173,11 @@ export function PeerProvider({ children }: { children: ReactNode }) {
   const connectToPeer = useCallback(
     (targetId: string) => {
       const currentPeer = peerStore.getState().peer
-      if (!currentPeer) return
+      if (!currentPeer) { console.warn('[Peer] No peer to connect with'); return }
+      console.log(`[Peer] Connecting to ${targetId}`)
       const conn = currentPeer.connect(targetId, { reliable: true })
       conn.on('open', () => {
+        console.log(`[Peer] Connection open to ${targetId}`)
         addConnection(targetId, conn)
         conn.send({
           type: 'join-room',
@@ -167,7 +187,11 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             nickname: localNicknameRef.current,
           },
         } as PeerMessage)
-        conn.on('data', (data) => handleRef.current(targetId, data))
+        conn.on('data', (data) => {
+          const msg = data as PeerMessage
+          console.log(`[Peer] Data from ${targetId}: ${msg.type}`)
+          handleRef.current(targetId, data)
+        })
       })
       conn.on('close', () => {
         removeConnection(targetId)
