@@ -2,6 +2,7 @@ export const CATEGORIES: string[] = [
   'İsim (Erkek)',
   'İsim (Kadın)',
   'Şehir (Türkiye)',
+  'Şehir (Dünya)',
   'Ülke (Dünya)',
   'Başkent',
   'Hayvan',
