@@ -10,13 +10,13 @@ import { Scoreboard } from '../components/Game/Scoreboard'
 import { Timer } from '../components/common/Timer'
 import { ChatBox } from '../components/common/ChatBox'
 import { calculateScore } from '../utils/scoring'
-import type { GradingItem, Vote, Round, PeerMessage } from '../types'
+import type { PeerMessage } from '../types'
 
 export function GamePage() {
   const navigate = useNavigate()
   const store = useGameStore()
   const { broadcastMessage, sendMessage } = usePeer()
-  const { startRound, submitAnswers, submitVote, finalizeRound, sendChatMessage } = useGame()
+  const { startRound, submitAnswers, submitVote, sendChatMessage } = useGame()
   const room = useGameStore((s) => s.room)
   const phase = useGameStore((s) => s.room?.phase)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
@@ -46,23 +46,30 @@ export function GamePage() {
   }
 
   const handleGradingComplete = () => {
-    if (!room) return
-    const round = room.rounds[room.rounds.length - 1]
+    const currentRoom = useGameStore.getState().room
+    if (!currentRoom) return
+    const round = currentRoom.rounds[currentRoom.rounds.length - 1]
     if (!round) return
 
-    const scoresMap = calculateScore(round.answers, round.votes, room.players)
-    const scores: Record<string, number> = {}
-    room.players.forEach((p) => {
-      scores[p.id] = (scoresMap.get(p.id) ?? 0)
+    const scoresMap = calculateScore(round.answers, round.votes, currentRoom.players)
+    const roundScores: Record<string, number> = {}
+    const updatedPlayers = currentRoom.players.map((p) => {
+      const roundScore = scoresMap.get(p.id) ?? 0
+      roundScores[p.id] = roundScore
+      return { ...p, score: p.score + roundScore }
     })
 
-    const updatedPlayers = room.players.map((p) => ({
-      ...p,
-      score: p.score + (scores[p.id] ?? 0),
-    }))
+    store.setScores(roundScores)
+    store.updatePlayers(updatedPlayers)
 
-    store.setScores(scores)
-    store.setPhase('round-results')
+    const isLastRound = currentRoom.currentRound >= currentRoom.settings.totalRounds
+    store.setPhase(isLastRound ? 'game-over' : 'round-results')
+
+    broadcastMessage({
+      type: 'round-end',
+      senderId: localPlayerId,
+      payload: { roundScores, updatedPlayers },
+    } as PeerMessage)
   }
 
   const handleNextRound = () => {
@@ -85,7 +92,7 @@ export function GamePage() {
     navigate(`/room/${room.code}`)
   }
 
-  const isGameOver = room.currentRound >= room.settings.totalRounds && phase === 'round-results'
+  const showRoundResults = phase === 'round-results' || phase === 'game-over'
 
   return (
     <Container maxWidth="md">
@@ -109,12 +116,12 @@ export function GamePage() {
           <GradingPanel onVote={handleVote} onComplete={handleGradingComplete} />
         )}
 
-        {phase === 'round-results' && (
+        {showRoundResults && (
           <Scoreboard
-            isGameOver={isGameOver}
-            onNextRound={room.currentRound < room.settings.totalRounds ? handleNextRound : undefined}
+            isGameOver={phase === 'game-over'}
+            onNextRound={phase === 'round-results' ? handleNextRound : undefined}
             onBackToLobby={handleBackToLobby}
-            onPlayAgain={isGameOver ? handlePlayAgain : undefined}
+            onPlayAgain={phase === 'game-over' ? handlePlayAgain : undefined}
           />
         )}
 

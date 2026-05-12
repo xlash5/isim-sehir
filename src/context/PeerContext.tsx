@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useCallback, useRef, type ReactNo
 import { Peer } from 'peerjs'
 import { usePeerStore } from '../stores/usePeerStore'
 import { useGameStore } from '../stores/useGameStore'
-import type { PeerMessage, GameRoom, Answer } from '../types'
+import type { PeerMessage, GameRoom, Answer, Player } from '../types'
 
 interface PeerContextType {
   createPeer: (id?: string) => void
@@ -111,8 +111,21 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         case 'player-disconnected':
           store.removePlayer((msg.payload as { playerId: string }).playerId)
           break
+        case 'round-end': {
+          const reP = msg.payload as { roundScores: Record<string, number>; updatedPlayers: Player[] }
+          gameStore.setState({ scores: reP.roundScores })
+          store.updatePlayers(reP.updatedPlayers)
+          const storeState = gameStore.getState()
+          if (storeState.room && storeState.room.currentRound >= storeState.room.settings.totalRounds) {
+            store.setPhase('game-over')
+          } else {
+            store.setPhase('round-results')
+          }
+          break
+        }
       }
     },
+
     [gameStore, peerStore],
   )
 

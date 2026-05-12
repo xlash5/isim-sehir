@@ -12,9 +12,11 @@ interface Props {
 export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain }: Props) {
   const room = useGameStore((s) => s.room)
   const scores = useGameStore((s) => s.scores)
+  const localPlayerId = useGameStore((s) => s.localPlayerId)
 
   if (!room) return null
 
+  const isAdmin = room.adminId === localPlayerId
   const sorted = [...room.players].sort((a, b) => b.score - a.score)
   const medals = ['🥇', '🥈', '🥉']
 
@@ -27,9 +29,10 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
         </Typography>
       </Box>
 
-      <Paper sx={{ p: 2, minWidth: 300 }}>
+      <Paper sx={{ p: 2, minWidth: 300, width: '100%', maxWidth: 500 }}>
         {sorted.map((player, i) => {
           const roundScore = scores[player.id] ?? 0
+          const isWinner = i === 0 && isGameOver
           return (
             <Box
               key={player.id}
@@ -41,26 +44,30 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
                 px: 2,
                 borderBottom: i < sorted.length - 1 ? '1px solid' : 'none',
                 borderColor: 'divider',
-                bgcolor: i === 0 ? 'rgba(206, 147, 216, 0.08)' : 'transparent',
+                bgcolor: i === 0 && isGameOver ? 'rgba(255, 215, 0, 0.08)' : i === 0 ? 'rgba(206, 147, 216, 0.08)' : 'transparent',
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Typography variant="h6" sx={{ minWidth: 30, textAlign: 'center' }}>
                   {medals[i] ?? `${i + 1}.`}
                 </Typography>
-                <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                  {player.nickname}
-                  {player.isAdmin && ' 👑'}
-                </Typography>
+                <Box>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {player.nickname}
+                    {player.isAdmin && ' 👑'}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                {player.score}
-                {!isGameOver && (
-                  <Typography component="span" variant="caption" sx={{ color: roundScore > 0 ? 'success.main' : 'text.disabled', ml: 0.5 }}>
-                    (+{roundScore})
+              <Box sx={{ textAlign: 'right' }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                  {player.score}
+                </Typography>
+                {!isGameOver && roundScore > 0 && (
+                  <Typography variant="caption" sx={{ color: 'success.main', display: 'block', lineHeight: 1 }}>
+                    +{roundScore} bu tur
                   </Typography>
                 )}
-              </Typography>
+              </Box>
             </Box>
           )
         })}
@@ -80,7 +87,7 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
           )}
         </Box>
       ) : (
-        onNextRound && (
+        isAdmin && onNextRound && (
           <Button variant="contained" onClick={onNextRound}>
             Sonraki Tur
           </Button>
