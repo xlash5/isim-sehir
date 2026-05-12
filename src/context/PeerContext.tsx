@@ -47,12 +47,13 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const payload = msg.payload as { id: string; nickname: string }
           console.log(`[Peer] join-room from ${payload.nickname} (${payload.id})`)
           store.addPlayer({ id: payload.id, nickname: payload.nickname, isAdmin: false, isReady: false, score: 0 })
-          if (store.room?.adminId === store.localPlayerId) {
+          const fresh = gameStore.getState()
+          if (fresh.room?.adminId === fresh.localPlayerId) {
             console.log('[Peer] Admin: sending room-state-sync to joiner')
             const syncMsg: PeerMessage = {
               type: 'room-state-sync',
-              senderId: store.localPlayerId!,
-              payload: { room: store.room },
+              senderId: fresh.localPlayerId!,
+              payload: { room: fresh.room },
             }
             const conn = pStore.connections.get(connId)
             if (conn) conn.send(syncMsg)
@@ -60,7 +61,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
               if (pid !== connId && c.open) {
                 c.send({
                   type: 'join-room',
-                  senderId: store.localPlayerId!,
+                  senderId: fresh.localPlayerId!,
                   payload: { id: payload.id, nickname: payload.nickname },
                 } as PeerMessage)
               }
