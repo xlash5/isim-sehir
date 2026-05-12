@@ -90,7 +90,7 @@ export function GradingPanel({ onVote, onComplete }: Props) {
                       </Box>
 
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        {!isOwnAnswer && !allAnswered && (
+                        {!isOwnAnswer && (
                           <>
                             <Button size="small"
                               variant={hasVoted && myVotes[answer.answerId] ? 'contained' : 'outlined'}
