@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Box, Container, Grid2 as Grid, Typography, Button, Paper,
@@ -22,6 +23,17 @@ export function LobbyPage() {
   const setPlayerReady = useGameStore((s) => s.setPlayerReady)
   const { broadcastMessage } = usePeer()
   const { startGame, sendChatMessage } = useGame()
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      const s = useGameStore.getState()
+      console.log('[DEBUG] room?.players:', s.room?.players.map((p) => p.nickname))
+      console.log('[DEBUG] room?.adminId:', s.room?.adminId)
+      console.log('[DEBUG] localPlayerId:', s.localPlayerId)
+      console.log('[DEBUG] localNickname:', s.localNickname)
+    }, 3000)
+    return () => clearInterval(id)
+  }, [])
 
   if (!room || !localPlayerId) {
     return (
@@ -106,6 +118,13 @@ export function LobbyPage() {
         )}
 
         <ChatBox onSend={sendChatMessage} />
+
+        <Paper sx={{ p: 1, bgcolor: 'rgba(0,0,0,0.3)' }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            [DEBUG] Oyuncu sayısı: {room.players.length} | Admin: {room.adminId.slice(0,8)} |
+            Oyuncular: {room.players.map(p => p.nickname).join(', ') || 'yok'}
+          </Typography>
+        </Paper>
       </Box>
     </Container>
   )
