@@ -35,6 +35,12 @@ export function LobbyPage() {
     return () => clearInterval(id)
   }, [])
 
+  useEffect(() => {
+    if (room && room.phase !== 'lobby') {
+      navigate(`/game/${room.code}`)
+    }
+  }, [room?.phase, navigate])
+
   if (!room || !localPlayerId) {
     return (
       <Container maxWidth="sm">
