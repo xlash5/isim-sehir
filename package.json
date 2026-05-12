@@ -1,0 +1,30 @@
+{
+  "name": "isim-sehir",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19",
+    "react-dom": "^19",
+    "react-router-dom": "^7",
+    "@mui/material": "^6",
+    "@mui/icons-material": "^6",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "peerjs": "^1.5",
+    "zustand": "^5"
+  },
+  "devDependencies": {
+    "vite": "^6",
+    "@vitejs/plugin-react": "^4",
+    "typescript": "^5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19"
+  }
+}
