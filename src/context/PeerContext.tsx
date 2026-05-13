@@ -244,31 +244,39 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           handleRef.current(targetId, data)
         })
       })
-      const handleOutgoingClose = () => {
-        console.log(`[Peer] Connection closed/errored to ${targetId}`)
-        removeConnection(targetId)
-        const store = gameStore.getState()
-        if (!store.room) return
-        const originalAdminId = adminPlayerIdRef.current
-        if (!originalAdminId) return
-        if (store.room.adminId !== originalAdminId) return
-        const adminStillExists = store.room.players.some((p) => p.id === originalAdminId)
-        if (!adminStillExists) return
-        const remaining = store.room.players.filter((p) => p.id !== originalAdminId)
-        if (remaining.length > 0) {
-          const newAdmin = remaining[0]
-          store.transferAdmin(newAdmin.id)
-          store.removePlayer(originalAdminId)
-          store.addChatMessage({
-            playerId: 'system',
-            nickname: 'System',
-            text: formatAdminTransferred(newAdmin.nickname),
-            timestamp: Date.now(),
-          })
-        } else {
-          store.removePlayer(originalAdminId)
+        const handleOutgoingClose = () => {
+          console.log(`[Peer] Connection closed/errored to ${targetId}`)
+          removeConnection(targetId)
+          const store = gameStore.getState()
+          if (!store.room) return
+          const originalAdminId = adminPlayerIdRef.current
+          if (!originalAdminId) return
+          if (store.room.adminId !== originalAdminId) return
+          const adminStillExists = store.room.players.some((p) => p.id === originalAdminId)
+          if (!adminStillExists) return
+          const remaining = store.room.players.filter((p) => p.id !== originalAdminId)
+          if (remaining.length > 0) {
+            const newAdmin = remaining[0]
+            store.transferAdmin(newAdmin.id)
+            store.removePlayer(originalAdminId)
+            store.addChatMessage({
+              playerId: 'system',
+              nickname: 'System',
+              text: formatAdminTransferred(newAdmin.nickname),
+              timestamp: Date.now(),
+            })
+          } else {
+            store.removePlayer(originalAdminId)
+          }
+          const fresh = gameStore.getState()
+          if (fresh.room && fresh.room.adminId === fresh.localPlayerId) {
+            const pStore = peerStore.getState()
+            if (pStore.peerId !== fresh.room.code) {
+              disconnect()
+              createPeer(fresh.room.code)
+            }
+          }
         }
-      }
       conn.on('close', handleOutgoingClose)
       conn.on('error', handleOutgoingClose)
     },
@@ -353,6 +361,14 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           })
         } else {
           store.removePlayer(originalAdminId)
+        }
+        const fresh = gameStore.getState()
+        if (fresh.room && fresh.room.adminId === fresh.localPlayerId) {
+          const pStore = peerStore.getState()
+          if (pStore.peerId !== fresh.room.code) {
+            disconnect()
+            createPeer(fresh.room.code)
+          }
         }
       }
     }, 5000)
