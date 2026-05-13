@@ -130,5 +130,8 @@ const tr: Record<string, string> = {
 
   'player.ready': '✅ Hazır',
   'player.notReady': '⏳ Hazır Değil',
+
+  'system.adminTransferred': '{nickname} yeni admin oldu.',
+  'system.playerDisconnected': '{nickname} oyundan ayrıldı.',
 }
 export default tr

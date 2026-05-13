@@ -130,5 +130,8 @@ const en: Record<string, string> = {
 
   'player.ready': '✅ Ready',
   'player.notReady': '⏳ Not Ready',
+
+  'system.adminTransferred': '{nickname} is the new admin.',
+  'system.playerDisconnected': '{nickname} left the game.',
 }
 export default en

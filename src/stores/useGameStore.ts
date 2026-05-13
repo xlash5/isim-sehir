@@ -20,6 +20,7 @@ interface GameState {
   joinRoom: (code: string) => void
   addPlayer: (player: Player) => void
   removePlayer: (playerId: string) => void
+  transferAdmin: (newAdminId: string) => void
   updatePlayers: (players: Player[]) => void
   setPlayerReady: (playerId: string, ready: boolean) => void
   updateSettings: (settings: Partial<GameSettings>) => void
@@ -127,6 +128,21 @@ export const useGameStore = create<GameState>((set, get) => ({
         room: {
           ...state.room,
           players: state.room.players.filter((p) => p.id !== playerId),
+        },
+      }
+    }),
+
+  transferAdmin: (newAdminId) =>
+    set((state) => {
+      if (!state.room) return state
+      return {
+        room: {
+          ...state.room,
+          adminId: newAdminId,
+          players: state.room.players.map((p) => ({
+            ...p,
+            isAdmin: p.id === newAdminId,
+          })),
         },
       }
     }),
