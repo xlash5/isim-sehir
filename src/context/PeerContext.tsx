@@ -2,11 +2,17 @@ import { createContext, useContext, useEffect, useCallback, useRef, type ReactNo
 import { Peer } from 'peerjs'
 import { usePeerStore } from '../stores/usePeerStore'
 import { useGameStore } from '../stores/useGameStore'
+import { useNotificationStore } from '../stores/useNotificationStore'
 import type { PeerMessage, GameRoom, Answer, Player } from '../types'
 
 function formatAdminTransferred(nickname: string): string {
   const locale = (typeof localStorage !== 'undefined' ? localStorage.getItem('locale') : null) || 'tr'
   return locale === 'en' ? `${nickname} is the new admin.` : `${nickname} yeni admin oldu.`
+}
+
+function formatPlayerDisconnected(nickname: string): string {
+  const locale = (typeof localStorage !== 'undefined' ? localStorage.getItem('locale') : null) || 'tr'
+  return locale === 'en' ? `${nickname} left the game.` : `${nickname} oyundan ayrıldı.`
 }
 
 interface PeerContextType {
@@ -135,9 +141,37 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         case 'heartbeat':
           lastHeartbeatAtRef.current = Date.now()
           break
-        case 'player-disconnected':
-          store.removePlayer((msg.payload as { playerId: string }).playerId)
+        case 'player-disconnected': {
+          const { playerId } = msg.payload as { playerId: string }
+          const currentState = gameStore.getState()
+          const player = currentState.room?.players.find((p) => p.id === playerId)
+          const nickname = player?.nickname ?? playerId
+          const wasAdmin = currentState.room?.adminId === playerId
+          store.removePlayer(playerId)
+          if (wasAdmin) {
+            const fresh = gameStore.getState()
+            const remaining = fresh.room?.players ?? []
+            if (remaining.length > 0) {
+              const newAdmin = remaining[0]
+              store.transferAdmin(newAdmin.id)
+              adminPlayerIdRef.current = newAdmin.id
+              lastHeartbeatAtRef.current = Date.now()
+              broadcastRef.current({
+                type: 'admin-transfer',
+                senderId: currentState.localPlayerId!,
+                payload: { newAdminId: newAdmin.id },
+              })
+            }
+          }
+          store.addChatMessage({
+            playerId: 'system',
+            nickname: 'System',
+            text: formatPlayerDisconnected(nickname),
+            timestamp: Date.now(),
+          })
+          useNotificationStore.getState().show(formatPlayerDisconnected(nickname), 'warning')
           break
+        }
         case 'admin-transfer': {
           const atPayload = msg.payload as { newAdminId: string }
           store.transferAdmin(atPayload.newAdminId)
@@ -208,6 +242,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const mapping = peerToPlayerMap.current.get(conn.peer)
           if (mapping) {
             const store = gameStore.getState()
+            const wasAdmin = store.room?.adminId === mapping.playerId
             const disconnectMsg: PeerMessage = {
               type: 'player-disconnected',
               senderId: store.localPlayerId!,
@@ -215,6 +250,25 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             }
             broadcastRef.current(disconnectMsg)
             store.removePlayer(mapping.playerId)
+            useNotificationStore.getState().show(
+              formatPlayerDisconnected(mapping.nickname),
+              'warning',
+            )
+            if (wasAdmin) {
+              const fresh = gameStore.getState()
+              const remaining = fresh.room?.players ?? []
+              if (remaining.length > 0) {
+                const newAdmin = remaining[0]
+                store.transferAdmin(newAdmin.id)
+                adminPlayerIdRef.current = newAdmin.id
+                lastHeartbeatAtRef.current = Date.now()
+                broadcastRef.current({
+                  type: 'admin-transfer',
+                  senderId: store.localPlayerId!,
+                  payload: { newAdminId: newAdmin.id },
+                })
+              }
+            }
             peerToPlayerMap.current.delete(conn.peer)
           }
           removeConnection(conn.peer)
@@ -270,11 +324,22 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const adminId = store.room.adminId
           const adminStillExists = store.room.players.some((p) => p.id === adminId)
           if (!adminStillExists) return
+          const adminPlayer = store.room.players.find((p) => p.id === adminId)
+          broadcastRef.current({
+            type: 'player-disconnected',
+            senderId: store.localPlayerId!,
+            payload: { playerId: adminId },
+          })
+          useNotificationStore.getState().show(
+            formatPlayerDisconnected(adminPlayer?.nickname ?? adminId),
+            'warning',
+          )
           const remaining = store.room.players.filter((p) => p.id !== adminId)
           if (remaining.length > 0) {
             const newAdmin = remaining[0]
             store.transferAdmin(newAdmin.id)
             store.removePlayer(adminId)
+            lastHeartbeatAtRef.current = Date.now()
             store.addChatMessage({
               playerId: 'system',
               nickname: 'System',
@@ -369,11 +434,22 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         const adminId = store.room.adminId
         const adminStillExists = store.room.players.some((p) => p.id === adminId)
         if (!adminStillExists) return
+        const adminPlayer = store.room.players.find((p) => p.id === adminId)
+        broadcastRef.current({
+          type: 'player-disconnected',
+          senderId: store.localPlayerId!,
+          payload: { playerId: adminId },
+        })
+        useNotificationStore.getState().show(
+          formatPlayerDisconnected(adminPlayer?.nickname ?? adminId),
+          'warning',
+        )
         const remaining = store.room.players.filter((p) => p.id !== adminId)
         if (remaining.length > 0) {
           const newAdmin = remaining[0]
           store.transferAdmin(newAdmin.id)
           store.removePlayer(adminId)
+          lastHeartbeatAtRef.current = Date.now()
           store.addChatMessage({
             playerId: 'system',
             nickname: 'System',

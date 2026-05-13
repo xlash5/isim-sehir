@@ -124,11 +124,22 @@ export const useGameStore = create<GameState>((set, get) => ({
   removePlayer: (playerId) =>
     set((state) => {
       if (!state.room) return state
+      const rounds = state.room.rounds.map((r) => ({
+        ...r,
+        answers: r.answers.filter((a) => a.playerId !== playerId),
+        votes: r.votes.filter((v) => v.voterId !== playerId),
+      }))
       return {
         room: {
           ...state.room,
           players: state.room.players.filter((p) => p.id !== playerId),
+          rounds,
         },
+        submittedPlayers: state.submittedPlayers.filter((id) => id !== playerId),
+        gradingItems: state.gradingItems.filter((item) => item.playerId !== playerId),
+        scores: Object.fromEntries(
+          Object.entries(state.scores).filter(([id]) => id !== playerId),
+        ),
       }
     }),
 

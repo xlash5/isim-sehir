@@ -7,6 +7,7 @@ import { darkTheme, lightTheme } from './theme'
 import { PeerProvider } from './context/PeerContext'
 import { LocaleProvider } from './locales'
 import { LanguageSwitcher } from './components/common/LanguageSwitcher'
+import { NotificationSnackbar } from './components/common/NotificationSnackbar'
 import { HomePage } from './pages/HomePage'
 import { LobbyPage } from './pages/LobbyPage'
 import { GamePage } from './pages/GamePage'
@@ -37,6 +38,7 @@ export default function App() {
               {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
             <PeerProvider>
+              <NotificationSnackbar />
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/room/:roomId" element={<LobbyPage />} />
