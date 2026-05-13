@@ -30,6 +30,10 @@ export function PeerProvider({ children }: { children: ReactNode }) {
   const localPlayerIdRef = useRef<string | null>(null)
   const localNicknameRef = useRef<string | null>(null)
   const peerToPlayerMap = useRef<Map<string, { playerId: string; nickname: string }>>(new Map())
+  const lastHeartbeatAtRef = useRef<number>(Date.now())
+  const adminPlayerIdRef = useRef<string | null>(null)
+  const heartbeatSenderRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const heartbeatMonitorRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const gameStore = useGameStore
   const peerStore = usePeerStore
@@ -81,6 +85,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const syncedRoom = payload.room
           if (syncedRoom) {
             console.log('[Peer] Received room-state-sync with', syncedRoom.players.length, 'players')
+            adminPlayerIdRef.current = syncedRoom.adminId
             gameStore.setState({ room: syncedRoom })
           }
           break
@@ -114,6 +119,9 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           break
         case 'chat-message':
           store.addChatMessage(msg.payload as never)
+          break
+        case 'heartbeat':
+          lastHeartbeatAtRef.current = Date.now()
           break
         case 'player-disconnected':
           store.removePlayer((msg.payload as { playerId: string }).playerId)
@@ -153,6 +161,8 @@ export function PeerProvider({ children }: { children: ReactNode }) {
 
   const handleRef = useRef(handleMessage)
   handleRef.current = handleMessage
+  const broadcastRef = useRef<(msg: PeerMessage) => void>(() => {})
+  const sendMessageRef = useRef<(targetId: string, msg: PeerMessage) => void>(() => {})
 
   const createPeer = useCallback(
     (id?: string) => {
@@ -179,8 +189,8 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             handleRef.current(conn.peer, data)
           })
         })
-        conn.on('close', () => {
-          console.log(`[Peer] Connection closed from ${conn.peer}`)
+        const handleIncomingClose = () => {
+          console.log(`[Peer] Connection closed/errored from ${conn.peer}`)
           const mapping = peerToPlayerMap.current.get(conn.peer)
           if (mapping) {
             const store = gameStore.getState()
@@ -189,12 +199,14 @@ export function PeerProvider({ children }: { children: ReactNode }) {
               senderId: store.localPlayerId!,
               payload: { playerId: mapping.playerId },
             }
-            broadcastMessage(disconnectMsg)
+            broadcastRef.current(disconnectMsg)
             store.removePlayer(mapping.playerId)
             peerToPlayerMap.current.delete(conn.peer)
           }
           removeConnection(conn.peer)
-        })
+        }
+        conn.on('close', handleIncomingClose)
+        conn.on('error', handleIncomingClose)
       })
       p.on('error', (err) => {
         console.error(`[Peer] Error${id ? ' (id: ' + id + ')' : ''}:`, err)
@@ -206,7 +218,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       })
       setPeer(p)
     },
-    [addConnection, removeConnection, setPeer, setPeerId],
+    [addConnection, removeConnection, setPeer, setPeerId, gameStore],
   )
 
   const connectToPeer = useCallback(
@@ -232,30 +244,35 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           handleRef.current(targetId, data)
         })
       })
-      conn.on('close', () => {
-        console.log(`[Peer] Connection closed to ${targetId}`)
+      const handleOutgoingClose = () => {
+        console.log(`[Peer] Connection closed/errored to ${targetId}`)
         removeConnection(targetId)
         const store = gameStore.getState()
-        if (store.room && store.room.adminId) {
-          const adminId = store.room.adminId
-          const remaining = store.room.players.filter((p) => p.id !== adminId)
-          if (remaining.length > 0) {
-            const newAdmin = remaining[0]
-            store.transferAdmin(newAdmin.id)
-            store.removePlayer(adminId)
-            store.addChatMessage({
-              playerId: 'system',
-              nickname: 'System',
-              text: formatAdminTransferred(newAdmin.nickname),
-              timestamp: Date.now(),
-            })
-          } else {
-            store.removePlayer(adminId)
-          }
+        if (!store.room) return
+        const originalAdminId = adminPlayerIdRef.current
+        if (!originalAdminId) return
+        if (store.room.adminId !== originalAdminId) return
+        const adminStillExists = store.room.players.some((p) => p.id === originalAdminId)
+        if (!adminStillExists) return
+        const remaining = store.room.players.filter((p) => p.id !== originalAdminId)
+        if (remaining.length > 0) {
+          const newAdmin = remaining[0]
+          store.transferAdmin(newAdmin.id)
+          store.removePlayer(originalAdminId)
+          store.addChatMessage({
+            playerId: 'system',
+            nickname: 'System',
+            text: formatAdminTransferred(newAdmin.nickname),
+            timestamp: Date.now(),
+          })
+        } else {
+          store.removePlayer(originalAdminId)
         }
-      })
+      }
+      conn.on('close', handleOutgoingClose)
+      conn.on('error', handleOutgoingClose)
     },
-    [addConnection, removeConnection, peerStore],
+    [addConnection, removeConnection, peerStore, gameStore],
   )
 
   const sendMessage = useCallback(
@@ -280,6 +297,9 @@ export function PeerProvider({ children }: { children: ReactNode }) {
     [peerStore],
   )
 
+  broadcastRef.current = broadcastMessage
+  sendMessageRef.current = sendMessage
+
   const disconnectAll = useCallback(() => {
     disconnect()
   }, [disconnect])
@@ -289,6 +309,60 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       disconnect()
     }
   }, [disconnect])
+
+  useEffect(() => {
+    if (heartbeatSenderRef.current) return
+    heartbeatSenderRef.current = setInterval(() => {
+      const store = gameStore.getState()
+      if (store.localPlayerId === store.room?.adminId) {
+        broadcastMessage({
+          type: 'heartbeat',
+          senderId: store.localPlayerId!,
+          payload: {},
+        })
+      }
+    }, 8000)
+    return () => {
+      if (heartbeatSenderRef.current) {
+        clearInterval(heartbeatSenderRef.current)
+        heartbeatSenderRef.current = null
+      }
+    }
+  }, [gameStore, broadcastMessage])
+
+  useEffect(() => {
+    if (heartbeatMonitorRef.current) return
+    heartbeatMonitorRef.current = setInterval(() => {
+      const store = gameStore.getState()
+      if (!store.room || store.localPlayerId === store.room.adminId) return
+      if (Date.now() - lastHeartbeatAtRef.current > 25000) {
+        const originalAdminId = adminPlayerIdRef.current
+        if (!originalAdminId) return
+        const adminStillExists = store.room.players.some((p) => p.id === originalAdminId)
+        if (!adminStillExists) return
+        const remaining = store.room.players.filter((p) => p.id !== originalAdminId)
+        if (remaining.length > 0) {
+          const newAdmin = remaining[0]
+          store.transferAdmin(newAdmin.id)
+          store.removePlayer(originalAdminId)
+          store.addChatMessage({
+            playerId: 'system',
+            nickname: 'System',
+            text: formatAdminTransferred(newAdmin.nickname),
+            timestamp: Date.now(),
+          })
+        } else {
+          store.removePlayer(originalAdminId)
+        }
+      }
+    }, 5000)
+    return () => {
+      if (heartbeatMonitorRef.current) {
+        clearInterval(heartbeatMonitorRef.current)
+        heartbeatMonitorRef.current = null
+      }
+    }
+  }, [])
 
   return (
     <PeerContext.Provider value={{ createPeer, connectToPeer, sendMessage, broadcastMessage, disconnectAll }}>
