@@ -97,6 +97,16 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             (msg.payload as { playerId: string }).playerId,
             (msg.payload as { ready: boolean }).ready,
           )
+          {
+            const fresh = gameStore.getState()
+            if (fresh.room?.adminId === fresh.localPlayerId) {
+              pStore.connections.forEach((c, pid) => {
+                if (pid !== connId && c.open) {
+                  c.send(msg as PeerMessage)
+                }
+              })
+            }
+          }
           break
         case 'settings-update':
           store.updateSettings(msg.payload as Record<string, unknown>)
