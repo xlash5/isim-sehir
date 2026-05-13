@@ -23,7 +23,8 @@ export function LobbyPage() {
   const room = useGameStore((s) => s.room)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
   const setPlayerReady = useGameStore((s) => s.setPlayerReady)
-  const { broadcastMessage } = usePeer()
+  const resetRoom = useGameStore((s) => s.resetRoom)
+  const { broadcastMessage, disconnectAll } = usePeer()
   const { startGame, sendChatMessage } = useGame()
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export function LobbyPage() {
       <Container maxWidth="sm">
         <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Typography>{t('lobby.roomNotFound')}</Typography>
-          <Button onClick={() => navigate('/')}>{t('lobby.homePage')}</Button>
+          <Button onClick={() => { disconnectAll(); resetRoom(); navigate('/') }}>{t('lobby.homePage')}</Button>
         </Box>
       </Container>
     )
@@ -84,7 +85,7 @@ export function LobbyPage() {
             <Typography variant="subtitle2">{t('lobby.roomCode')}</Typography>
             <CopyCode code={room.code} />
           </Box>
-          <Button variant="text" onClick={() => navigate('/')}>
+          <Button variant="text" onClick={() => { disconnectAll(); resetRoom(); navigate('/') }}>
             {t('lobby.exit')}
           </Button>
         </Paper>
