@@ -2,11 +2,11 @@
 
 > **Priority:** Medium — addresses a known issue from v1.0
 > **Version target:** v1.1
-> **Status:** 🔴 Not implemented
+> **Status:** ✅ Implemented (commit `3cfeeee`)
 
 ## Overview
 
-Currently the "Oyuna Başla" (Start Game) button becomes enabled when **all other players** are ready, but the admin themselves does not need to be ready. This is inconsistent. This spec requires the admin to also toggle "Hazır" before the game can start.
+Previously the "Oyuna Başla" (Start Game) button was always visible to the admin (only disabled), and the ready check included a `players.length >= 2` guard. The admin did not need to be ready. This was inconsistent. This spec requires the admin to also toggle "Hazır" before the game can start.
 
 ## Requirements
 
@@ -18,19 +18,23 @@ Currently the "Oyuna Başla" (Start Game) button becomes enabled when **all othe
 
 ## Technical Design
 
-### Current Behavior
+### Behavior Before Fix
 
 ```ts
-// Current: all players except admin must be ready
-const allReady = players.every(p => p.id === adminId || p.isReady)
+// all players (including admin) checked, but button always visible & only disabled,
+// and ready check had min-player guard baked in
+const allReady = players.length >= 2 && players.every(p => p.isReady)
+// Button rendered unconditionally for admin, merely disabled:
+{isAdmin && <Button disabled={!allReady || !hasEnoughPlayers || !hasCategories}>}
 ```
 
-### New Behavior
+### Behavior After Fix
 
 ```ts
-// New: all players including admin must be ready
+// all players including admin must be ready (min-player guard separated)
 const allReady = players.every(p => p.isReady)
-const canStart = allReady && isAdmin
+// Button hidden until all conditions are met:
+{isAdmin && allReady && hasEnoughPlayers && hasCategories && <Button>}
 ```
 
 ### UI Changes
@@ -51,7 +55,7 @@ No new messages needed. The existing `player-ready` message already handles admi
 
 ## Acceptance Criteria
 
-- [ ] Admin must be "Hazır" for the game to start
-- [ ] "Oyuna Başla" appears only when all players (including admin) are ready
-- [ ] Settings panel locks when admin is ready, unlocks when admin un-readies
-- [ ] All other existing ready logic remains unchanged
+- [x] Admin must be "Hazır" for the game to start
+- [x] "Oyuna Başla" appears only when all players (including admin) are ready
+- [x] Settings panel locks when admin is ready, unlocks when admin un-readies (already worked)
+- [x] All other existing ready logic remains unchanged
