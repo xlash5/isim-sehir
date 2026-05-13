@@ -16,6 +16,7 @@ React 19 + TypeScript 5 + Vite 6 + MUI 6 + Zustand 5 + PeerJS + React Router 7
 - Cumulative score + per-round breakdown
 - 33 Turkish categories
 - Anonymous nickname-based login
+- i18n: Turkish & English with instant language switcher (persisted to localStorage)
 
 ## Architecture
 
