@@ -72,6 +72,8 @@ export type PeerMessageType =
   | 'admin-transfer'
   | 'room-state-sync'
   | 'heartbeat'
+  | 'reconnect'
+  | 'reconnect-accepted'
 
 export interface PeerMessage {
   type: PeerMessageType

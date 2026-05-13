@@ -87,6 +87,12 @@ const tr: Record<string, string> = {
   'common.copy': 'Kopyala',
   'common.copied': 'Oda kodu kopyalandı!',
 
+  'restore.title': 'Oyuna Geri Dön',
+  'restore.message': 'Oyuna geri dönmek ister misin? {nickname} olarak {roomCode} odasına bağlan.',
+  'restore.yes': 'Evet',
+  'restore.no': 'Hayır',
+  'restore.reconnecting': 'Yeniden bağlanılıyor...',
+
   'error.duplicateNickname': 'Bu rumuz zaten kullanılıyor',
   'error.roomFull': 'Oda dolu',
   'error.connectionLost': 'Bağlantı koptu',

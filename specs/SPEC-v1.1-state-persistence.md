@@ -2,7 +2,7 @@
 
 > **Priority:** High — addresses a known issue from v1.0
 > **Version target:** v1.1
-> **Status:** 🔴 Not implemented
+> **Status:** 🟢 Implemented
 
 ## Overview
 

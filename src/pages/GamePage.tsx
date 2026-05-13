@@ -12,6 +12,7 @@ import { Timer } from '../components/common/Timer'
 import { ChatBox } from '../components/common/ChatBox'
 import { calculateScore } from '../utils/scoring'
 import type { PeerMessage } from '../types'
+import { clearSession } from '../utils/session'
 
 export function GamePage() {
   const navigate = useNavigate()
@@ -90,6 +91,7 @@ export function GamePage() {
   }
 
   const handleBackToLobby = () => {
+    clearSession()
     store.resetGame()
     navigate(`/room/${room.code}`)
   }

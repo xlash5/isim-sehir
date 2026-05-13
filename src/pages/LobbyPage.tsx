@@ -16,6 +16,7 @@ import { GameSettingsPanel } from '../components/Lobby/GameSettingsPanel'
 import { ChatBox } from '../components/common/ChatBox'
 import { CopyCode } from '../components/common/CopyCode'
 import type { PeerMessage } from '../types'
+import { clearSession } from '../utils/session'
 
 export function LobbyPage() {
   const navigate = useNavigate()
@@ -56,7 +57,7 @@ export function LobbyPage() {
       <Container maxWidth="sm">
         <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Typography>{t('lobby.roomNotFound')}</Typography>
-          <Button onClick={() => { disconnectAll(); resetRoom(); navigate('/') }}>{t('lobby.homePage')}</Button>
+          <Button onClick={() => { clearSession(); disconnectAll(); resetRoom(); navigate('/') }}>{t('lobby.homePage')}</Button>
         </Box>
       </Container>
     )
@@ -93,7 +94,7 @@ export function LobbyPage() {
             <Typography variant="subtitle2">{t('lobby.roomCode')}</Typography>
             <CopyCode code={room.code} />
           </Box>
-          <Button variant="text" onClick={() => { disconnectAll(); resetRoom(); navigate('/') }}>
+          <Button variant="text" onClick={() => { clearSession(); disconnectAll(); resetRoom(); navigate('/') }}>
             {t('lobby.exit')}
           </Button>
         </Paper>

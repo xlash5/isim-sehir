@@ -87,6 +87,12 @@ const en: Record<string, string> = {
   'common.copy': 'Copy',
   'common.copied': 'Room code copied!',
 
+  'restore.title': 'Return to Game',
+  'restore.message': 'Do you want to return to the game? Connect as {nickname} to room {roomCode}.',
+  'restore.yes': 'Yes',
+  'restore.no': 'No',
+  'restore.reconnecting': 'Reconnecting...',
+
   'error.duplicateNickname': 'This nickname is already taken',
   'error.roomFull': 'Room is full',
   'error.connectionLost': 'Connection lost',
