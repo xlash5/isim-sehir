@@ -8,6 +8,7 @@ import { PeerProvider } from './context/PeerContext'
 import { LocaleProvider } from './locales'
 import { LanguageSwitcher } from './components/common/LanguageSwitcher'
 import { NotificationSnackbar } from './components/common/NotificationSnackbar'
+import { SessionRestore } from './components/common/SessionRestore'
 import { HomePage } from './pages/HomePage'
 import { LobbyPage } from './pages/LobbyPage'
 import { GamePage } from './pages/GamePage'
@@ -39,6 +40,7 @@ export default function App() {
             </IconButton>
             <PeerProvider>
               <NotificationSnackbar />
+              <SessionRestore />
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/room/:roomId" element={<LobbyPage />} />
