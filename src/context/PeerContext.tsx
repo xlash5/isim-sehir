@@ -194,17 +194,25 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const storeState = gameStore.getState()
           if (storeState.room?.adminId === storeState.localPlayerId) {
             console.log(`[Peer] Reconnect from ${reconnectPayload.nickname} (${reconnectPayload.playerId})`)
-            const existingPlayer = storeState.room.players.find((p) => p.id === reconnectPayload.playerId)
-            if (existingPlayer) {
-              peerToPlayerMap.current.set(connId, { playerId: reconnectPayload.playerId, nickname: reconnectPayload.nickname })
-              const ack: PeerMessage = {
-                type: 'reconnect-accepted',
-                senderId: storeState.localPlayerId!,
-                payload: { room: storeState.room },
-              }
-              const conn = pStore.connections.get(connId)
-              if (conn) conn.send(ack)
+            store.addPlayer({ id: reconnectPayload.playerId, nickname: reconnectPayload.nickname, isAdmin: false, isReady: false, score: 0 })
+            peerToPlayerMap.current.set(connId, { playerId: reconnectPayload.playerId, nickname: reconnectPayload.nickname })
+            const fresh = gameStore.getState()
+            const ack: PeerMessage = {
+              type: 'reconnect-accepted',
+              senderId: storeState.localPlayerId!,
+              payload: { room: fresh.room },
             }
+            const conn = pStore.connections.get(connId)
+            if (conn) conn.send(ack)
+            pStore.connections.forEach((c, pid) => {
+              if (pid !== connId && c.open) {
+                c.send({
+                  type: 'join-room',
+                  senderId: storeState.localPlayerId!,
+                  payload: { id: reconnectPayload.playerId, nickname: reconnectPayload.nickname },
+                } as PeerMessage)
+              }
+            })
           }
           break
         }
