@@ -30,10 +30,17 @@ export function LobbyPage() {
   useEffect(() => {
     const id = setInterval(() => {
       const s = useGameStore.getState()
-      console.log('[DEBUG] room?.players:', s.room?.players.map((p) => p.nickname))
+      console.log('[DEBUG] room?.players:', s.room?.players.map((p) => ({ n: p.nickname, ready: p.isReady, admin: p.isAdmin })))
       console.log('[DEBUG] room?.adminId:', s.room?.adminId)
       console.log('[DEBUG] localPlayerId:', s.localPlayerId)
       console.log('[DEBUG] localNickname:', s.localNickname)
+      console.log('[DEBUG] conditions:', {
+        isAdmin: s.room?.adminId === s.localPlayerId,
+        allReady: s.room?.players.every((p) => p.isReady),
+        hasEnoughPlayers: (s.room?.players.length ?? 0) >= 2,
+        hasCategories: (s.room?.settings.categories.length ?? 0) >= 3,
+        catCount: s.room?.settings.categories.length,
+      })
     }, 3000)
     return () => clearInterval(id)
   }, [])
