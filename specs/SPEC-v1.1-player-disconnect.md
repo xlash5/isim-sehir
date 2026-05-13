@@ -2,7 +2,7 @@
 
 > **Priority:** High — addresses a known issue from v1.0
 > **Version target:** v1.1
-> **Status:** 🔴 Not implemented
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -73,8 +73,8 @@ Show a `Snackbar` (already used in `CopyCode.tsx`) with a warning/error appearan
 
 ## Acceptance Criteria
 
-- [ ] Closing a browser tab removes the player from all remaining peers' state
-- [ ] A snackbar notification appears: "[nickname] ayrıldı."
-- [ ] If the disconnected player was admin, admin transfer is triggered
-- [ ] Disconnect mid-game does not break the game
-- [ ] Missing answers from a disconnected player score 0
+- [x] Closing a browser tab removes the player from all remaining peers' state
+- [x] A snackbar notification appears: "[nickname] ayrıldı."
+- [x] If the disconnected player was admin, admin transfer is triggered
+- [x] Disconnect mid-game does not break the game
+- [x] Missing answers from a disconnected player score 0
