@@ -20,6 +20,7 @@ React 19 + TypeScript 5 + Vite 6 + MUI 6 + Zustand 5 + PeerJS + React Router 7
 - Player disconnect notification (snackbar + chat message) with in-game state cleanup
 - Admin must be "Hazır" before starting the game (v1.1)
 - i18n: Turkish & English with instant language switcher (persisted to localStorage)
+- Session persistence on page refresh — dialog prompt on home page, auto-reconnect on room/game routes (v1.1)
 
 ## Architecture
 
