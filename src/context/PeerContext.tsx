@@ -260,6 +260,8 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       })
         const handleOutgoingClose = () => {
           console.log(`[Peer] Connection closed/errored to ${targetId}`)
+          const activeConn = peerStore.getState().connections.get(targetId)
+          if (activeConn !== conn) return
           removeConnection(targetId)
           lastHeartbeatAtRef.current = Date.now()
           const store = gameStore.getState()
