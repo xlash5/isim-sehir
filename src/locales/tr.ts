@@ -28,6 +28,7 @@ const tr: Record<string, string> = {
   'lobby.roomNotFound': 'Oda bulunamadı. Ana sayfaya dönün.',
   'lobby.homePage': 'Ana Sayfa',
   'lobby.starting': 'Başlatılıyor...',
+  'lobby.needCategories': 'Hazır olmadan önce en az 3 kategori seçin',
 
   'settings.categories': 'Kategoriler',
   'settings.rounds': 'Tur Sayısı: {count}',

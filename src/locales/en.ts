@@ -28,6 +28,7 @@ const en: Record<string, string> = {
   'lobby.roomNotFound': 'Room not found. Return to home page.',
   'lobby.homePage': 'Home Page',
   'lobby.starting': 'Starting...',
+  'lobby.needCategories': 'Select at least 3 categories before readying up',
 
   'settings.categories': 'Categories',
   'settings.rounds': 'Rounds: {count}',

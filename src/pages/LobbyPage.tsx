@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Box, Container, Grid2 as Grid, Typography, Button, Paper,
+  Box, Container, Grid2 as Grid, Typography, Button, Paper, Tooltip,
 } from '@mui/material'
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -69,6 +69,7 @@ export function LobbyPage() {
   const hasCategories = room.settings.categories.length >= 3
 
   const handleToggleReady = () => {
+    if (!hasCategories) return
     const newReady = !currentPlayer?.isReady
     setPlayerReady(localPlayerId, newReady)
     broadcastMessage({
@@ -107,14 +108,19 @@ export function LobbyPage() {
         </Grid>
 
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-          <Button
-            variant={currentPlayer?.isReady ? 'outlined' : 'contained'}
-            size="large"
-            startIcon={currentPlayer?.isReady ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
-            onClick={handleToggleReady}
-          >
-            {t('lobby.ready_toggle')}
-          </Button>
+          <Tooltip title={!hasCategories ? t('lobby.needCategories') : ''}>
+            <span>
+              <Button
+                variant={currentPlayer?.isReady ? 'outlined' : 'contained'}
+                size="large"
+                disabled={!hasCategories}
+                startIcon={currentPlayer?.isReady ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
+                onClick={handleToggleReady}
+              >
+                {t('lobby.ready_toggle')}
+              </Button>
+            </span>
+          </Tooltip>
           {isAdmin && allReady && hasEnoughPlayers && hasCategories && (
             <Button
               variant="contained"
