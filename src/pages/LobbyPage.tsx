@@ -58,6 +58,7 @@ export function LobbyPage() {
   const isAdmin = room.adminId === localPlayerId
   const allReady = room.players.length >= 2 && room.players.every((p) => p.isReady)
   const hasEnoughPlayers = room.players.length >= 2
+  const hasCategories = room.settings.categories.length >= 3
 
   const handleToggleReady = () => {
     const newReady = !currentPlayer?.isReady
@@ -113,7 +114,7 @@ export function LobbyPage() {
               size="large"
               startIcon={<RocketLaunchIcon />}
               onClick={handleGameStart}
-              disabled={!allReady || !hasEnoughPlayers}
+              disabled={!allReady || !hasEnoughPlayers || !hasCategories}
             >
               {t('lobby.startGame')}
             </Button>

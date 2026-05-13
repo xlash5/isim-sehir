@@ -29,7 +29,7 @@ const en: Record<string, string> = {
   'lobby.homePage': 'Home Page',
   'lobby.starting': 'Starting...',
 
-  'settings.categories': 'Categories (min 2, max 10)',
+  'settings.categories': 'Categories',
   'settings.rounds': 'Rounds: {count}',
   'settings.duration': 'Duration',
   'settings.letterPool': 'Letter Pool',
@@ -44,7 +44,7 @@ const en: Record<string, string> = {
   'settings.letterPoolSelected': 'Selected Letters',
   'settings.letterDisplayAll': 'All Letters',
   'settings.letterDisplaySelected': '{count} letters selected',
-  'settings.minCategories': 'You must select at least 2 categories',
+  'settings.minCategories': 'You must select at least 3 categories',
   'settings.seconds': '{value} seconds',
 
   'game.wheel.spinning': 'Spinning...',

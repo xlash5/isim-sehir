@@ -29,7 +29,7 @@ const tr: Record<string, string> = {
   'lobby.homePage': 'Ana Sayfa',
   'lobby.starting': 'Başlatılıyor...',
 
-  'settings.categories': 'Kategoriler (min 2, max 10)',
+  'settings.categories': 'Kategoriler',
   'settings.rounds': 'Tur Sayısı: {count}',
   'settings.duration': 'Süre',
   'settings.letterPool': 'Harf Havuzu',
@@ -44,7 +44,7 @@ const tr: Record<string, string> = {
   'settings.letterPoolSelected': 'Seçilen Harfler',
   'settings.letterDisplayAll': 'Tüm Harfler',
   'settings.letterDisplaySelected': '{count} harf seçili',
-  'settings.minCategories': 'En az 2 kategori seçmelisiniz',
+  'settings.minCategories': 'En az 3 kategori seçmelisiniz',
   'settings.seconds': '{value} saniye',
 
   'game.wheel.spinning': 'Dönüyor...',

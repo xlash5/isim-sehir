@@ -39,7 +39,7 @@ export function GameSettingsPanel() {
   if (!settings) return null
 
   const handleSave = () => {
-    if (categories.length < 2) return
+    if (categories.length < 3) return
     const newSettings = {
       categories,
       totalRounds,
@@ -95,7 +95,7 @@ export function GameSettingsPanel() {
               value={categories}
               onChange={(e) => {
                 const val = e.target.value as string[]
-                if (val.length <= 10) setCategories(val)
+                setCategories(val)
               }}
               input={<OutlinedInput label={t('settings.categories')} />}
               renderValue={(selected) => (
@@ -113,7 +113,7 @@ export function GameSettingsPanel() {
                 </MenuItem>
               ))}
             </Select>
-            {categories.length < 2 && (
+            {categories.length < 3 && categories.length > 0 && (
               <Typography variant="caption" color="error">
                 {t('settings.minCategories')}
               </Typography>
@@ -184,7 +184,7 @@ export function GameSettingsPanel() {
           )}
 
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="contained" onClick={handleSave} disabled={categories.length < 2}>
+            <Button variant="contained" onClick={handleSave} disabled={categories.length < 3}>
               {t('settings.save')}
             </Button>
             <Button variant="text" onClick={() => setEditMode(false)}>
