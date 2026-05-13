@@ -272,7 +272,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           if (fresh.room && fresh.room.adminId === fresh.localPlayerId) {
             const pStore = peerStore.getState()
             if (pStore.peerId !== fresh.room.code) {
-              disconnect()
+              pStore.peer?.destroy()
               createPeer(fresh.room.code)
             }
           }
@@ -366,7 +366,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         if (fresh.room && fresh.room.adminId === fresh.localPlayerId) {
           const pStore = peerStore.getState()
           if (pStore.peerId !== fresh.room.code) {
-            disconnect()
+            pStore.peer?.destroy()
             createPeer(fresh.room.code)
           }
         }
