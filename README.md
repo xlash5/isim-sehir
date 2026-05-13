@@ -47,4 +47,4 @@ Set on Vercel:
 | `VITE_PEER_PORT` | `443` |
 | `VITE_PEER_PATH` | `/isim-sehir` |
 
-Detailed specification: [SPEC.md](./SPEC.md)
+Detailed specifications: [`specs/`](./specs/)

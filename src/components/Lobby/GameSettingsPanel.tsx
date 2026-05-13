@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import {
   Paper, Typography, Box, FormControl, InputLabel, Select, MenuItem,
-  Chip, Button, Slider, TextField, OutlinedInput, Checkbox, ListItemText,
+  Chip, Button, Slider, OutlinedInput, Checkbox, ListItemText,
 } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useGameStore } from '../../stores/useGameStore'
 import { usePeer } from '../../context/PeerContext'
-import { CATEGORIES } from '../../utils/categories'
+import { useLocale } from '../../locales'
+import { CATEGORY_KEYS } from '../../utils/categories'
 import { TURKISH_LETTERS } from '../../utils/letters'
 import type { PeerMessage } from '../../types'
 
@@ -15,6 +16,7 @@ export function GameSettingsPanel() {
   const localPlayerId = useGameStore((s) => s.localPlayerId)
   const updateSettings = useGameStore((s) => s.updateSettings)
   const { broadcastMessage } = usePeer()
+  const { t } = useLocale()
 
   const isAdmin = room?.adminId === localPlayerId
   const isAdminReady = isAdmin && room?.players.find((p) => p.id === localPlayerId)?.isReady
@@ -53,39 +55,41 @@ export function GameSettingsPanel() {
     setEditMode(false)
   }
 
-  const letterDisplay = letterMode === 'all' ? 'Tüm Harfler' : `${selectedLetters.length} harf seçili`
+  const letterDisplay = letterMode === 'all'
+    ? t('settings.letterDisplayAll')
+    : t('settings.letterDisplaySelected', { count: selectedLetters.length })
 
   return (
     <Paper sx={{ p: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <SettingsIcon fontSize="small" />
-        <Typography variant="subtitle2">Oyun Ayarları</Typography>
+        <Typography variant="subtitle2">{t('lobby.settings')}</Typography>
       </Box>
 
       {(!editMode || isAdminReady) ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography variant="body2">
-            <strong>Kategoriler:</strong> {settings.categories.length} seçili
+            <strong>{t('settings.categoriesCount', { count: settings.categories.length })}</strong>
           </Typography>
           <Typography variant="body2">
-            <strong>Tur:</strong> {settings.totalRounds}
+            <strong>{t('settings.roundsCount', { count: settings.totalRounds })}</strong>
           </Typography>
           <Typography variant="body2">
-            <strong>Süre:</strong> {settings.roundDuration === null ? 'Limitsiz' : `${settings.roundDuration}sn`}
+            <strong>{t('settings.durationValue', { value: settings.roundDuration === null ? t('settings.unlimited') : t('settings.seconds', { value: settings.roundDuration }) })}</strong>
           </Typography>
           <Typography variant="body2">
-            <strong>Harfler:</strong> {letterDisplay}
+            <strong>{t('settings.letterPool')}:</strong> {letterDisplay}
           </Typography>
           {isAdmin && (
             <Button size="small" variant="outlined" onClick={() => setEditMode(true)} disabled={isAdminReady} sx={{ mt: 1 }}>
-              Ayarları Düzenle
+              {t('settings.edit')}
             </Button>
           )}
         </Box>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <FormControl size="small" fullWidth>
-            <InputLabel>Kategoriler (min 2, max 10)</InputLabel>
+            <InputLabel>{t('settings.categories')}</InputLabel>
             <Select
               multiple
               value={categories}
@@ -93,32 +97,32 @@ export function GameSettingsPanel() {
                 const val = e.target.value as string[]
                 if (val.length <= 10) setCategories(val)
               }}
-              input={<OutlinedInput label="Kategoriler (min 2, max 10)" />}
+              input={<OutlinedInput label={t('settings.categories')} />}
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((v) => (
-                    <Chip key={v} label={v} size="small" />
+                    <Chip key={v} label={t(`category.${v}`)} size="small" />
                   ))}
                 </Box>
               )}
             >
-              {CATEGORIES.map((cat) => (
-                <MenuItem key={cat} value={cat}>
-                  <Checkbox checked={categories.includes(cat)} />
-                  <ListItemText primary={cat} />
+              {CATEGORY_KEYS.map((key) => (
+                <MenuItem key={key} value={key}>
+                  <Checkbox checked={categories.includes(key)} />
+                  <ListItemText primary={t(`category.${key}`)} />
                 </MenuItem>
               ))}
             </Select>
             {categories.length < 2 && (
               <Typography variant="caption" color="error">
-                En az 2 kategori seçmelisiniz
+                {t('settings.minCategories')}
               </Typography>
             )}
           </FormControl>
 
           <Box>
             <Typography variant="body2" gutterBottom>
-              Tur Sayısı: {totalRounds}
+              {t('settings.rounds', { count: totalRounds })}
             </Typography>
             <Slider
               value={totalRounds}
@@ -131,42 +135,42 @@ export function GameSettingsPanel() {
           </Box>
 
           <FormControl size="small" fullWidth>
-            <InputLabel>Süre</InputLabel>
+            <InputLabel>{t('settings.duration')}</InputLabel>
             <Select
               value={roundDuration === null ? 'unlimited' : roundDuration}
-              label="Süre"
+              label={t('settings.duration')}
               onChange={(e) => {
                 setRoundDuration(e.target.value === 'unlimited' ? null : (e.target.value as number))
               }}
             >
-              <MenuItem value={30}>30 saniye</MenuItem>
-              <MenuItem value={60}>60 saniye</MenuItem>
-              <MenuItem value={90}>90 saniye</MenuItem>
-              <MenuItem value={120}>120 saniye</MenuItem>
-              <MenuItem value="unlimited">Limitsiz</MenuItem>
+              <MenuItem value={30}>{t('settings.seconds', { value: 30 })}</MenuItem>
+              <MenuItem value={60}>{t('settings.seconds', { value: 60 })}</MenuItem>
+              <MenuItem value={90}>{t('settings.seconds', { value: 90 })}</MenuItem>
+              <MenuItem value={120}>{t('settings.seconds', { value: 120 })}</MenuItem>
+              <MenuItem value="unlimited">{t('settings.unlimited')}</MenuItem>
             </Select>
           </FormControl>
 
           <FormControl size="small" fullWidth>
-            <InputLabel>Harf Havuzu</InputLabel>
+            <InputLabel>{t('settings.letterPool')}</InputLabel>
             <Select
               value={letterMode}
-              label="Harf Havuzu"
+              label={t('settings.letterPool')}
               onChange={(e) => setLetterMode(e.target.value as 'all' | 'select')}
             >
-              <MenuItem value="all">Tüm Harfler (Ğ hariç)</MenuItem>
-              <MenuItem value="select">Seçilen Harfler</MenuItem>
+              <MenuItem value="all">{t('settings.letterPoolAll')}</MenuItem>
+              <MenuItem value="select">{t('settings.letterPoolSelected')}</MenuItem>
             </Select>
           </FormControl>
 
           {letterMode === 'select' && (
             <FormControl size="small" fullWidth>
-              <InputLabel>Harfler</InputLabel>
+              <InputLabel>{t('settings.letterPool')}</InputLabel>
               <Select
                 multiple
                 value={selectedLetters}
                 onChange={(e) => setSelectedLetters(e.target.value as string[])}
-                input={<OutlinedInput label="Harfler" />}
+                input={<OutlinedInput label={t('settings.letterPool')} />}
                 renderValue={(selected) => selected.join(', ')}
               >
                 {TURKISH_LETTERS.map((l) => (
@@ -181,10 +185,10 @@ export function GameSettingsPanel() {
 
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button variant="contained" onClick={handleSave} disabled={categories.length < 2}>
-              Kaydet
+              {t('settings.save')}
             </Button>
             <Button variant="text" onClick={() => setEditMode(false)}>
-              İptal
+              {t('settings.cancel')}
             </Button>
           </Box>
         </Box>

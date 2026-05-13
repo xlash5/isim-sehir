@@ -3,6 +3,7 @@ import SendIcon from '@mui/icons-material/Send'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import { useGameStore } from '../../stores/useGameStore'
+import { useLocale } from '../../locales'
 
 interface Props {
   onSubmit: () => void
@@ -15,6 +16,7 @@ export function AnswerTable({ onSubmit }: Props) {
   const isSubmitting = useGameStore((s) => s.isSubmitting)
   const submittedPlayers = useGameStore((s) => s.submittedPlayers)
   const timer = useGameStore((s) => s.timer)
+  const { t } = useLocale()
 
   if (!room) return null
 
@@ -26,7 +28,7 @@ export function AnswerTable({ onSubmit }: Props) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Typography variant="h6" sx={{ textAlign: 'center' }}>
-        <strong>{letter}</strong> harfi ile başlayan kelimeler yazın
+        {t('game.answering.prompt', { letter: letter ?? '?' })}
       </Typography>
 
       <Paper sx={{ p: 1.5, display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -51,8 +53,8 @@ export function AnswerTable({ onSubmit }: Props) {
           {categories.map((category) => (
             <TextField
               key={category}
-              label={category}
-              placeholder={`${category}...`}
+              label={t(`category.${category}`)}
+              placeholder={t('game.answering.placeholder', { category: t(`category.${category}`) })}
               value={answers.get(category) ?? ''}
               onChange={(e) => {
                 if (e.target.value.length <= 50) setAnswer(category, e.target.value)
@@ -72,7 +74,7 @@ export function AnswerTable({ onSubmit }: Props) {
           onClick={onSubmit}
           sx={{ alignSelf: 'center' }}
         >
-          Cevapları Gönder
+          {t('game.answering.submit')}
         </Button>
       )}
     </Box>

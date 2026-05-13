@@ -11,9 +11,12 @@ import { useGameStore } from '../stores/useGameStore'
 import { usePeerStore } from '../stores/usePeerStore'
 import { usePeer } from '../context/PeerContext'
 import { generateRoomCode } from '../utils/letters'
+import { useLocale } from '../locales'
+import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
 
 export function HomePage() {
   const navigate = useNavigate()
+  const { t } = useLocale()
   const [nickname, setNickname] = useState('')
   const [joinCode, setJoinCode] = useState('')
   const [nicknameError, setNicknameError] = useState('')
@@ -62,11 +65,11 @@ export function HomePage() {
 
   const validateNickname = (): boolean => {
     if (!nickname.trim()) {
-      setNicknameError('Lütfen bir rumuz girin')
+      setNicknameError(t('home.nicknameRequired'))
       return false
     }
     if (nickname.trim().length > 20) {
-      setNicknameError('Rumuz en fazla 20 karakter olabilir')
+      setNicknameError(t('home.nicknameTooLong'))
       return false
     }
     setNicknameError('')
@@ -90,7 +93,7 @@ export function HomePage() {
   const handleJoinRoom = () => {
     if (!validateNickname()) return
     if (!joinCode.trim() || joinCode.trim().length !== 6 || !/^\d{6}$/.test(joinCode.trim())) {
-      setCodeError('Geçerli 6 haneli oda kodu girin')
+      setCodeError(t('home.invalidCode'))
       return
     }
     setCodeError('')
@@ -119,24 +122,26 @@ export function HomePage() {
         <Box sx={{ textAlign: 'center' }}>
           <SportsEsportsIcon sx={{ fontSize: 64, color: 'primary.main', mb: 1 }} />
           <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: -1 }}>
-            İsim Şehir
+            {t('home.title')}
           </Typography>
           <Typography variant="body1" sx={{ color: 'text.secondary', mt: 1 }}>
-            Klasik kelime oyunu, modern çok oyunculu versiyonu
+            {t('home.subtitle')}
           </Typography>
         </Box>
+
+        <LanguageSwitcher />
 
         <Paper sx={{ p: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
             <VpnKeyIcon fontSize="small" />
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              Giriş
+              {t('home.login')}
             </Typography>
           </Box>
           <TextField
             fullWidth
-            label="Rumuzunuz"
-            placeholder="Bir rumuz girin..."
+            label={t('home.nickname')}
+            placeholder={t('home.nicknamePlaceholder')}
             value={nickname}
             onChange={(e) => {
               if (e.target.value.length <= 20) setNickname(e.target.value)
@@ -155,16 +160,16 @@ export function HomePage() {
             disabled={loading}
             sx={{ mb: 1.5 }}
           >
-            Oda Oluştur
+            {t('home.createRoom')}
           </Button>
 
-          <Divider sx={{ my: 2 }}>veya</Divider>
+          <Divider sx={{ my: 2 }}>{t('home.or')}</Divider>
 
           <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
             <TextField
               fullWidth
-              label="Oda Kodu"
-              placeholder="6 haneli kod"
+              label={t('home.roomCode')}
+              placeholder={t('home.roomCodePlaceholder')}
               value={joinCode}
               onChange={(e) => {
                 const val = e.target.value.replace(/\D/g, '').slice(0, 6)
@@ -184,21 +189,21 @@ export function HomePage() {
             onClick={handleJoinRoom}
             disabled={joinCode.length !== 6 || loading}
           >
-            Odaya Katıl
+            {t('home.joinRoom')}
           </Button>
 
           {loading && (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 2 }}>
               <CircularProgress size={20} />
               <Typography variant="body2" color="text.secondary">
-                Bağlanıyor...
+                {t('home.connecting')}
               </Typography>
             </Box>
           )}
 
           {peerError && (
             <Alert severity="error" sx={{ mt: 2 }}>
-              Sunucuya bağlanılamadı. Lütfen sayfayı yenileyip tekrar deneyin.
+              {t('home.connectionError')}
             </Alert>
           )}
         </Paper>

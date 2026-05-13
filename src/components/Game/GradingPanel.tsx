@@ -2,6 +2,7 @@ import { Box, Typography, Paper, Button, Chip } from '@mui/material'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import ThumbDownIcon from '@mui/icons-material/ThumbDown'
 import { useGameStore } from '../../stores/useGameStore'
+import { useLocale } from '../../locales'
 
 interface Props {
   onVote: (answerId: string, isValid: boolean) => void
@@ -13,11 +14,12 @@ export function GradingPanel({ onVote, onComplete }: Props) {
   const gradingItems = useGameStore((s) => s.gradingItems)
   const myVotes = useGameStore((s) => s.myVotes)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
+  const { t } = useLocale()
 
   if (!room || gradingItems.length === 0) {
     return (
       <Typography sx={{ textAlign: 'center', color: 'text.secondary', py: 4 }}>
-        Değerlendirme için veri bulunamadı.
+        {t('grading.noData')}
       </Typography>
     )
   }
@@ -42,7 +44,7 @@ export function GradingPanel({ onVote, onComplete }: Props) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Typography variant="h6" sx={{ textAlign: 'center' }}>
-        Değerlendirme
+        {t('grading.title')}
       </Typography>
 
       {categories.map((category) => {
@@ -53,7 +55,7 @@ export function GradingPanel({ onVote, onComplete }: Props) {
         return (
           <Paper key={category} sx={{ p: 2 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5, color: 'primary.light' }}>
-              {category}
+              {t(`category.${category}`)}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               {answersInCategory.map((answer) => {
@@ -85,7 +87,7 @@ export function GradingPanel({ onVote, onComplete }: Props) {
                           {answer.playerId === room.adminId && ' 👑'}
                         </Typography>
                         <Typography variant="body1" sx={{ fontWeight: 700, fontSize: '1.1rem' }}>
-                          {answer.value || '(boş)'}
+                          {answer.value || t('game.answering.answerEmpty')}
                         </Typography>
                       </Box>
 
@@ -96,18 +98,18 @@ export function GradingPanel({ onVote, onComplete }: Props) {
                               variant={hasVoted && myVotes[answer.answerId] ? 'contained' : 'outlined'}
                               color="success" startIcon={<ThumbUpIcon />}
                               onClick={() => onVote(answer.answerId, true)}>
-                              Geçerli
+                              {t('grading.valid')}
                             </Button>
                             <Button size="small"
                               variant={hasVoted && !myVotes[answer.answerId] ? 'contained' : 'outlined'}
                               color="error" startIcon={<ThumbDownIcon />}
                               onClick={() => onVote(answer.answerId, false)}>
-                              Geçersiz
+                              {t('grading.invalid')}
                             </Button>
                           </>
                         )}
                         {isOwnAnswer && (
-                          <Chip label="Kendi cevabınız" size="small" variant="outlined" />
+                          <Chip label={t('grading.yourVote')} size="small" variant="outlined" />
                         )}
                       </Box>
                     </Box>
@@ -134,7 +136,7 @@ export function GradingPanel({ onVote, onComplete }: Props) {
                     )}
 
                     <Typography variant="caption" sx={{ color: 'text.disabled', mt: 0.5, display: 'block' }}>
-                      Oylama: {votedCount}/{eligibleCount}
+                      {t('grading.voting', { voted: votedCount, eligible: eligibleCount })}
                     </Typography>
                   </Box>
                 )
@@ -147,15 +149,15 @@ export function GradingPanel({ onVote, onComplete }: Props) {
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         {isAdmin && allVotesComplete ? (
           <Button variant="contained" color="secondary" size="large" onClick={onComplete}>
-            Sonuçları Göster
+            {t('grading.showResults')}
           </Button>
         ) : allVotesComplete ? (
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Admin sonuçları gösteriyor...
+            {t('grading.waitingAdmin')}
           </Typography>
         ) : (
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Tüm oylamaların tamamlanması bekleniyor...
+            {t('grading.waitingVotes')}
           </Typography>
         )}
       </Box>

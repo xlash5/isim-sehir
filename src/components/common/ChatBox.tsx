@@ -3,6 +3,7 @@ import { Paper, TextField, IconButton, Typography, Box, List, ListItem } from '@
 import SendIcon from '@mui/icons-material/Send'
 import ChatIcon from '@mui/icons-material/Chat'
 import { useGameStore } from '../../stores/useGameStore'
+import { useLocale } from '../../locales'
 
 interface Props {
   onSend: (text: string) => void
@@ -13,6 +14,7 @@ export function ChatBox({ onSend }: Props) {
   const messages = useGameStore((s) => s.chatMessages)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
   const listRef = useRef<HTMLUListElement>(null)
+  const { t } = useLocale()
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
@@ -28,7 +30,7 @@ export function ChatBox({ onSend }: Props) {
     <Paper sx={{ p: 2, height: 300, display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         <ChatIcon fontSize="small" />
-        <Typography variant="subtitle2">Sohbet</Typography>
+        <Typography variant="subtitle2">{t('chat.title')}</Typography>
       </Box>
       <List
         ref={listRef}
@@ -47,7 +49,7 @@ export function ChatBox({ onSend }: Props) {
         <TextField
           size="small"
           fullWidth
-          placeholder="Mesaj yaz..."
+          placeholder={t('chat.placeholder')}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}

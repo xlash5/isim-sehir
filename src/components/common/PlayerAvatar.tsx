@@ -1,4 +1,5 @@
 import { Avatar, Typography, Box } from '@mui/material'
+import { useLocale } from '../../locales'
 
 interface Props {
   nickname: string
@@ -9,6 +10,7 @@ interface Props {
 
 export function PlayerAvatar({ nickname, isAdmin, isReady, size = 40 }: Props) {
   const initial = nickname.charAt(0).toLocaleUpperCase('tr-TR')
+  const { t } = useLocale()
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -30,7 +32,7 @@ export function PlayerAvatar({ nickname, isAdmin, isReady, size = 40 }: Props) {
         </Typography>
         {isReady !== undefined && (
           <Typography variant="caption" sx={{ color: isReady ? 'success.main' : 'text.secondary' }}>
-            {isReady ? '✅ Hazır' : '⏳ Hazır Değil'}
+            {isReady ? t('player.ready') : t('player.notReady')}
           </Typography>
         )}
       </Box>

@@ -1,6 +1,7 @@
 import { Box, Typography, Paper, Button } from '@mui/material'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import { useGameStore } from '../../stores/useGameStore'
+import { useLocale } from '../../locales'
 
 interface Props {
   isGameOver: boolean
@@ -13,6 +14,7 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
   const room = useGameStore((s) => s.room)
   const scores = useGameStore((s) => s.scores)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
+  const { t } = useLocale()
 
   if (!room) return null
 
@@ -25,7 +27,7 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <EmojiEventsIcon color="secondary" />
         <Typography variant="h5" sx={{ fontWeight: 700 }}>
-          {isGameOver ? '🎉 Oyun Sonu! 🎉' : `Tur ${room.currentRound} Sonuçları`}
+          {isGameOver ? t('scoreboard.gameOver') : t('scoreboard.round', { round: room.currentRound })}
         </Typography>
       </Box>
 
@@ -64,7 +66,7 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
                 </Typography>
                 {!isGameOver && roundScore > 0 && (
                   <Typography variant="caption" sx={{ color: 'success.main', display: 'block', lineHeight: 1 }}>
-                    +{roundScore} bu tur
+                    {t('scoreboard.thisRound', { score: roundScore })}
                   </Typography>
                 )}
               </Box>
@@ -77,19 +79,19 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
         <Box sx={{ display: 'flex', gap: 2 }}>
           {onPlayAgain && (
             <Button variant="contained" color="secondary" onClick={onPlayAgain}>
-              🔄 Tekrar Oyna
+              {t('scoreboard.playAgain')}
             </Button>
           )}
           {onBackToLobby && (
             <Button variant="outlined" onClick={onBackToLobby}>
-              Lobiye Dön
+              {t('scoreboard.backToLobby')}
             </Button>
           )}
         </Box>
       ) : (
         isAdmin && onNextRound && (
           <Button variant="contained" onClick={onNextRound}>
-            Sonraki Tur
+            {t('scoreboard.nextRound')}
           </Button>
         )
       )}

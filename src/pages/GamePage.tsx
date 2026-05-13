@@ -3,6 +3,7 @@ import { Box, Container, Typography, Paper } from '@mui/material'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeer } from '../context/PeerContext'
 import { useGame } from '../hooks/useGame'
+import { useLocale } from '../locales'
 import { SlotMachine } from '../components/Game/SlotMachine'
 import { AnswerTable } from '../components/Game/AnswerTable'
 import { GradingPanel } from '../components/Game/GradingPanel'
@@ -14,6 +15,7 @@ import type { PeerMessage } from '../types'
 
 export function GamePage() {
   const navigate = useNavigate()
+  const { t } = useLocale()
   const store = useGameStore()
   const { broadcastMessage, sendMessage } = usePeer()
   const { startRound, submitAnswers, submitVote, sendChatMessage } = useGame()
@@ -25,7 +27,7 @@ export function GamePage() {
     return (
       <Container maxWidth="sm">
         <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Typography>Oyun bulunamadı. Lobiye dönün.</Typography>
+          <Typography>{t('error.gameNotFound')}</Typography>
         </Box>
       </Container>
     )
@@ -99,7 +101,7 @@ export function GamePage() {
       <Box sx={{ minHeight: '100vh', py: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant="subtitle2">
-            Tur {room.currentRound}/{room.settings.totalRounds}  |  Harf: {room.currentLetter ?? '?'}
+            {t('game.roundInfo', { current: room.currentRound, total: room.settings.totalRounds, letter: room.currentLetter ?? '?' })}
           </Typography>
           <Timer />
         </Paper>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Snackbar } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import { useLocale } from '../../locales'
 
 interface Props {
   code: string
@@ -8,6 +9,7 @@ interface Props {
 
 export function CopyCode({ code }: Props) {
   const [open, setOpen] = useState(false)
+  const { t } = useLocale()
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code)
@@ -28,7 +30,7 @@ export function CopyCode({ code }: Props) {
         open={open}
         autoHideDuration={2000}
         onClose={() => setOpen(false)}
-        message="Oda kodu kopyalandı!"
+        message={t('common.copied')}
       />
     </>
   )

@@ -10,6 +10,7 @@ import MeetingRoomIcon from '@mui/icons-material/MeetingRoom'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeer } from '../context/PeerContext'
 import { useGame } from '../hooks/useGame'
+import { useLocale } from '../locales'
 import { PlayerList } from '../components/Lobby/PlayerList'
 import { GameSettingsPanel } from '../components/Lobby/GameSettingsPanel'
 import { ChatBox } from '../components/common/ChatBox'
@@ -18,6 +19,7 @@ import type { PeerMessage } from '../types'
 
 export function LobbyPage() {
   const navigate = useNavigate()
+  const { t } = useLocale()
   const room = useGameStore((s) => s.room)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
   const setPlayerReady = useGameStore((s) => s.setPlayerReady)
@@ -45,8 +47,8 @@ export function LobbyPage() {
     return (
       <Container maxWidth="sm">
         <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Typography>Oda bulunamadı. Ana sayfaya dönün.</Typography>
-          <Button onClick={() => navigate('/')}>Ana Sayfa</Button>
+          <Typography>{t('lobby.roomNotFound')}</Typography>
+          <Button onClick={() => navigate('/')}>{t('lobby.homePage')}</Button>
         </Box>
       </Container>
     )
@@ -78,11 +80,11 @@ export function LobbyPage() {
         <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <MeetingRoomIcon fontSize="small" />
-            <Typography variant="subtitle2">Oda Kodu:</Typography>
+            <Typography variant="subtitle2">{t('lobby.roomCode')}</Typography>
             <CopyCode code={room.code} />
           </Box>
           <Button variant="text" onClick={() => navigate('/')}>
-            Çıkış
+            {t('lobby.exit')}
           </Button>
         </Paper>
 
@@ -102,7 +104,7 @@ export function LobbyPage() {
             startIcon={currentPlayer?.isReady ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
             onClick={handleToggleReady}
           >
-            {currentPlayer?.isReady ? 'Hazır' : 'Hazır'}
+            {t('lobby.ready_toggle')}
           </Button>
           {isAdmin && (
             <Button
@@ -113,13 +115,13 @@ export function LobbyPage() {
               onClick={handleGameStart}
               disabled={!allReady || !hasEnoughPlayers}
             >
-              Oyuna Başla
+              {t('lobby.startGame')}
             </Button>
           )}
         </Box>
         {!hasEnoughPlayers && (
           <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
-            Oyunun başlaması için en az 2 oyuncu gereklidir.
+            {t('lobby.waitingForPlayers')}
           </Typography>
         )}
 
@@ -127,8 +129,7 @@ export function LobbyPage() {
 
         <Paper sx={{ p: 1, bgcolor: 'rgba(0,0,0,0.3)' }}>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            [DEBUG] Oyuncu sayısı: {room.players.length} | Admin: {room.adminId.slice(0,8)} |
-            Oyuncular: {room.players.map(p => p.nickname).join(', ') || 'yok'}
+            {t('lobby.debug.players', { count: room.players.length, admin: room.adminId.slice(0, 8), players: room.players.map(p => p.nickname).join(', ') || 'yok' })}
           </Typography>
         </Paper>
       </Box>

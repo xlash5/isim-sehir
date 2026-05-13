@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { GameRoom, Player, GameSettings, Round, Answer, Vote, ChatMessage, GamePhase, GradingItem } from '../types'
 import { TURKISH_LETTERS } from '../utils/letters'
+import { CATEGORY_KEYS } from '../utils/categories'
 
 interface GameState {
   room: GameRoom | null
@@ -44,7 +45,7 @@ interface GameState {
 }
 
 const defaultSettings: GameSettings = {
-  categories: [],
+  categories: [...CATEGORY_KEYS],
   totalRounds: 3,
   roundDuration: 60,
   letterPool: TURKISH_LETTERS,

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { Box, Typography } from '@mui/material'
 import { TURKISH_LETTERS } from '../../utils/letters'
 import { useGameStore } from '../../stores/useGameStore'
+import { useLocale } from '../../locales'
 
 interface Props {
   onComplete: (letter: string) => void
@@ -12,6 +13,7 @@ const randomLetter = () =>
 
 export function SlotMachine({ onComplete }: Props) {
   const pendingLetter = useGameStore((s) => s.room?.pendingLetter)
+  const { t } = useLocale()
 
   const [displayLetter, setDisplayLetter] = useState('?')
   const [isSpinning, setIsSpinning] = useState(true)
@@ -133,7 +135,7 @@ export function SlotMachine({ onComplete }: Props) {
           },
         }}
       >
-        {showResult ? 'Seçilen Harf' : isSpinning ? 'Dönüyor...' : ''}
+        {showResult ? t('game.wheel.letter') : isSpinning ? t('game.wheel.spinning') : ''}
       </Typography>
     </Box>
   )
