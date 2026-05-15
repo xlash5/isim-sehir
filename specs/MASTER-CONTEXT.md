@@ -47,23 +47,38 @@ isim_sehir/
 │   └── index.js            # PeerJS signaling server
 │
 ├── specs/                  # Feature specifications (v1.0–v2.1)
-│   ├── SPEC-v1.0.md
-│   ├── SPEC-IMPLEMENTED-v1.1-*.md   # player-disconnect, admin-transfer,
-│   │                                 # localisation, state-persistence, admin-ready
-│   ├── SPEC-IMPLEMENTED-v1.2-*.md   # custom-categories, timer-reconnect,
-│   │                                 # game-history, sound-effects
-│   ├── SPEC-IMPLEMENTED-v2.0-*.md   # connection-loss, admin-transfer,
-│   │                                 # mobile-responsive, room-codes, performance
-│   ├── SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md
-│   ├── SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md
-│   ├── SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md
-│   ├── SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md   # Autocomplete language picker ✅
-│   ├── SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md     # ES, PT, FR, DE locales ✅
-│   ├── SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md     # Rate limiting on peer messages ✅
-│   ├── SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md  # Room passwords / private rooms ✅
-│   ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md # Stale room cleanup ✅
-│   ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
-│   └── SPEC-DRAFT-v2.1-*.md        # spectator-mode, lobby-auto-start
+│   ├── MASTER-CONTEXT.md
+│   ├── v1.0/
+│   │   └── SPEC-v1.0.md
+│   ├── v1.1/
+│   │   ├── SPEC-IMPLEMENTED-v1.1-P01-01-player-disconnect.md
+│   │   ├── SPEC-IMPLEMENTED-v1.1-P01-02-admin-transfer.md
+│   │   ├── SPEC-IMPLEMENTED-v1.1-P01-03-localisation.md
+│   │   ├── SPEC-IMPLEMENTED-v1.1-P01-04-state-persistence.md
+│   │   └── SPEC-IMPLEMENTED-v1.1-P02-01-admin-ready.md
+│   ├── v1.2/
+│   │   ├── SPEC-IMPLEMENTED-v1.2-P02-01-custom-categories.md
+│   │   ├── SPEC-IMPLEMENTED-v1.2-P02-02-timer-reconnect.md
+│   │   ├── SPEC-IMPLEMENTED-v1.2-P03-01-game-history.md
+│   │   └── SPEC-IMPLEMENTED-v1.2-P03-02-sound-effects.md
+│   ├── v2.0/
+│   │   ├── SPEC-IMPLEMENTED-v2.0-P01-01-connection-loss.md
+│   │   ├── SPEC-IMPLEMENTED-v2.0-P01-02-admin-transfer.md
+│   │   ├── SPEC-IMPLEMENTED-v2.0-P01-03-mobile-responsive.md
+│   │   ├── SPEC-IMPLEMENTED-v2.0-P02-01-room-codes.md
+│   │   └── SPEC-IMPLEMENTED-v2.0-P03-01-performance.md
+│   └── v2.1/
+│       ├── SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md     # Server safeguards ✅
+│       ├── SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md    # Message validation ✅
+│       ├── SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md    # XSS prevention ✅
+│       ├── SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md       # Autocomplete picker ✅
+│       ├── SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md         # ES, PT, FR, DE locales ✅
+│       ├── SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md         # Rate limiting ✅
+│       ├── SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md        # Room passwords ✅
+│       ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md    # Stale room cleanup ✅
+│       ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
+│       ├── SPEC-DRAFT-v2.1-P03-01-spectator-mode.md              # Spectator mode 📝
+│       └── SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md            # Lobby auto-start 📝
 │
 └── src/
     ├── main.tsx            # ReactDOM entry
@@ -404,29 +419,29 @@ cd server && npm start   # PeerJS on :9000
 
 | File | Feature / Version |
 |---|---|
-| `SPEC-v1.0.md` | Base game (lobby, wheel, answering, grading, scoring) |
-| `SPEC-IMPLEMENTED-v1.1-P01-01-player-disconnect.md` | v1.1 — Disconnect detection + cleanup ✅ |
-| `SPEC-IMPLEMENTED-v1.1-P01-02-admin-transfer.md` | v1.1 — Seamless admin handover on disconnect ✅ |
-| `SPEC-IMPLEMENTED-v1.1-P01-03-localisation.md` | v1.1 — TR/EN i18n ✅ |
-| `SPEC-IMPLEMENTED-v1.1-P01-04-state-persistence.md` | v1.1 — Session restore on refresh ✅ |
-| `SPEC-IMPLEMENTED-v1.1-P02-01-admin-ready.md` | v1.1 — Admin must be ready to start ✅ |
-| `SPEC-IMPLEMENTED-v1.2-P02-01-custom-categories.md` | v1.2 — Custom category support ✅ |
-| `SPEC-IMPLEMENTED-v1.2-P02-02-timer-reconnect.md` | v1.2 — Timer + reconnect improvements ✅ |
-| `SPEC-IMPLEMENTED-v1.2-P03-01-game-history.md` | v1.2 — Game history / replay ✅ |
-| `SPEC-IMPLEMENTED-v1.2-P03-02-sound-effects.md` | v1.2 — Sound effects ✅ |
-| `SPEC-IMPLEMENTED-v2.0-P01-01-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect ✅ |
-| `SPEC-IMPLEMENTED-v2.0-P01-02-admin-transfer.md` | v2.0 — Voluntary admin transfer ✅ |
-| `SPEC-IMPLEMENTED-v2.0-P01-03-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading ✅ |
-| `SPEC-IMPLEMENTED-v2.0-P02-01-room-codes.md` | v2.0 — 4-char alphanumeric room codes ✅ |
-| `SPEC-IMPLEMENTED-v2.0-P03-01-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md` | v2.1 — CORS, rate limiting, room caps, connection timeouts ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md` | v2.1 — PeerJS message schema validation ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md` | v2.1 — XSS prevention, input sanitization ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md` | v2.1 — Autocomplete language picker ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md` | v2.1 — ES, PT, FR, DE locale files ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md` | v2.1 — Rate limiting on peer messages ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md` | v2.1 — Room passwords / private rooms ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md` | v2.1 — Stale room cleanup / abandoned room reclamation ✅ |
-| `SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md` | v2.1 — Real-time category chip display for all players ✅ |
-| `SPEC-DRAFT-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers 📝 |
-| `SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready 📝 |
+| `v1.0/SPEC-v1.0.md` | Base game (lobby, wheel, answering, grading, scoring) |
+| `v1.1/SPEC-IMPLEMENTED-v1.1-P01-01-player-disconnect.md` | v1.1 — Disconnect detection + cleanup ✅ |
+| `v1.1/SPEC-IMPLEMENTED-v1.1-P01-02-admin-transfer.md` | v1.1 — Seamless admin handover on disconnect ✅ |
+| `v1.1/SPEC-IMPLEMENTED-v1.1-P01-03-localisation.md` | v1.1 — TR/EN i18n ✅ |
+| `v1.1/SPEC-IMPLEMENTED-v1.1-P01-04-state-persistence.md` | v1.1 — Session restore on refresh ✅ |
+| `v1.1/SPEC-IMPLEMENTED-v1.1-P02-01-admin-ready.md` | v1.1 — Admin must be ready to start ✅ |
+| `v1.2/SPEC-IMPLEMENTED-v1.2-P02-01-custom-categories.md` | v1.2 — Custom category support ✅ |
+| `v1.2/SPEC-IMPLEMENTED-v1.2-P02-02-timer-reconnect.md` | v1.2 — Timer + reconnect improvements ✅ |
+| `v1.2/SPEC-IMPLEMENTED-v1.2-P03-01-game-history.md` | v1.2 — Game history / replay ✅ |
+| `v1.2/SPEC-IMPLEMENTED-v1.2-P03-02-sound-effects.md` | v1.2 — Sound effects ✅ |
+| `v2.0/SPEC-IMPLEMENTED-v2.0-P01-01-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect ✅ |
+| `v2.0/SPEC-IMPLEMENTED-v2.0-P01-02-admin-transfer.md` | v2.0 — Voluntary admin transfer ✅ |
+| `v2.0/SPEC-IMPLEMENTED-v2.0-P01-03-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading ✅ |
+| `v2.0/SPEC-IMPLEMENTED-v2.0-P02-01-room-codes.md` | v2.0 — 4-char alphanumeric room codes ✅ |
+| `v2.0/SPEC-IMPLEMENTED-v2.0-P03-01-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md` | v2.1 — CORS, rate limiting, room caps, connection timeouts ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md` | v2.1 — PeerJS message schema validation ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md` | v2.1 — XSS prevention, input sanitization ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md` | v2.1 — Autocomplete language picker ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md` | v2.1 — ES, PT, FR, DE locale files ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md` | v2.1 — Rate limiting on peer messages ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md` | v2.1 — Room passwords / private rooms ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md` | v2.1 — Stale room cleanup / abandoned room reclamation ✅ |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md` | v2.1 — Real-time category chip display for all players ✅ |
+| `v2.1/SPEC-DRAFT-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers 📝 |
+| `v2.1/SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready 📝 |
