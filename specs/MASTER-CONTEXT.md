@@ -78,11 +78,13 @@ isim_sehir/
 │   │   ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md    # Stale room cleanup ✅
 │   │   ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
 │   │   ├── SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md        # Spectator mode ✅
-│   │   ├── SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md      # Lobby auto-start ✅
+│   │   └── SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md      # Lobby auto-start ✅
+│   ├── v2.2/
 │   │   └── SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md    # Locale-aware letter pool ✅
 │   └── v3.0/
-│       ├── SPEC-v3.0-P01-01-ux-rules-visibility.md               # Rules visibility 🔵
+│       ├── SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md   # Rules visibility ✅
 │       ├── SPEC-v3.0-P01-02-error-boundary-sentry.md             # Error boundary + Sentry 🔵
+│       ├── SPEC-v3.0-P01-03-pre-connection-ux-guard.md           # Pre-connection UX guard 🔵
 │       ├── SPEC-v3.0-P02-01-testing-strategy.md                  # Unit/integration/E2E tests 🔵
 │       ├── SPEC-v3.0-P02-02-ci-cd-pipeline.md                    # GitHub Actions CI/CD 🔵
 │       ├── SPEC-v3.0-P02-03-docker-compose.md                    # Docker Compose dev env 🔵
@@ -460,8 +462,9 @@ cd server && npm start   # PeerJS on :9000
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers ✅ |
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready ✅ |
 | `v2.2/SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md` | v2.2 — Locale-aware letter pool ✅ |
-| `v3.0/SPEC-v3.0-P01-01-ux-rules-visibility.md` | v3.0 — Rules visibility, phase indicators, tooltips 🔵 |
+| `v3.0/SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md` | v3.0 — Rules visibility, phase indicators, tooltips ✅ |
 | `v3.0/SPEC-v3.0-P01-02-error-boundary-sentry.md` | v3.0 — Error boundaries + Sentry crash reporting 🔵 |
+| `v3.0/SPEC-v3.0-P01-03-pre-connection-ux-guard.md` | v3.0 — Server health probe, gated buttons, connection banner 🔵 |
 | `v3.0/SPEC-v3.0-P02-01-testing-strategy.md` | v3.0 — Unit, integration & E2E test strategy 🔵 |
 | `v3.0/SPEC-v3.0-P02-02-ci-cd-pipeline.md` | v3.0 — GitHub Actions CI/CD pipeline 🔵 |
 | `v3.0/SPEC-v3.0-P02-03-docker-compose.md` | v3.0 — Docker Compose for local development 🔵 |
