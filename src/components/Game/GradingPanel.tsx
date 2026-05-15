@@ -7,6 +7,7 @@ import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { withErrorBoundary } from '@sentry/react'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
 import { CATEGORY_KEYS } from '../../utils/categories'
@@ -16,7 +17,7 @@ interface Props {
   onComplete: () => void
 }
 
-export const GradingPanel = memo(function GradingPanel({ onVote, onComplete }: Props) {
+const GradingPanelInner = memo(function GradingPanel({ onVote, onComplete }: Props) {
   const room = useGameStore((s) => s.room)
   const gradingItems = useGameStore((s) => s.gradingItems)
   const myVotes = useGameStore((s) => s.myVotes)
@@ -256,3 +257,14 @@ export const GradingPanel = memo(function GradingPanel({ onVote, onComplete }: P
     </Box>
   )
 })
+
+function GradingFallback() {
+  const { t } = useLocale()
+  return (
+    <Box sx={{ p: 4, textAlign: 'center' }}>
+      <Typography color="text.secondary">{t('error.grading.unavailable')}</Typography>
+    </Box>
+  )
+}
+
+export const GradingPanel = withErrorBoundary(GradingPanelInner, { fallback: <GradingFallback /> })

@@ -90,10 +90,10 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.1** | **P03** | **Lobby auto-start — countdown when all ready** | ✅ |
 | **v2.2** | **P01** | **Locale-aware letter pool — alphabet adapts to admin's language** | ✅ |
 | **v3.0** | **P01** | **UX Rules & Behaviour Visibility — RulesPanel, PhaseIndicator, tooltips, chat tips, scoring drill-down** | ✅ |
+| **v3.0** | **P01** | **Error Boundaries & Sentry — crash-safe React tree, Sentry monitoring** | ✅ |
 
 ### Planned
 - **P01** Pre-Connection UX Guard — server health probe, gated buttons, connection banner on home page
-- **P01** Error Boundaries & Sentry — crash-safe React tree, production error monitoring
 - **P02** Testing strategy, CI/CD pipeline, Docker Compose, TypeScript signalling server
 - **P03** Server persistence, observability, PWA support
 - **P04** Mesh scaling alternatives
@@ -123,6 +123,9 @@ cd server && npm install && npm start   # http://localhost:9000
 | `VITE_PEER_HOST` | `localhost` | PeerJS server host |
 | `VITE_PEER_PORT` | `9000` | PeerJS server port |
 | `VITE_PEER_PATH` | `/isim-sehir` | PeerJS server path |
+| `VITE_SENTRY_DSN` | — | Sentry project DSN (optional, no-op if absent) |
+| `VITE_SENTRY_TRACES_SAMPLE_RATE` | `0` | Performance tracing sample rate (0-1) |
+| `VITE_SENTRY_REPLAY_SAMPLE_RATE` | `0` | Session replay sample rate (0-1) |
 
 ### Server (Render / `.env`)
 

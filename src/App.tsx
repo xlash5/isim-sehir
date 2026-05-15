@@ -14,6 +14,8 @@ import { NotificationSnackbar } from './components/common/NotificationSnackbar'
 import { SessionRestore } from './components/common/SessionRestore'
 import { HomePage } from './pages/HomePage'
 import { isSoundEnabled, setSoundEnabled } from './utils/sounds'
+import ErrorBoundary from './components/common/ErrorBoundary'
+import { ErrorFallback } from './components/common/ErrorFallback'
 
 const LobbyPage = lazy(() => import('./pages/LobbyPage').then(m => ({ default: m.LobbyPage })))
 const GamePage = lazy(() => import('./pages/GamePage').then(m => ({ default: m.GamePage })))
@@ -47,6 +49,7 @@ export default function App() {
       <CssBaseline />
       <BrowserRouter>
         <LocaleProvider>
+          <ErrorBoundary fallback={<ErrorFallback />}>
           <Box sx={{ minHeight: '100vh', position: 'relative' }}>
             <IconButton
               onClick={toggleSound}
@@ -89,6 +92,7 @@ export default function App() {
               </Suspense>
             </PeerProvider>
           </Box>
+          </ErrorBoundary>
         </LocaleProvider>
       </BrowserRouter>
     </ThemeProvider>

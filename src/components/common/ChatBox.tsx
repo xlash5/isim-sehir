@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Paper, TextField, IconButton, Typography, Box, List, ListItem } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 import ChatIcon from '@mui/icons-material/Chat'
+import { withErrorBoundary } from '@sentry/react'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
 import { playSound } from '../../utils/sounds'
@@ -11,7 +12,7 @@ interface Props {
   onSend: (text: string) => void
 }
 
-export function ChatBox({ onSend }: Props) {
+function ChatBoxInner({ onSend }: Props) {
   const [text, setText] = useState('')
   const messages = useGameStore((s) => s.chatMessages)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
@@ -82,3 +83,13 @@ export function ChatBox({ onSend }: Props) {
     </Paper>
   )
 }
+
+function ChatFallback() {
+  return (
+    <Paper sx={{ p: 2, height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Typography variant="body2" color="text.secondary">Sohbet yüklenemedi.</Typography>
+    </Paper>
+  )
+}
+
+export const ChatBox = withErrorBoundary(ChatBoxInner, { fallback: <ChatFallback /> })

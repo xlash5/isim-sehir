@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/react'
+
 const TYPE_LIMITS: Record<string, { maxHits: number; windowMs: number }> = {
   'chat-message': { maxHits: 5, windowMs: 10_000 },
   'vote': { maxHits: 15, windowMs: 10_000 },
@@ -47,8 +49,10 @@ export class RateLimiter {
       if (entry.violations.length >= MUTE_VIOLATION_THRESHOLD) {
         entry.mutedUntil = now + MUTE_DURATION_MS
         console.warn(`[RateLimiter] ${connId} muted for ${MUTE_DURATION_MS}ms (${entry.violations.length} violations)`)
+        Sentry.captureMessage('rate-limit-muted', { level: 'warning', extra: { connId, msgType, violations: entry.violations.length } })
       } else {
         console.warn(`[RateLimiter] ${connId} violation ${entry.violations.length} on ${msgType}`)
+        Sentry.captureMessage('rate-limit-violation', { level: 'warning', extra: { connId, msgType, violations: entry.violations.length } })
       }
       return false
     }

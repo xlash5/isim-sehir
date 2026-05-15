@@ -2,7 +2,7 @@
 
 > **Priority:** P01 — production crash visibility and graceful degradation
 > **Version target:** v3.0
-> **Status:** 🔵 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 

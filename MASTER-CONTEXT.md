@@ -46,6 +46,9 @@ Multiplayer peer-to-peer WebRTC version of the classic Turkish word game (simila
 | `src/components/Game/ScoreBreakdown.tsx` | Per-category scoring drill-down dialog (v3.0) |
 | `src/utils/tips.ts` | Contextual tip pool keyed by game event (v3.0) |
 | `src/utils/rules.ts` | Rules section metadata + localStorage flag helpers (v3.0) |
+| `src/components/common/ErrorBoundary.tsx` | Configurable error boundary class component (v3.0 P01-02) |
+| `src/components/common/ErrorFallback.tsx` | Full-page error fallback with refresh + report (v3.0 P01-02) |
+| `src/components/common/GameErrorFallback.tsx` | Game-specific error fallback with lobby navigation (v3.0 P01-02) |
 
 ## Stores
 
@@ -164,7 +167,7 @@ All spec files live under [`specs/`](./specs/) organised by version. Implemented
 | File | Priority | Feature | Status |
 |---|---|---|---|
 | `specs/v3.0/SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md` | P01 | UX Rules & Behaviour Visibility | ✅ (05f70ea) |
-| `specs/v3.0/SPEC-v3.0-P01-02-error-boundary-sentry.md` | P01 | Error Boundaries & Sentry | 🔵 |
+| `specs/v3.0/SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md` | P01 | Error Boundaries & Sentry | ✅ |
 | `specs/v3.0/SPEC-v3.0-P01-03-pre-connection-ux-guard.md` | P01 | Pre-Connection UX Guard | 🔵 |
 | `specs/v3.0/SPEC-v3.0-P02-01-testing-strategy.md` | P02 | Testing Strategy | 🔵 |
 | `specs/v3.0/SPEC-v3.0-P02-02-ci-cd-pipeline.md` | P02 | CI/CD Pipeline | 🔵 |

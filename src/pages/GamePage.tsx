@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect, useRef } from 'react'
 import { Box, Container, Typography, Paper } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import * as Sentry from '@sentry/react'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeer } from '../context/PeerContext'
 import { useGame } from '../hooks/useGame'
@@ -20,6 +21,8 @@ import { getTipForEvent, resetTips } from '../utils/tips'
 import { incrementGamesPlayed, getGamesPlayedCount } from '../utils/rules'
 import type { PeerMessage, GamePhase, ChatMessage } from '../types'
 import { clearSession } from '../utils/session'
+import ErrorBoundary from '../components/common/ErrorBoundary'
+import { GameErrorFallback } from '../components/common/GameErrorFallback'
 
 export function GamePage() {
   const navigate = useNavigate()
@@ -161,54 +164,56 @@ export function GamePage() {
   const showRoundResults = phase === 'round-results' || phase === 'game-over'
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ minHeight: '100vh', py: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="subtitle2">
-            {t('game.roundInfo', { current: room.currentRound, total: room.settings.totalRounds, letter: room.currentLetter ?? '?' })}
-          </Typography>
-          <Timer />
-        </Paper>
-        <PhaseIndicator currentPhase={phase ?? 'lobby'} completedPhases={completedPhases} />
-        <PhaseTransitionBanner />
-
-        {isSpectator ? (
-          <Paper sx={{ p: 4, textAlign: 'center' }}>
-            <VisibilityIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-            <Typography variant="h6" color="text.secondary">
-              {t('game.watching')}
+    <ErrorBoundary fallback={<GameErrorFallback roomCode={room.code} />}>
+      <Container maxWidth="md">
+        <Box sx={{ minHeight: '100vh', py: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="subtitle2">
+              {t('game.roundInfo', { current: room.currentRound, total: room.settings.totalRounds, letter: room.currentLetter ?? '?' })}
             </Typography>
-            <Typography variant="body2" color="text.disabled" sx={{ mt: 1 }}>
-              {t('game.watchingSubtitle')}
-            </Typography>
+            <Timer />
           </Paper>
-        ) : (
-          <>
-            {phase === 'wheel' && (
-              <SlotMachine onComplete={handleWheelComplete} />
-            )}
+          <PhaseIndicator currentPhase={phase ?? 'lobby'} completedPhases={completedPhases} />
+          <PhaseTransitionBanner />
 
-            {phase === 'answering' && (
-              <AnswerTable onSubmit={handleSubmitAnswers} />
-            )}
+          {isSpectator ? (
+            <Paper sx={{ p: 4, textAlign: 'center' }}>
+              <VisibilityIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+              <Typography variant="h6" color="text.secondary">
+                {t('game.watching')}
+              </Typography>
+              <Typography variant="body2" color="text.disabled" sx={{ mt: 1 }}>
+                {t('game.watchingSubtitle')}
+              </Typography>
+            </Paper>
+          ) : (
+            <>
+              {phase === 'wheel' && (
+                <SlotMachine onComplete={handleWheelComplete} />
+              )}
 
-            {phase === 'grading' && (
-              <GradingPanel onVote={handleVote} onComplete={handleGradingComplete} />
-            )}
+              {phase === 'answering' && (
+                <AnswerTable onSubmit={handleSubmitAnswers} />
+              )}
 
-            {showRoundResults && (
-              <Scoreboard
-                isGameOver={phase === 'game-over'}
-                onNextRound={phase === 'round-results' ? handleNextRound : undefined}
-                onBackToLobby={handleBackToLobby}
-                onPlayAgain={phase === 'game-over' ? handlePlayAgain : undefined}
-              />
-            )}
-          </>
-        )}
+              {phase === 'grading' && (
+                <GradingPanel onVote={handleVote} onComplete={handleGradingComplete} />
+              )}
 
-        <ChatBox onSend={sendChatMessage} />
-      </Box>
-    </Container>
+              {showRoundResults && (
+                <Scoreboard
+                  isGameOver={phase === 'game-over'}
+                  onNextRound={phase === 'round-results' ? handleNextRound : undefined}
+                  onBackToLobby={handleBackToLobby}
+                  onPlayAgain={phase === 'game-over' ? handlePlayAgain : undefined}
+                />
+              )}
+            </>
+          )}
+
+          <ChatBox onSend={sendChatMessage} />
+        </Box>
+      </Container>
+    </ErrorBoundary>
   )
 }

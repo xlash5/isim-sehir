@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react'
 import type { PeerMessage, PeerMessageType, Answer } from '../types'
 
 const VALID_TYPES = new Set<PeerMessageType>([
@@ -123,15 +124,27 @@ const validators: Record<string, (payload: unknown) => boolean> = {
 }
 
 export function validateMessage(data: unknown): PeerMessage | null {
-  if (!isRecord(data)) return null
+  if (!isRecord(data)) {
+    Sentry.captureMessage('validation-not-record', { level: 'warning', extra: { data } })
+    return null
+  }
 
-  const { type, senderId, payload } = data
+  const { type, senderId, payload } = data as Record<string, unknown>
 
-  if (!isString(type) || !VALID_TYPES.has(type as PeerMessageType)) return null
-  if (!isString(senderId) || senderId.length === 0) return null
+  if (!isString(type) || !VALID_TYPES.has(type as PeerMessageType)) {
+    Sentry.captureMessage('validation-invalid-type', { level: 'warning', extra: { type } })
+    return null
+  }
+  if (!isString(senderId) || senderId.length === 0) {
+    Sentry.captureMessage('validation-invalid-sender', { level: 'warning', extra: { senderId } })
+    return null
+  }
 
   const validator = validators[type]
-  if (!validator(payload)) return null
+  if (!validator(payload)) {
+    Sentry.captureMessage('validation-payload-fail', { level: 'warning', extra: { type, senderId } })
+    return null
+  }
 
   return { type: type as PeerMessageType, senderId, payload }
 }

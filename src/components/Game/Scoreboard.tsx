@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, memo } from 'react'
 import { Box, Typography, Paper, Button, IconButton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { withErrorBoundary } from '@sentry/react'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
 import { playSound } from '../../utils/sounds'
@@ -14,7 +15,7 @@ interface Props {
   onPlayAgain?: () => void
 }
 
-export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain }: Props) {
+const ScoreboardInner = memo(function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain }: Props) {
   const room = useGameStore((s) => s.room)
   const scores = useGameStore((s) => s.scores)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
@@ -190,3 +191,21 @@ export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, on
     </>
   )
 })
+
+function ScoreboardFallback() {
+  const room = useGameStore((s) => s.room)
+  const scores = useGameStore((s) => s.scores)
+  if (!room) return null
+  const sorted = [...room.players].sort((a, b) => b.score - a.score)
+  return (
+    <Box sx={{ p: 2 }}>
+      {sorted.map((p) => (
+        <Typography key={p.id} variant="body2">
+          {p.nickname}: {p.score} ({scores[p.id] ?? 0})
+        </Typography>
+      ))}
+    </Box>
+  )
+}
+
+export const Scoreboard = withErrorBoundary(ScoreboardInner, { fallback: <ScoreboardFallback /> })

@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, Paper } from '@mui/material'
+import { withErrorBoundary } from '@sentry/react'
 import { TURKISH_LETTERS } from '../../utils/letters'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
@@ -12,7 +13,7 @@ interface Props {
 const randomLetter = () =>
   TURKISH_LETTERS[Math.floor(Math.random() * TURKISH_LETTERS.length)]
 
-export function SlotMachine({ onComplete }: Props) {
+function SlotMachineInner({ onComplete }: Props) {
   const pendingLetter = useGameStore((s) => s.room?.pendingLetter)
   const { t } = useLocale()
 
@@ -143,3 +144,16 @@ export function SlotMachine({ onComplete }: Props) {
     </Box>
   )
 }
+
+function SlotMachineFallback() {
+  const pendingLetter = useGameStore((s) => s.room?.pendingLetter)
+  return (
+    <Paper sx={{ p: 3, textAlign: 'center' }}>
+      <Typography variant="h3" sx={{ fontFamily: '"Courier New", monospace' }}>
+        {pendingLetter ?? '?'}
+      </Typography>
+    </Paper>
+  )
+}
+
+export const SlotMachine = withErrorBoundary(SlotMachineInner, { fallback: <SlotMachineFallback /> })

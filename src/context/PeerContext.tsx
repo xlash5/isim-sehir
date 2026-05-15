@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useCallback, useRef, type ReactNode } from 'react'
 import { Peer } from 'peerjs'
+import * as Sentry from '@sentry/react'
 import { usePeerStore } from '../stores/usePeerStore'
 import { useGameStore } from '../stores/useGameStore'
 import { useNotificationStore } from '../stores/useNotificationStore'
@@ -164,9 +165,12 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         case 'settings-update':
           store.updateSettings(msg.payload as Record<string, unknown>)
           break
-        case 'game-start':
+        case 'game-start': {
           store.setPhase('wheel')
+          const gsState = gameStore.getState()
+          Sentry.captureMessage('game-start', { level: 'info', extra: { playerCount: gsState.room?.players.length, settings: gsState.room?.settings } })
           break
+        }
         case 'round-start': {
           const p = msg.payload as { letter: string }
           if (p.letter) store.setPendingLetter(p.letter)
@@ -286,6 +290,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const atPayload = msg.payload as { newAdminId: string }
           store.transferAdmin(atPayload.newAdminId)
           adminPlayerIdRef.current = atPayload.newAdminId
+          Sentry.captureMessage('admin-transfer', { level: 'info', extra: { newAdminId: atPayload.newAdminId, fromAdminId: msg.senderId } })
           const fresh = gameStore.getState()
           const newAdmin = fresh.room?.players.find((p) => p.id === atPayload.newAdminId)
           if (newAdmin) {
@@ -368,9 +373,12 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           gameStore.setState({ scores: reP.roundScores })
           store.updatePlayers(reP.updatedPlayers)
           const storeState = gameStore.getState()
-          if (storeState.room && storeState.room.currentRound >= storeState.room.settings.totalRounds) {
+          const isLastRound = storeState.room && storeState.room.currentRound >= storeState.room.settings.totalRounds
+          if (isLastRound) {
+            Sentry.captureMessage('game-end', { level: 'info', extra: { round: storeState.room?.currentRound } })
             store.setPhase('game-over')
           } else {
+            Sentry.captureMessage('round-end', { level: 'info', extra: { round: storeState.room?.currentRound } })
             store.setPhase('round-results')
           }
           break
@@ -452,10 +460,14 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           lastPongTimestampsRef.current.delete(conn.peer)
         }
         conn.on('close', handleIncomingClose)
-        conn.on('error', handleIncomingClose)
+        conn.on('error', (err) => {
+          Sentry.captureException(err, { level: 'warning', extra: { context: 'peerjs-conn-error', peer: conn.peer, direction: 'incoming' } })
+          handleIncomingClose()
+        })
       })
       p.on('error', (err) => {
         console.error(`[Peer] Error${id ? ' (id: ' + id + ')' : ''}:`, err)
+        Sentry.captureException(err, { level: 'warning', extra: { context: 'peerjs-peer-error', peerId: id } })
         if (!id) {
           const fallback = new Peer(PEER_OPTIONS)
           fallback.on('open', (pid) => setPeerId(pid))
@@ -548,7 +560,10 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           }
         }
       conn.on('close', handleOutgoingClose)
-      conn.on('error', handleOutgoingClose)
+      conn.on('error', (err) => {
+        Sentry.captureException(err, { level: 'warning', extra: { context: 'peerjs-conn-error', targetId, direction: 'outgoing' } })
+        handleOutgoingClose()
+      })
     },
     [addConnection, removeConnection, peerStore, gameStore],
   )
@@ -629,7 +644,10 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         }
       }
       conn.on('close', handleReconnectClose)
-      conn.on('error', handleReconnectClose)
+      conn.on('error', (err) => {
+        Sentry.captureException(err, { level: 'warning', extra: { context: 'peerjs-conn-error', targetId, direction: 'reconnect' } })
+        handleReconnectClose()
+      })
     },
     [addConnection, removeConnection, peerStore, gameStore],
   )
