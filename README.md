@@ -68,7 +68,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | v2.0 | P01 | Connection loss, admin transfer, mobile responsive | ✅ |
 | v2.0 | P02 | Room code generation | ✅ |
 | v2.0 | P03 | Performance optimisations | ✅ |
-| **v2.1** | **P01** | **Server safeguards — CORS, IP rate limits, connection caps** | 📝 |
+| **v2.1** | **P01** | **Server safeguards — CORS, IP rate limits, connection caps** | ✅ |
 | **v2.1** | **P01** | **Message schema validation — PeerJS payload type checking** | 📝 |
 | **v2.1** | **P01** | **Input sanitisation — XSS prevention layer** | 📝 |
 | **v2.1** | **P01** | **Language picker autocomplete — searchable dropdown** | 📝 |
@@ -98,10 +98,20 @@ cd server && npm install && npm start   # http://localhost:9000
 
 ## Environment Variables
 
-Set on Vercel (or `.env` for dev):
+### Frontend (Vercel / `.env`)
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `VITE_PEER_HOST` | `localhost` | PeerJS server host |
 | `VITE_PEER_PORT` | `9000` | PeerJS server port |
 | `VITE_PEER_PATH` | `/isim-sehir` | PeerJS server path |
+
+### Server (Render / `.env`)
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `PORT` | `9000` | Listening port |
+| `MAX_PEERS_PER_ROOM` | `8` | Hard cap on connected peers per room |
+| `MAX_CONNECTIONS_PER_SEC` | `5` | IP-level rate limit (connections/sec) |
+| `CONNECTION_TIMEOUT_MS` | `30000` | Idle peer expiry in ms |
+| `ALLOWED_ORIGINS` | `http://localhost:5173,https://isim-sehir-phi.vercel.app` | CORS-allowed origins (comma-separated) |

@@ -352,13 +352,23 @@ Navigation guards:
 
 ## Environment Variables
 
-Set on Vercel (or `.env` for dev):
+### Frontend (Vercel / `.env`)
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `VITE_PEER_HOST` | `localhost` | PeerJS server host |
 | `VITE_PEER_PORT` | `9000` | PeerJS server port |
 | `VITE_PEER_PATH` | `/isim-sehir` | PeerJS server path |
+
+### Server (Render / `.env`)
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `PORT` | `9000` | Listening port |
+| `MAX_PEERS_PER_ROOM` | `8` | Hard cap on connected peers per room |
+| `MAX_CONNECTIONS_PER_SEC` | `5` | IP-level rate limit (connections/sec) |
+| `CONNECTION_TIMEOUT_MS` | `30000` | Idle peer expiry in ms |
+| `ALLOWED_ORIGINS` | `http://localhost:5173,https://isim-sehir-phi.vercel.app` | CORS-allowed origins (comma-separated) |
 
 ---
 
@@ -397,3 +407,4 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-IMPLEMENTED-v2.0-P01-03-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading ✅ |
 | `SPEC-IMPLEMENTED-v2.0-P02-01-room-codes.md` | v2.0 — 4-char alphanumeric room codes ✅ |
 | `SPEC-IMPLEMENTED-v2.0-P03-01-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis ✅ |
+| `SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md` | v2.1 — CORS, rate limiting, room caps, connection timeouts ✅ |

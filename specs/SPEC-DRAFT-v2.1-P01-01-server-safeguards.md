@@ -2,7 +2,7 @@
 
 > **Priority:** High
 > **Version target:** v2.1
-> **Status:** 📝 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -36,8 +36,8 @@ app.use('/isim-sehir', rateLimit({ windowMs: 1000, max: 5 }))
 
 ## Acceptance Criteria
 
-- [ ] Connections from unknown origins are rejected
-- [ ] More than 8 peers trying to join the same room are blocked after 8
-- [ ] More than 5 connection attempts / sec from the same IP are throttled
-- [ ] Unused signalling peers are cleaned up after 30s
-- [ ] Server logs show clear rejection reasons
+- [x] Connections from unknown origins are rejected (via `corsOptions.origin`)
+- [x] More than 8 peers trying to join the same room are blocked after 8 (OFFER-intercept, `MAX_PEERS_PER_ROOM`)
+- [x] More than 5 connection attempts / sec from the same IP are throttled (`ipTimestamps` tracker)
+- [x] Unused signalling peers are cleaned up after 30s (via `expire_timeout`)
+- [x] Server logs show clear rejection reasons (`[REJECT]` prefix with reason and detail)
