@@ -2,7 +2,7 @@
 
 > **Priority:** Medium
 > **Version target:** v2.0
-> **Status:** 🔴 Not implemented
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -24,7 +24,7 @@
 
 ## Acceptance Criteria
 
-- [ ] `generateRoomCode()` returns 4 chars from the allowed set only
-- [ ] Joining with a 6-digit legacy code still works
-- [ ] Joining with a 4-char alphanumeric code works
-- [ ] Room code display (CopyCode, lobby header) works with both formats
+- [x] `generateRoomCode()` returns 4 chars from the allowed set only
+- [x] Joining with a 6-digit legacy code still works
+- [x] Joining with a 4-char alphanumeric code works
+- [x] Room code display (CopyCode, lobby header) works with both formats

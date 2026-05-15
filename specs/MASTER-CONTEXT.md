@@ -52,7 +52,8 @@ isim_sehir/
 │   │                       # player-disconnect, state-persistence
 │   ├── SPEC-v1.2-*.md     # custom-categories, game-history, sound-effects,
 │   │                       # timer-reconnect
-│   └── SPEC-v2.0-major.md
+│   └── SPEC-v2.0-*.md     # room-codes, connection-loss, admin-transfer,
+│                           # mobile-responsive, performance
 │
 └── src/
     ├── main.tsx            # ReactDOM entry
@@ -386,7 +387,7 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-v1.2-game-history.md` | Game history / replay ✅ |
 | `SPEC-v1.2-sound-effects.md` | Sound effects ✅ |
 | `SPEC-v1.2-timer-reconnect.md` | Timer + reconnect improvements ✅ |
-| `SPEC-v2.0-room-codes.md` | v2.0 — 4-char alphanumeric room codes |
+| `SPEC-v2.0-room-codes.md` | v2.0 — 4-char alphanumeric room codes ✅ |
 | `SPEC-v2.0-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect ✅ |
 | `SPEC-v2.0-admin-transfer.md` | v2.0 — Voluntary admin transfer ✅ |
 | `SPEC-v2.0-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading ✅ |

@@ -9,6 +9,12 @@ export function getRandomLetter(pool?: string[]): string {
   return letters[Math.floor(Math.random() * letters.length)]
 }
 
+const ROOM_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+
 export function generateRoomCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
+  let code = ''
+  for (let i = 0; i < 4; i++) {
+    code += ROOM_CODE_CHARS[Math.floor(Math.random() * ROOM_CODE_CHARS.length)]
+  }
+  return code
 }

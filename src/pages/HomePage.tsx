@@ -99,7 +99,8 @@ export function HomePage() {
 
   const handleJoinRoom = () => {
     if (!validateNickname()) return
-    if (!joinCode.trim() || joinCode.trim().length !== 6 || !/^\d{6}$/.test(joinCode.trim())) {
+    const trimmed = joinCode.trim().toUpperCase()
+    if (!trimmed || trimmed.length < 4 || trimmed.length > 6 || !/^[A-Z0-9]{4,6}$/.test(trimmed)) {
       setCodeError(t('home.invalidCode'))
       return
     }
@@ -107,7 +108,7 @@ export function HomePage() {
     const playerId = crypto.randomUUID()
     nicknameRef.current = nickname.trim()
     setLocalPlayer(playerId, nickname.trim())
-    roomCodeRef.current = joinCode.trim()
+    roomCodeRef.current = trimmed
     createPeer()
     pendingActionRef.current = 'join'
     navigatedRef.current = false
@@ -180,7 +181,7 @@ export function HomePage() {
               placeholder={t('home.roomCodePlaceholder')}
               value={joinCode}
               onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, '').slice(0, 6)
+                const val = e.target.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 6)
                 setJoinCode(val)
                 setCodeError('')
               }}
@@ -195,7 +196,7 @@ export function HomePage() {
             size="large"
             startIcon={<LinkIcon />}
             onClick={handleJoinRoom}
-            disabled={joinCode.length !== 6 || loading}
+            disabled={joinCode.length < 4 || loading}
             sx={{ minHeight: isMobile ? 44 : undefined }}
           >
             {t('home.joinRoom')}
