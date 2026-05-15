@@ -62,8 +62,8 @@ isim_sehir/
 │   ├── SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md     # Rate limiting on peer messages ✅
 │   ├── SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md  # Room passwords / private rooms ✅
 │   ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md # Stale room cleanup ✅
-│   └── SPEC-DRAFT-v2.1-*.md        # lobby-category-visibility, spectator-mode,
-│                                     # lobby-auto-start
+│   ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
+│   └── SPEC-DRAFT-v2.1-*.md        # spectator-mode, lobby-auto-start
 │
 └── src/
     ├── main.tsx            # ReactDOM entry
@@ -427,3 +427,6 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md` | v2.1 — Rate limiting on peer messages ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md` | v2.1 — Room passwords / private rooms ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md` | v2.1 — Stale room cleanup / abandoned room reclamation ✅ |
+| `SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md` | v2.1 — Real-time category chip display for all players ✅ |
+| `SPEC-DRAFT-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers 📝 |
+| `SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready 📝 |

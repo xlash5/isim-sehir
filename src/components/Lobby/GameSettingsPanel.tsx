@@ -111,6 +111,17 @@ export function GameSettingsPanel() {
           <Typography variant="body2">
             <strong>{t('settings.categoriesCount', { count: settings.categories.length })}</strong>
           </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {settings.categories.map((key) => (
+              <Chip
+                key={key}
+                label={getCategoryLabel(key)}
+                size="small"
+                variant="outlined"
+                sx={!CATEGORY_KEYS.includes(key) ? { fontStyle: 'italic' } : undefined}
+              />
+            ))}
+          </Box>
           <Typography variant="body2">
             <strong>{t('settings.roundsCount', { count: settings.totalRounds })}</strong>
           </Typography>
