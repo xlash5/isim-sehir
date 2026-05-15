@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Box, Container, Typography, Paper } from '@mui/material'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeer } from '../context/PeerContext'
 import { useGame } from '../hooks/useGame'
@@ -34,6 +35,9 @@ export function GamePage() {
       </Container>
     )
   }
+
+  const currentPlayer = room.players.find((p) => p.id === localPlayerId)
+  const isSpectator = currentPlayer?.isSpectator ?? false
 
   const handleWheelComplete = (letter: string) => {
     store.startRound(letter)
@@ -117,25 +121,39 @@ export function GamePage() {
           <Timer />
         </Paper>
 
-        {phase === 'wheel' && (
-          <SlotMachine onComplete={handleWheelComplete} />
-        )}
+        {isSpectator ? (
+          <Paper sx={{ p: 4, textAlign: 'center' }}>
+            <VisibilityIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+            <Typography variant="h6" color="text.secondary">
+              {t('game.watching')}
+            </Typography>
+            <Typography variant="body2" color="text.disabled" sx={{ mt: 1 }}>
+              {t('game.watchingSubtitle')}
+            </Typography>
+          </Paper>
+        ) : (
+          <>
+            {phase === 'wheel' && (
+              <SlotMachine onComplete={handleWheelComplete} />
+            )}
 
-        {phase === 'answering' && (
-          <AnswerTable onSubmit={handleSubmitAnswers} />
-        )}
+            {phase === 'answering' && (
+              <AnswerTable onSubmit={handleSubmitAnswers} />
+            )}
 
-        {phase === 'grading' && (
-          <GradingPanel onVote={handleVote} onComplete={handleGradingComplete} />
-        )}
+            {phase === 'grading' && (
+              <GradingPanel onVote={handleVote} onComplete={handleGradingComplete} />
+            )}
 
-        {showRoundResults && (
-          <Scoreboard
-            isGameOver={phase === 'game-over'}
-            onNextRound={phase === 'round-results' ? handleNextRound : undefined}
-            onBackToLobby={handleBackToLobby}
-            onPlayAgain={phase === 'game-over' ? handlePlayAgain : undefined}
-          />
+            {showRoundResults && (
+              <Scoreboard
+                isGameOver={phase === 'game-over'}
+                onNextRound={phase === 'round-results' ? handleNextRound : undefined}
+                onBackToLobby={handleBackToLobby}
+                onPlayAgain={phase === 'game-over' ? handlePlayAgain : undefined}
+              />
+            )}
+          </>
         )}
 
         <ChatBox onSend={sendChatMessage} />

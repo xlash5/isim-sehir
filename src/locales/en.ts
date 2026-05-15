@@ -151,6 +151,7 @@ const en: Record<string, string> = {
 
   'player.ready': '✅ Ready',
   'player.notReady': '⏳ Not Ready',
+  'player.spectator': 'Spectator',
 
   'system.adminTransferred': '{nickname} is the new admin.',
   'system.playerDisconnected': '{nickname} left the game.',
@@ -175,6 +176,14 @@ const en: Record<string, string> = {
   'admin.transferNo': 'No',
 
   'system.adminTransferredByRequest': '{oldAdmin} transferred admin to {newAdmin}.',
+
+  'home.joinAsSpectator': 'Join as Spectator',
+
+  'lobby.spectators': 'Spectators ({count})',
+  'lobby.spectatorNotice': 'You are connected as a spectator. Watching the game.',
+
+  'game.watching': 'Watching...',
+  'game.watchingSubtitle': 'You are watching players answer and vote.',
 
   'connection.connected': 'Connected',
   'connection.reconnecting': 'Reconnecting...',

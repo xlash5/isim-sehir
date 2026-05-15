@@ -14,6 +14,9 @@ export function useGame() {
     const room = store.room
     if (!room) return
 
+    const currentPlayer = room.players.find((p) => p.id === store.localPlayerId)
+    if (currentPlayer?.isSpectator) return
+
     if (room.phase === 'answering' && room.settings.roundDuration !== null) {
       timerRef.current = setInterval(() => {
         const gs = useGameStore.getState()

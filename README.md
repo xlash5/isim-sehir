@@ -29,6 +29,7 @@ letter across ~33 categories. Peers grade each other's answers.
 - Cumulative score + per-round breakdown (unique=10pts, shared=5pts)
 - Turkish letter pool (28 letters, Ğ excluded)
 - Configurable rounds, round duration, letter pool
+- Spectator mode — join as read-only observer with distinct badge (v2.1)
 
 ### Multiplayer & Networking
 - Peer-to-peer WebRTC mesh topology via PeerJS (v1.0)
@@ -78,7 +79,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.1** | **P02** | **Room passwords — optional private rooms** | ✅ |
 | **v2.1** | **P02** | **Stale room cleanup — abandoned room reclamation** | ✅ |
 | **v2.1** | **P02** | **Lobby category visibility — real-time chip display** | ✅ |
-| **v2.1** | **P03** | **Spectator mode — read-only game observers** | 📝 |
+| **v2.1** | **P03** | **Spectator mode — read-only game observers** | ✅ |
 | **v2.1** | **P03** | **Lobby auto-start — countdown when all ready** | 📝 |
 
 Detailed specifications in [`specs/`](./specs/).

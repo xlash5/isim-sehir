@@ -12,6 +12,7 @@ export interface Player {
   isAdmin: boolean
   isReady: boolean
   score: number
+  isSpectator: boolean
 }
 
 export interface GameSettings {
@@ -80,11 +81,18 @@ export type PeerMessageType =
   | 'ping'
   | 'pong'
   | 'join-rejected'
+  | 'spectate-request'
 
 export interface JoinRoomPayload {
   id: string
   nickname: string
   password?: string
+  isSpectator?: boolean
+}
+
+export interface SpectateRequestPayload {
+  playerId: string
+  nickname: string
 }
 
 export interface JoinRejectedPayload {
@@ -153,6 +161,7 @@ export interface PeerMessagePayloadMap {
   'ping': Record<string, never>
   'pong': Record<string, never>
   'join-rejected': JoinRejectedPayload
+  'spectate-request': SpectateRequestPayload
 }
 
 export interface PeerMessage {

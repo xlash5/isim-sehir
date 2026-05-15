@@ -77,7 +77,7 @@ isim_sehir/
 │       ├── SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md        # Room passwords ✅
 │       ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md    # Stale room cleanup ✅
 │       ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
-│       ├── SPEC-DRAFT-v2.1-P03-01-spectator-mode.md              # Spectator mode 📝
+│       ├── SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md        # Spectator mode ✅
 │       └── SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md            # Lobby auto-start 📝
 │
 └── src/
@@ -242,6 +242,7 @@ lobby → wheel → answering → grading → round-results → wheel → ... �
 | `player-disconnected` | Detector→All | `{ playerId }` |
 | `admin-transfer` | Detector→All | `{ newAdminId }` |
 | `admin-transfer-request` | Admin→All | `{ newAdminId }` |
+| `spectate-request` | Player→Admin | `{ playerId, nickname }` |
 | `reconnect` | Reconnecting→Admin | `{ playerId, nickname }` |
 | `reconnect-accepted` | Admin→Reconnecting | `{ room: GameRoom, timer: number \| null }` |
 
@@ -272,7 +273,7 @@ lobby → wheel → answering → grading → round-results → wheel → ... �
 ```typescript
 GamePhase = 'lobby' | 'wheel' | 'answering' | 'grading' | 'round-results' | 'game-over'
 
-Player        { id, nickname, isAdmin, isReady, score }
+Player        { id, nickname, isAdmin, isReady, score, isSpectator }
 GameSettings  { categories, totalRounds, roundDuration, letterPool, customCategories }
 Answer        { playerId, category, value }
 Vote          { voterId, answerId, isValid }
@@ -443,5 +444,5 @@ cd server && npm start   # PeerJS on :9000
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md` | v2.1 — Room passwords / private rooms ✅ |
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md` | v2.1 — Stale room cleanup / abandoned room reclamation ✅ |
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md` | v2.1 — Real-time category chip display for all players ✅ |
-| `v2.1/SPEC-DRAFT-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers 📝 |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers ✅ |
 | `v2.1/SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready 📝 |

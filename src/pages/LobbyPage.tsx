@@ -67,9 +67,11 @@ export function LobbyPage() {
 
   const currentPlayer = room.players.find((p) => p.id === localPlayerId)
   const isAdmin = room.adminId === localPlayerId
-  const allReady = room.players.every((p) => p.isReady)
-  const hasEnoughPlayers = room.players.length >= 2
+  const activePlayers = room.players.filter((p) => !p.isSpectator)
+  const allReady = activePlayers.every((p) => p.isReady)
+  const hasEnoughPlayers = activePlayers.length >= 2
   const hasCategories = room.settings.categories.length >= 3
+  const isSpectator = currentPlayer?.isSpectator ?? false
 
   const handleToggleReady = () => {
     if (!hasCategories) return
@@ -111,21 +113,28 @@ export function LobbyPage() {
         </Grid>
 
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
-          <Tooltip title={!hasCategories ? t('lobby.needCategories') : ''}>
-            <span>
-              <Button
-                variant={currentPlayer?.isReady ? 'outlined' : 'contained'}
-                size="large"
-                disabled={!hasCategories}
-                fullWidth={isMobile}
-                startIcon={currentPlayer?.isReady ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
-                onClick={handleToggleReady}
-                sx={isMobile ? { minHeight: 44 } : {}}
-              >
-                {t('lobby.ready_toggle')}
-              </Button>
-            </span>
-          </Tooltip>
+          {!isSpectator && (
+            <Tooltip title={!hasCategories ? t('lobby.needCategories') : ''}>
+              <span>
+                <Button
+                  variant={currentPlayer?.isReady ? 'outlined' : 'contained'}
+                  size="large"
+                  disabled={!hasCategories}
+                  fullWidth={isMobile}
+                  startIcon={currentPlayer?.isReady ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
+                  onClick={handleToggleReady}
+                  sx={isMobile ? { minHeight: 44 } : {}}
+                >
+                  {t('lobby.ready_toggle')}
+                </Button>
+              </span>
+            </Tooltip>
+          )}
+          {isSpectator && (
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 1 }}>
+              {t('lobby.spectatorNotice')}
+            </Typography>
+          )}
           {isAdmin && allReady && hasEnoughPlayers && hasCategories && (
             <Button
               variant="contained"

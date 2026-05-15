@@ -2,7 +2,7 @@
 
 > **Priority:** Low
 > **Version target:** v2.1
-> **Status:** 📝 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -44,9 +44,9 @@ Allow players to join a room as **spectators** — they can watch the game and c
 
 ## Acceptance Criteria
 
-- [ ] Players can toggle spectator mode on join
-- [ ] Spectators are shown with a distinct badge
-- [ ] Spectators cannot ready up, submit answers, or vote
-- [ ] Spectators do not block game start (not counted in minimum)
-- [ ] Spectators can chat
-- [ ] Admin transfer skips spectators
+- [x] Players can toggle spectator mode on join
+- [x] Spectators are shown with a distinct badge (eye icon + italic label)
+- [x] Spectators cannot ready up, submit answers, or vote
+- [x] Spectators do not block game start (not counted in minimum)
+- [x] Spectators can chat
+- [x] Admin transfer skips spectators

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Paper, Typography, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import GroupIcon from '@mui/icons-material/Group'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { useGameStore } from '../../stores/useGameStore'
 import { usePeer } from '../../context/PeerContext'
@@ -33,11 +34,24 @@ export function PlayerList() {
 
   const targetPlayer = transferTarget ? players.find((p) => p.id === transferTarget) : null
 
+  const activePlayers = players.filter((p) => !p.isSpectator)
+  const spectators = players.filter((p) => p.isSpectator)
+
   return (
     <Paper sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <GroupIcon fontSize="small" />
-        <Typography variant="subtitle2">{t('lobby.players', { count: players.length })}</Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <GroupIcon fontSize="small" />
+          <Typography variant="subtitle2">{t('lobby.players', { count: activePlayers.length })}</Typography>
+        </Box>
+        {spectators.length > 0 && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <VisibilityIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+            <Typography variant="caption" color="text.secondary">
+              {t('lobby.spectators', { count: spectators.length })}
+            </Typography>
+          </Box>
+        )}
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
         {players.map((p) => (
@@ -47,9 +61,10 @@ export function PlayerList() {
                 nickname={p.nickname}
                 isAdmin={p.id === adminId}
                 isReady={p.isReady}
+                isSpectator={p.isSpectator}
               />
             </Box>
-            {canTransfer && p.id !== localPlayerId && (
+            {canTransfer && p.id !== localPlayerId && !p.isSpectator && (
               <Button
                 size="small"
                 variant="outlined"

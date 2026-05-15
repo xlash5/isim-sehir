@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Box, TextField, Button, Typography, Paper, Divider, Container, Alert, CircularProgress, useMediaQuery, useTheme,
+  Box, TextField, Button, Typography, Paper, Divider, Container, Alert, CircularProgress, FormControlLabel, Switch, useMediaQuery, useTheme,
 } from '@mui/material'
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
@@ -9,6 +9,7 @@ import LinkIcon from '@mui/icons-material/Link'
 import VpnKeyIcon from '@mui/icons-material/VpnKey'
 import HistoryIcon from '@mui/icons-material/History'
 import LockIcon from '@mui/icons-material/Lock'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeerStore } from '../stores/usePeerStore'
 import { usePeer } from '../context/PeerContext'
@@ -45,6 +46,12 @@ export function HomePage() {
   const [joinError, setJoinError] = useState('')
   const joinPasswordRef = useRef('')
   const awaitingJoinApprovalRef = useRef(false)
+  const [isSpectator, setIsSpectator] = useState(false)
+  const isSpectatorRef = useRef(false)
+
+  useEffect(() => {
+    isSpectatorRef.current = isSpectator
+  }, [isSpectator])
 
   useEffect(() => {
     if (peerId && pendingActionRef.current && !navigatedRef.current) {
@@ -53,7 +60,7 @@ export function HomePage() {
       const code = roomCodeRef.current!
       if (pendingActionRef.current === 'join') {
         joinRoom(code)
-        connectToPeer(code, joinPasswordRef.current)
+        connectToPeer(code, joinPasswordRef.current, isSpectatorRef.current)
         if (joinPasswordRef.current) {
           pendingActionRef.current = null
           awaitingJoinApprovalRef.current = true
@@ -285,6 +292,22 @@ export function HomePage() {
             }}
             sx={{ mb: 1.5 }}
             slotProps={{ htmlInput: { style: { fontFamily: 'monospace' } } }}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isSpectator}
+                onChange={(e) => setIsSpectator(e.target.checked)}
+                size="small"
+              />
+            }
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <VisibilityIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                <Typography variant="body2">{t('home.joinAsSpectator')}</Typography>
+              </Box>
+            }
+            sx={{ mb: 1.5, ml: 0 }}
           />
           <Button
             fullWidth

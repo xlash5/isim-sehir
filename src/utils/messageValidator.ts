@@ -5,7 +5,7 @@ const VALID_TYPES = new Set<PeerMessageType>([
   'answers-submit', 'vote', 'round-end', 'chat-message',
   'settings-update', 'player-disconnected', 'admin-transfer',
   'room-state-sync', 'heartbeat', 'reconnect', 'reconnect-accepted',
-  'admin-transfer-request', 'ping', 'pong', 'join-rejected',
+  'admin-transfer-request', 'ping', 'pong', 'join-rejected', 'spectate-request',
 ])
 
 function isString(v: unknown): v is string {
@@ -114,6 +114,11 @@ const validators: Record<string, (payload: unknown) => boolean> = {
   'join-rejected': (p) => {
     if (!isRecord(p)) return false
     return isString(p.reason) && ['wrong-password', 'room-full', 'duplicate-nickname'].includes(p.reason)
+  },
+  'spectate-request': (p) => {
+    if (!isRecord(p)) return false
+    if (!isString(p.playerId) || p.playerId.length === 0) return false
+    return isString(p.nickname) && p.nickname.length > 0
   },
 }
 

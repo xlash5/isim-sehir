@@ -28,7 +28,7 @@ function formatPlayerDisconnected(nickname: string): string {
 
 interface PeerContextType {
   createPeer: (id?: string) => void
-  connectToPeer: (peerId: string, password?: string) => void
+  connectToPeer: (peerId: string, password?: string, isSpectator?: boolean) => void
   reconnectToPeer: (targetId: string) => void
   sendMessage: (targetId: string, message: PeerMessage) => void
   broadcastMessage: (message: PeerMessage) => void
@@ -90,9 +90,10 @@ export function PeerProvider({ children }: { children: ReactNode }) {
 
       switch (msg.type) {
         case 'join-room': {
-          const payload = msg.payload as { id: string; nickname: string; password?: string }
+          const payload = msg.payload as { id: string; nickname: string; password?: string; isSpectator?: boolean }
           const cleanNickname = sanitizeString(payload.nickname, 20)
-          console.log(`[Peer] join-room from ${cleanNickname} (${payload.id})`)
+          const isSpectator = payload.isSpectator ?? false
+          console.log(`[Peer] join-room from ${cleanNickname} (${payload.id}) isSpectator=${isSpectator}`)
           const currentState = gameStore.getState()
           const roomPassword = currentState.room?.settings.roomPassword
           if (roomPassword && payload.password !== roomPassword) {
@@ -109,7 +110,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           if (payload.id !== store.localPlayerId) {
             playSound('player-connect')
           }
-          store.addPlayer({ id: payload.id, nickname: cleanNickname, isAdmin: false, isReady: false, score: 0 })
+          store.addPlayer({ id: payload.id, nickname: cleanNickname, isAdmin: false, isReady: false, score: 0, isSpectator })
           peerToPlayerMap.current.set(connId, { playerId: payload.id, nickname: cleanNickname })
           const fresh = gameStore.getState()
           if (fresh.room?.adminId === fresh.localPlayerId) {
@@ -126,7 +127,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
                 c.send({
                   type: 'join-room',
                   senderId: fresh.localPlayerId!,
-                  payload: { id: payload.id, nickname: payload.nickname },
+                  payload: { id: payload.id, nickname: payload.nickname, isSpectator },
                 } as PeerMessage)
               }
             })
@@ -202,6 +203,34 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           gameStore.getState().setJoinRejected(reason)
           break
         }
+        case 'spectate-request': {
+          const spPayload = msg.payload as { playerId: string; nickname: string }
+          const cleanSpNickname = sanitizeString(spPayload.nickname, 20)
+          console.log(`[Peer] spectate-request from ${cleanSpNickname} (${spPayload.playerId})`)
+          store.addPlayer({ id: spPayload.playerId, nickname: cleanSpNickname, isAdmin: false, isReady: false, score: 0, isSpectator: true })
+          peerToPlayerMap.current.set(connId, { playerId: spPayload.playerId, nickname: cleanSpNickname })
+          const spFresh = gameStore.getState()
+          if (spFresh.room?.adminId === spFresh.localPlayerId) {
+            console.log('[Peer] Admin: sending room-state-sync to spectator')
+            const syncMsg: PeerMessage = {
+              type: 'room-state-sync',
+              senderId: spFresh.localPlayerId!,
+              payload: { room: spFresh.room },
+            }
+            const conn = pStore.connections.get(connId)
+            if (conn) conn.send(syncMsg)
+            pStore.connections.forEach((c, pid) => {
+              if (pid !== connId && c.open) {
+                c.send({
+                  type: 'join-room',
+                  senderId: spFresh.localPlayerId!,
+                  payload: { id: spPayload.playerId, nickname: spPayload.nickname, isSpectator: true },
+                } as PeerMessage)
+              }
+            })
+          }
+          break
+        }
         case 'pong': {
           lastPongTimestampsRef.current.set(connId, Date.now())
           const pStore = peerStore.getState()
@@ -231,7 +260,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           store.removePlayer(playerId)
           if (wasAdmin) {
             const fresh = gameStore.getState()
-            const remaining = fresh.room?.players ?? []
+            const remaining = (fresh.room?.players ?? []).filter((p) => !p.isSpectator)
             if (remaining.length > 0) {
               const newAdmin = remaining[0]
               store.transferAdmin(newAdmin.id)
@@ -292,7 +321,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const storeState = gameStore.getState()
           if (storeState.room?.adminId === storeState.localPlayerId) {
             console.log(`[Peer] Reconnect from ${cleanNickname} (${reconnectPayload.playerId})`)
-            store.addPlayer({ id: reconnectPayload.playerId, nickname: cleanNickname, isAdmin: false, isReady: false, score: 0 })
+            store.addPlayer({ id: reconnectPayload.playerId, nickname: cleanNickname, isAdmin: false, isReady: false, score: 0, isSpectator: false })
             peerToPlayerMap.current.set(connId, { playerId: reconnectPayload.playerId, nickname: cleanNickname })
             const fresh = gameStore.getState()
             const ack: PeerMessage = {
@@ -394,7 +423,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             )
             if (wasAdmin) {
               const fresh = gameStore.getState()
-              const remaining = fresh.room?.players ?? []
+              const remaining = (fresh.room?.players ?? []).filter((p) => !p.isSpectator)
               if (remaining.length > 0) {
                 const newAdmin = remaining[0]
                 store.transferAdmin(newAdmin.id)
@@ -429,7 +458,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
   )
 
   const connectToPeer = useCallback(
-    (targetId: string, password?: string) => {
+    (targetId: string, password?: string, isSpectator?: boolean) => {
       const currentPeer = peerStore.getState().peer
       if (!currentPeer) { console.warn('[Peer] No peer to connect with'); return }
       console.log(`[Peer] Connecting to ${targetId}`)
@@ -445,6 +474,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             id: localPlayerIdRef.current,
             nickname: localNicknameRef.current,
             ...(password ? { password } : {}),
+            ...(isSpectator ? { isSpectator: true } : {}),
           },
         } as PeerMessage)
         conn.on('data', (data) => {
@@ -478,8 +508,9 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             'warning',
           )
           const remaining = store.room.players.filter((p) => p.id !== adminId)
-          if (remaining.length > 0) {
-            const newAdmin = remaining[0]
+          const nonSpectators = remaining.filter((p) => !p.isSpectator)
+          if (nonSpectators.length > 0) {
+            const newAdmin = nonSpectators[0]
             store.transferAdmin(newAdmin.id)
             store.removePlayer(adminId)
             lastHeartbeatAtRef.current = Date.now()
@@ -558,8 +589,9 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           'warning',
         )
         const remaining = store.room.players.filter((p) => p.id !== adminId)
-        if (remaining.length > 0) {
-          const newAdmin = remaining[0]
+        const nonSpectators = remaining.filter((p) => !p.isSpectator)
+        if (nonSpectators.length > 0) {
+          const newAdmin = nonSpectators[0]
           store.transferAdmin(newAdmin.id)
           store.removePlayer(adminId)
           lastHeartbeatAtRef.current = Date.now()
@@ -671,8 +703,9 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           'warning',
         )
         const remaining = store.room.players.filter((p) => p.id !== adminId)
-        if (remaining.length > 0) {
-          const newAdmin = remaining[0]
+        const nonSpectators = remaining.filter((p) => !p.isSpectator)
+        if (nonSpectators.length > 0) {
+          const newAdmin = nonSpectators[0]
           store.transferAdmin(newAdmin.id)
           store.removePlayer(adminId)
           lastHeartbeatAtRef.current = Date.now()

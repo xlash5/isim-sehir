@@ -151,6 +151,7 @@ const tr: Record<string, string> = {
 
   'player.ready': '✅ Hazır',
   'player.notReady': '⏳ Hazır Değil',
+  'player.spectator': 'İzleyici',
 
   'system.adminTransferred': '{nickname} yeni admin oldu.',
   'system.playerDisconnected': '{nickname} oyundan ayrıldı.',
@@ -175,6 +176,14 @@ const tr: Record<string, string> = {
   'admin.transferNo': 'Hayır',
 
   'system.adminTransferredByRequest': '{oldAdmin} admin yetkisini {newAdmin} kullanıcısına devretti.',
+
+  'home.joinAsSpectator': 'İzleyici Olarak Katıl',
+
+  'lobby.spectators': 'İzleyiciler ({count})',
+  'lobby.spectatorNotice': 'İzleyici olarak bağlandınız. Oyunu izliyorsunuz.',
+
+  'game.watching': 'İzleniyor...',
+  'game.watchingSubtitle': 'Oyuncuların cevaplarını ve oylamalarını izliyorsunuz.',
 
   'connection.connected': 'Bağlı',
   'connection.reconnecting': 'Yeniden bağlanıyor...',

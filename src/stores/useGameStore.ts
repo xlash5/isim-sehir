@@ -79,7 +79,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     const roomCode = code ?? Math.floor(100000 + Math.random() * 900000).toString()
     const id = get().localPlayerId ?? crypto.randomUUID()
     const nickname = get().localNickname ?? 'Oyuncu'
-    const player: Player = { id, nickname, isAdmin: true, isReady: false, score: 0 }
+    const player: Player = { id, nickname, isAdmin: true, isReady: false, score: 0, isSpectator: false }
       const room: GameRoom = {
         code: roomCode,
         adminId: id,
@@ -97,7 +97,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   joinRoom: (code, _password) => {
     const id = get().localPlayerId ?? crypto.randomUUID()
     const nickname = get().localNickname ?? 'Oyuncu'
-    const player: Player = { id, nickname, isAdmin: false, isReady: false, score: 0 }
+    const player: Player = { id, nickname, isAdmin: false, isReady: false, score: 0, isSpectator: false }
     set((state) => {
       if (!state.room) {
         const room: GameRoom = {
@@ -261,7 +261,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((state) => {
       if (!state.room || state.submittedPlayers.includes(playerId)) return state
       const submittedPlayers = [...state.submittedPlayers, playerId]
-      if (submittedPlayers.length >= state.room.players.length) {
+      const activePlayers = state.room.players.filter((p) => !p.isSpectator)
+      if (submittedPlayers.length >= activePlayers.length) {
         const round = state.room.rounds[state.room.rounds.length - 1]
         if (round) {
           const gradingItems: GradingItem[] = state.room.players.map((p) => ({
