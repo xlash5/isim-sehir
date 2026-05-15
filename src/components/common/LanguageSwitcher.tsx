@@ -1,6 +1,13 @@
-import { ToggleButtonGroup, ToggleButton, Typography, Box } from '@mui/material'
+import { Autocomplete, TextField, Box, Typography } from '@mui/material'
 import TranslateIcon from '@mui/icons-material/Translate'
-import { useLocale } from '../../locales'
+import type { ReactNode } from 'react'
+import { useLocale, type Locale } from '../../locales'
+
+interface LanguageOption {
+  code: Locale
+  label: string
+  Flag: () => ReactNode
+}
 
 function TurkishFlag() {
   return (
@@ -27,36 +34,105 @@ function EnglishFlag() {
   )
 }
 
+function SpanishFlag() {
+  return (
+    <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+      <rect width="20" height="14" fill="#C60B1E" rx="1" />
+      <rect y="3" width="20" height="8" fill="#FFC400" />
+      <rect y="5" width="20" height="4" fill="#C60B1E" />
+    </svg>
+  )
+}
+
+function PortugueseFlag() {
+  return (
+    <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+      <rect width="20" height="14" fill="#006600" rx="1" />
+      <rect x="4" y="0" width="8" height="14" fill="#FF0000" />
+      <circle cx="10" cy="7" r="2.5" fill="#FFD700" />
+      <circle cx="11.2" cy="7" r="1.8" fill="#006600" />
+      <path d="M10.5 5.5l.6 1.2 1.3.1-1 .9.3 1.3-1.2-.7-1.2.7.3-1.3-1-.9 1.3-.1z" fill="#FFD700" />
+    </svg>
+  )
+}
+
+function FrenchFlag() {
+  return (
+    <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+      <rect width="20" height="14" fill="#FFFFFF" rx="1" />
+      <rect x="0" width="6.67" height="14" fill="#002395" />
+      <rect x="13.33" width="6.67" height="14" fill="#ED2939" />
+    </svg>
+  )
+}
+
+function GermanFlag() {
+  return (
+    <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+      <rect width="20" height="14" fill="#FFCE00" rx="1" />
+      <rect width="20" height="4.67" fill="#000000" />
+      <rect y="9.33" width="20" height="4.67" fill="#DD0000" />
+    </svg>
+  )
+}
+
+const LANGUAGES: LanguageOption[] = [
+  { code: 'tr', label: 'Türkçe', Flag: TurkishFlag },
+  { code: 'en', label: 'English', Flag: EnglishFlag },
+  { code: 'es', label: 'Español', Flag: SpanishFlag },
+  { code: 'pt', label: 'Português', Flag: PortugueseFlag },
+  { code: 'fr', label: 'Français', Flag: FrenchFlag },
+  { code: 'de', label: 'Deutsch', Flag: GermanFlag },
+]
+
 export function LanguageSwitcher() {
   const { locale, setLocale, t } = useLocale()
+  const selected = LANGUAGES.find((l) => l.code === locale) ?? LANGUAGES[0]
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center', mb: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center', mb: 3 }}>
       <TranslateIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+      <Typography variant="caption" sx={{ color: 'text.secondary', whiteSpace: 'nowrap' }}>
         {t('home.language')}:
       </Typography>
-      <ToggleButtonGroup
-        value={locale}
-        exclusive
-        onChange={(_, newLocale) => {
-          if (newLocale) setLocale(newLocale)
+      <Autocomplete
+        value={selected}
+        onChange={(_, option) => {
+          if (option) setLocale(option.code)
         }}
+        options={LANGUAGES}
+        getOptionLabel={(option) => option.label}
+        isOptionEqualToValue={(option, value) => option.code === value.code}
+        disableClearable
         size="small"
-      >
-        <ToggleButton value="tr" sx={{ px: 1.5, py: 0.5, fontSize: '0.8rem', gap: 0.5 }}>
-          <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
-            <TurkishFlag />
-            Türkçe
-          </Box>
-        </ToggleButton>
-        <ToggleButton value="en" sx={{ px: 1.5, py: 0.5, fontSize: '0.8rem', gap: 0.5 }}>
-          <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
-            <EnglishFlag />
-            English
-          </Box>
-        </ToggleButton>
-      </ToggleButtonGroup>
+        sx={{ minWidth: 160, maxWidth: 240, flex: { xs: 1, sm: 'none' } }}
+        renderOption={(props, option) => {
+          const { key, ...rest } = props
+          return (
+            <Box component="li" key={key} {...rest} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 0.75 }}>
+              <option.Flag />
+              <Typography variant="body2">{option.label}</Typography>
+            </Box>
+          )
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            placeholder={t('home.language')}
+            slotProps={{
+              input: {
+                ...params.InputProps,
+                startAdornment: (
+                  <Box component="span" sx={{ display: 'flex', alignItems: 'center', mr: 0.5 }}>
+                    <selected.Flag />
+                  </Box>
+                ),
+              },
+            }}
+          />
+        )}
+      />
     </Box>
   )
 }

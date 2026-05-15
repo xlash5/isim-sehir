@@ -57,8 +57,9 @@ isim_sehir/
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md
-│   └── SPEC-DRAFT-v2.1-*.md        # language-picker,
-│                                     # new-languages, rate-limiting, room-passwords,
+│   ├── SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md   # Autocomplete language picker ✅
+│   ├── SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md     # ES, PT, FR, DE locales ✅
+│   └── SPEC-DRAFT-v2.1-*.md        # rate-limiting, room-passwords,
 │                                     # stale-room-cleanup, lobby-category-visibility,
 │                                     # spectator-mode, lobby-auto-start
 │
@@ -92,7 +93,7 @@ isim_sehir/
     │   ├── common/
     │   │   ├── ChatBox.tsx           # Chat UI
     │   │   ├── CopyCode.tsx          # Room code copy button
-    │   │   ├── LanguageSwitcher.tsx   # TR/EN toggle with flags
+    │   │   ├── LanguageSwitcher.tsx   # Autocomplete with flags (6 languages)
     │   │   ├── NotificationSnackbar.tsx
     │   │   ├── PlayerAvatar.tsx       # Avatar + ready/admin badges
     │   │   ├── SessionRestore.tsx     # Session persistence dialog
@@ -109,7 +110,11 @@ isim_sehir/
     ├── locales/
     │   ├── index.tsx         # LocaleProvider + useLocale + interpolation
     │   ├── tr.ts             # Turkish translations
-    │   └── en.ts             # English translations
+    │   ├── en.ts             # English translations
+    │   ├── es.ts             # Spanish translations
+    │   ├── pt.ts             # Portuguese translations
+    │   ├── fr.ts             # French translations
+    │   └── de.ts             # German translations
     │
         └── utils/
             ├── categories.ts     # 33 built-in category keys + helper
@@ -288,9 +293,10 @@ Navigation guards:
 
 ## i18n
 
-- Locale stored in `localStorage` key `"locale"` (`'tr'` or `'en'`)
+- Locale stored in `localStorage` key `"locale"` (`'tr'`, `'en'`, `'es'`, `'pt'`, `'fr'`, `'de'`)
 - Default: `'tr'`
 - Translation keys follow dot notation: `home.title`, `category.isim_erkek`, etc.
+- Translations: Turkish (native), English, Spanish, Portuguese, French, German
 - Missing keys fall back to Turkish, then warn in dev
 - Simple `{param}` interpolation via `t('key', { param: value })`
 
@@ -411,3 +417,6 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-IMPLEMENTED-v2.0-P03-01-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md` | v2.1 — CORS, rate limiting, room caps, connection timeouts ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md` | v2.1 — PeerJS message schema validation ✅ |
+| `SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md` | v2.1 — XSS prevention, input sanitization ✅ |
+| `SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md` | v2.1 — Autocomplete language picker ✅ |
+| `SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md` | v2.1 — ES, PT, FR, DE locale files ✅ |

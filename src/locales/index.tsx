@@ -1,10 +1,14 @@
 import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react'
 import tr from './tr'
 import en from './en'
+import es from './es'
+import pt from './pt'
+import fr from './fr'
+import de from './de'
 
-type Locale = 'tr' | 'en'
+export type Locale = 'tr' | 'en' | 'es' | 'pt' | 'fr' | 'de'
 
-const LOCALE_MAP: Record<Locale, Record<string, string>> = { tr, en }
+const LOCALE_MAP: Record<Locale, Record<string, string>> = { tr, en, es, pt, fr, de }
 
 interface LocaleContextType {
   locale: Locale

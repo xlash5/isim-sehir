@@ -42,7 +42,7 @@ letter across ~33 categories. Peers grade each other's answers.
 
 ### UI & UX
 - Dark/light theme toggle (persisted to localStorage)
-- i18n: Turkish & English with instant language switcher (v1.1)
+- i18n: Turkish, English, Spanish, Portuguese, French, German with searchable autocomplete picker (v2.1)
 - Mobile responsive layout with bottom sheet grading (v2.0)
 - Game history in localStorage (max 50 entries) (v1.2)
 - Sound effects via Web Audio API with toggle (v1.2)
@@ -71,8 +71,8 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.1** | **P01** | **Server safeguards — CORS, IP rate limits, connection caps** | ✅ |
 | **v2.1** | **P01** | **Message schema validation — PeerJS payload type checking** | ✅ |
 | **v2.1** | **P01** | **Input sanitisation — XSS prevention layer** | ✅ |
-| **v2.1** | **P01** | **Language picker autocomplete — searchable dropdown** | 📝 |
-| **v2.1** | **P01** | **New languages — ES, PT, FR, DE locale files** | 📝 |
+| **v2.1** | **P01** | **Language picker autocomplete — searchable dropdown** | ✅ |
+| **v2.1** | **P01** | **New languages — ES, PT, FR, DE locale files** | ✅ |
 | **v2.1** | **P02** | **Rate limiting — anti-spam on peer messages** | 📝 |
 | **v2.1** | **P02** | **Room passwords — optional private rooms** | 📝 |
 | **v2.1** | **P02** | **Stale room cleanup — abandoned room reclamation** | 📝 |
