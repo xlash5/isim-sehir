@@ -2,7 +2,7 @@
 
 > **Priority:** P01 — directly improves player understanding and reduces friction
 > **Version target:** v3.0
-> **Status:** 🔵 Draft
+> **Status:** ✅ Implemented (commit 05f70ea)
 
 ## Overview
 
@@ -175,13 +175,13 @@ All 6 languages need translations for:
 
 ## Acceptance Criteria
 
-- [ ] First-time visitor sees rules panel auto-open on home page
-- [ ] Rules panel explains game objective, phases, scoring, peer grading, admin roles, spectator mode, room passwords, letter pool
-- [ ] Rules panel content is localised in all 6 languages
-- [ ] Phase transition banner shows on every phase change with appropriate message
-- [ ] Phase indicator is always visible in-game, shows current/completed/future phases
-- [ ] Inline tooltips exist on all non-obvious UI elements
-- [ ] Score drill-down shows per-category breakdown with verdict
-- [ ] Contextual chat tips fire once per event per game
-- [ ] All new UI is responsive (mobile-friendly)
-- [ ] No breaking changes to existing game logic
+- [x] First-time visitor sees rules panel auto-open on home page
+- [x] Rules panel explains game objective, phases, scoring, peer grading, admin roles, spectator mode, room passwords, letter pool
+- [x] Rules panel content is localised in all 6 languages
+- [x] Phase transition banner shows on every phase change with appropriate message
+- [x] Phase indicator is always visible in-game, shows current/completed/future phases
+- [x] Inline tooltips exist on all non-obvious UI elements
+- [x] Score drill-down shows per-category breakdown with verdict
+- [x] Contextual chat tips fire once per event per game
+- [x] All new UI is responsive (mobile-friendly)
+- [x] No breaking changes to existing game logic
