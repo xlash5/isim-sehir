@@ -22,7 +22,7 @@ import type { PeerMessage } from '../types'
 
 export function HomePage() {
   const navigate = useNavigate()
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [nickname, setNickname] = useState('')
@@ -67,7 +67,7 @@ export function HomePage() {
           return
         }
       } else {
-        createRoom(code, roomPassword)
+        createRoom(code, roomPassword, locale)
       }
       navigatedRef.current = true
       saveSession(peerId, useGameStore.getState().localPlayerId!, nicknameRef.current, code)

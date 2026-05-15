@@ -82,7 +82,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.1** | **P02** | **Lobby category visibility — real-time chip display** | ✅ |
 | **v2.1** | **P03** | **Spectator mode — read-only game observers** | ✅ |
 | **v2.1** | **P03** | **Lobby auto-start — countdown when all ready** | ✅ |
-| **v2.2** | **P01** | **Locale-aware letter pool — alphabet adapts to admin's language** | 📝 |
+| **v2.2** | **P01** | **Locale-aware letter pool — alphabet adapts to admin's language** | ✅ |
 
 Detailed specifications in [`specs/`](./specs/).
 

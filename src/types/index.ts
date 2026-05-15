@@ -22,6 +22,7 @@ export interface GameSettings {
   letterPool: string[]
   customCategories: string[]
   roomPassword?: string
+  locale?: string
 }
 
 export interface Answer {

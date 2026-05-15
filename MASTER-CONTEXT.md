@@ -93,4 +93,4 @@ When all players are ready, minimum players met, and categories selected, a 10-s
 
 ## Specs
 
-All specs in [`specs/v2.1/`](./specs/v2.1/). Implemented specs are renamed `SPEC-IMPLEMENTED-*`. See [`README.md`](./README.md) for the feature matrix.
+All specs in [`specs/v2.1/`](./specs/v2.1/) and [`specs/v2.2/`](./specs/v2.2/). Implemented specs are renamed `SPEC-IMPLEMENTED-*`. See [`README.md`](./README.md) for the feature matrix.

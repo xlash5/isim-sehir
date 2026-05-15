@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type { GameRoom, Player, GameSettings, Round, Answer, Vote, ChatMessage, GamePhase, GradingItem } from '../types'
-import { TURKISH_LETTERS } from '../utils/letters'
+import { TURKISH_LETTERS, LOCALE_LETTER_POOLS } from '../utils/letters'
 
 interface GameState {
   room: GameRoom | null
@@ -21,7 +21,7 @@ interface GameState {
   setLocalPlayer: (id: string, nickname: string) => void
   setJoinRejected: (reason: string) => void
   clearJoinRejected: () => void
-  createRoom: (code?: string, password?: string) => void
+  createRoom: (code?: string, password?: string, locale?: string) => void
   joinRoom: (code: string, password?: string) => void
   addPlayer: (player: Player) => void
   removePlayer: (playerId: string) => void
@@ -81,16 +81,22 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   clearJoinRejected: () => set({ joinRejectedReason: null }),
 
-  createRoom: (code?: string, password?: string) => {
+  createRoom: (code?: string, password?: string, locale?: string) => {
     const roomCode = code ?? Math.floor(100000 + Math.random() * 900000).toString()
     const id = get().localPlayerId ?? crypto.randomUUID()
     const nickname = get().localNickname ?? 'Oyuncu'
     const player: Player = { id, nickname, isAdmin: true, isReady: false, score: 0, isSpectator: false }
-      const room: GameRoom = {
+    const letterPool = locale ? (LOCALE_LETTER_POOLS[locale] ?? TURKISH_LETTERS) : TURKISH_LETTERS
+    const room: GameRoom = {
         code: roomCode,
         adminId: id,
         players: [player],
-        settings: { ...defaultSettings, ...(password ? { roomPassword: password } : {}) },
+        settings: {
+          ...defaultSettings,
+          letterPool,
+          locale: locale ?? 'tr',
+          ...(password ? { roomPassword: password } : {}),
+        },
         phase: 'lobby',
         currentRound: 0,
         currentLetter: null,

@@ -10,7 +10,7 @@ import { useGameStore } from '../../stores/useGameStore'
 import { usePeer } from '../../context/PeerContext'
 import { useLocale } from '../../locales'
 import { CATEGORY_KEYS } from '../../utils/categories'
-import { TURKISH_LETTERS } from '../../utils/letters'
+import { TURKISH_LETTERS, LOCALE_LETTER_POOLS, getLetterPoolLabelKey } from '../../utils/letters'
 import type { PeerMessage } from '../../types'
 import { sanitizeString } from '../../utils/sanitize'
 
@@ -43,6 +43,13 @@ export function GameSettingsPanel() {
       setRoundDuration(settings.roundDuration)
       setCustomCategories(settings.customCategories)
       setRoomPassword(settings.roomPassword ?? '')
+      setSelectedLetters(settings.letterPool)
+      const locale = settings.locale ?? 'tr'
+      const defaultPool = LOCALE_LETTER_POOLS[locale] ?? TURKISH_LETTERS
+      const isDefault =
+        settings.letterPool.length === defaultPool.length &&
+        settings.letterPool.every((l, i) => l === defaultPool[i])
+      setLetterMode(isDefault ? 'all' : 'select')
     }
   }, [settings])
 
@@ -50,11 +57,12 @@ export function GameSettingsPanel() {
 
   const handleSave = () => {
     if (categories.length < 3) return
+    const activePool = LOCALE_LETTER_POOLS[settings.locale ?? 'tr'] ?? TURKISH_LETTERS
     const newSettings: Record<string, unknown> = {
       categories,
       totalRounds,
       roundDuration,
-      letterPool: letterMode === 'all' ? TURKISH_LETTERS : selectedLetters,
+      letterPool: letterMode === 'all' ? activePool : selectedLetters,
       customCategories,
       roomPassword: roomPassword || undefined,
     }
@@ -68,9 +76,8 @@ export function GameSettingsPanel() {
     setSettingsEditMode(false)
   }
 
-  const letterDisplay = letterMode === 'all'
-    ? t('settings.letterDisplayAll')
-    : t('settings.letterDisplaySelected', { count: selectedLetters.length })
+  const poolLocale = settings.locale ?? 'tr'
+  const alphabetLabelKey = getLetterPoolLabelKey(poolLocale)
 
   const handleAddCustom = () => {
     const name = sanitizeString(customInput.trim(), 30)
@@ -131,7 +138,7 @@ export function GameSettingsPanel() {
             <strong>{t('settings.durationValue', { value: settings.roundDuration === null ? t('settings.unlimited') : t('settings.seconds', { value: settings.roundDuration }) })}</strong>
           </Typography>
           <Typography variant="body2">
-            <strong>{t('settings.letterPool')}:</strong> {letterDisplay}
+            <strong>{t('settings.letterPool')}:</strong> {t(alphabetLabelKey)} ({t('settings.letterCount', { count: settings.letterPool.length })})
           </Typography>
           {settings.customCategories.length > 0 && (
             <Typography variant="body2">
@@ -304,7 +311,7 @@ export function GameSettingsPanel() {
                 input={<OutlinedInput label={t('settings.letterPool')} />}
                 renderValue={(selected) => selected.join(', ')}
               >
-                {TURKISH_LETTERS.map((l) => (
+                {(LOCALE_LETTER_POOLS[poolLocale] ?? TURKISH_LETTERS).map((l) => (
                   <MenuItem key={l} value={l}>
                     <Checkbox checked={selectedLetters.includes(l)} />
                     <ListItemText primary={l} />
