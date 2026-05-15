@@ -58,23 +58,27 @@ letter across ~33 categories. Peers grade each other's answers.
 
 ## Specs
 
-| Version | Spec | Status |
-|---|---|---|
-| v1.0 | Base game (lobby, wheel, answering, grading, scoring) | ✅ |
-| v1.1 | Admin ready, admin transfer, i18n, player disconnect, state persistence | ✅ |
-| v1.2 | Custom categories, game history, sound effects, timer reconnect | ✅ |
-| v2.0 | Room codes, connection loss, admin transfer, mobile, performance | ✅ |
-| **v2.1** | **Language picker autocomplete** — searchable dropdown for 6+ locales | 📝 Draft |
-| **v2.1** | **New languages** — ES, PT, FR, DE locale files | 📝 Draft |
-| **v2.1** | **Lobby category visibility** — real-time chip display for all players | 📝 Draft |
-| **v2.1** | **Message schema validation** — PeerJS payload type checking | 📝 Draft |
-| **v2.1** | **Input sanitisation** — XSS prevention layer | 📝 Draft |
-| **v2.1** | **Rate limiting** — anti-spam on peer messages | 📝 Draft |
-| **v2.1** | **Server safeguards** — CORS, IP rate limits, connection caps | 📝 Draft |
-| **v2.1** | **Room passwords** — optional private rooms | 📝 Draft |
-| **v2.1** | **Spectator mode** — read-only game observers | 📝 Draft |
-| **v2.1** | **Stale room cleanup** — server-side abandoned room reclamation | 📝 Draft |
-| **v2.1** | **Lobby auto-start** — countdown when all players ready | 📝 Draft |
+| Version | Priority | Feature | Status |
+|---|---|---|---|
+| v1.0 | — | Base game (lobby, wheel, answering, grading, scoring) | ✅ |
+| v1.1 | P01 | Player disconnect, admin transfer, i18n, state persistence | ✅ |
+| v1.1 | P02 | Admin must be ready to start | ✅ |
+| v1.2 | P02 | Custom categories, timer reconnect | ✅ |
+| v1.2 | P03 | Game history, sound effects | ✅ |
+| v2.0 | P01 | Connection loss, admin transfer, mobile responsive | ✅ |
+| v2.0 | P02 | Room code generation | ✅ |
+| v2.0 | P03 | Performance optimisations | ✅ |
+| **v2.1** | **P01** | **Server safeguards — CORS, IP rate limits, connection caps** | 📝 |
+| **v2.1** | **P01** | **Message schema validation — PeerJS payload type checking** | 📝 |
+| **v2.1** | **P01** | **Input sanitisation — XSS prevention layer** | 📝 |
+| **v2.1** | **P01** | **Language picker autocomplete — searchable dropdown** | 📝 |
+| **v2.1** | **P01** | **New languages — ES, PT, FR, DE locale files** | 📝 |
+| **v2.1** | **P02** | **Rate limiting — anti-spam on peer messages** | 📝 |
+| **v2.1** | **P02** | **Room passwords — optional private rooms** | 📝 |
+| **v2.1** | **P02** | **Stale room cleanup — abandoned room reclamation** | 📝 |
+| **v2.1** | **P02** | **Lobby category visibility — real-time chip display** | 📝 |
+| **v2.1** | **P03** | **Spectator mode — read-only game observers** | 📝 |
+| **v2.1** | **P03** | **Lobby auto-start — countdown when all ready** | 📝 |
 
 Detailed specifications in [`specs/`](./specs/).
 

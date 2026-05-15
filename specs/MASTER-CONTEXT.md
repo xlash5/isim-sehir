@@ -46,14 +46,19 @@ isim_sehir/
 │   ├── package.json        # Server deps (peer only)
 │   └── index.js            # PeerJS signaling server
 │
-├── specs/                  # Feature specifications (v1.0–v2.0)
+├── specs/                  # Feature specifications (v1.0–v2.1)
 │   ├── SPEC-v1.0.md
-│   ├── SPEC-v1.1-*.md     # admin-ready, admin-transfer, localisation,
-│   │                       # player-disconnect, state-persistence
-│   ├── SPEC-v1.2-*.md     # custom-categories, game-history, sound-effects,
-│   │                       # timer-reconnect
-│   └── SPEC-v2.0-*.md     # room-codes, connection-loss, admin-transfer,
-│                           # mobile-responsive, performance
+│   ├── SPEC-IMPLEMENTED-v1.1-*.md   # player-disconnect, admin-transfer,
+│   │                                 # localisation, state-persistence, admin-ready
+│   ├── SPEC-IMPLEMENTED-v1.2-*.md   # custom-categories, timer-reconnect,
+│   │                                 # game-history, sound-effects
+│   ├── SPEC-IMPLEMENTED-v2.0-*.md   # connection-loss, admin-transfer,
+│   │                                 # mobile-responsive, room-codes, performance
+│   └── SPEC-DRAFT-v2.1-*.md        # server-safeguards, message-validation,
+│                                     # input-sanitization, language-picker,
+│                                     # new-languages, rate-limiting, room-passwords,
+│                                     # stale-room-cleanup, lobby-category-visibility,
+│                                     # spectator-mode, lobby-auto-start
 │
 └── src/
     ├── main.tsx            # ReactDOM entry
@@ -378,17 +383,17 @@ cd server && npm start   # PeerJS on :9000
 | File | Feature / Version |
 |---|---|
 | `SPEC-v1.0.md` | Base game (lobby, wheel, answering, grading, scoring) |
-| `SPEC-v1.1-admin-ready.md` | Admin must be ready to start |
-| `SPEC-v1.1-admin-transfer.md` | Seamless admin handover on disconnect |
-| `SPEC-v1.1-localisation.md` | TR/EN i18n |
-| `SPEC-v1.1-player-disconnect.md` | Disconnect detection + cleanup |
-| `SPEC-v1.1-state-persistence.md` | Session restore on refresh |
-| `SPEC-v1.2-custom-categories.md` | Custom category support |
-| `SPEC-v1.2-game-history.md` | Game history / replay ✅ |
-| `SPEC-v1.2-sound-effects.md` | Sound effects ✅ |
-| `SPEC-v1.2-timer-reconnect.md` | Timer + reconnect improvements ✅ |
-| `SPEC-v2.0-room-codes.md` | v2.0 — 4-char alphanumeric room codes ✅ |
-| `SPEC-v2.0-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect ✅ |
-| `SPEC-v2.0-admin-transfer.md` | v2.0 — Voluntary admin transfer ✅ |
-| `SPEC-v2.0-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading ✅ |
-| `SPEC-v2.0-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis ✅ |
+| `SPEC-IMPLEMENTED-v1.1-P01-01-player-disconnect.md` | v1.1 — Disconnect detection + cleanup ✅ |
+| `SPEC-IMPLEMENTED-v1.1-P01-02-admin-transfer.md` | v1.1 — Seamless admin handover on disconnect ✅ |
+| `SPEC-IMPLEMENTED-v1.1-P01-03-localisation.md` | v1.1 — TR/EN i18n ✅ |
+| `SPEC-IMPLEMENTED-v1.1-P01-04-state-persistence.md` | v1.1 — Session restore on refresh ✅ |
+| `SPEC-IMPLEMENTED-v1.1-P02-01-admin-ready.md` | v1.1 — Admin must be ready to start ✅ |
+| `SPEC-IMPLEMENTED-v1.2-P02-01-custom-categories.md` | v1.2 — Custom category support ✅ |
+| `SPEC-IMPLEMENTED-v1.2-P02-02-timer-reconnect.md` | v1.2 — Timer + reconnect improvements ✅ |
+| `SPEC-IMPLEMENTED-v1.2-P03-01-game-history.md` | v1.2 — Game history / replay ✅ |
+| `SPEC-IMPLEMENTED-v1.2-P03-02-sound-effects.md` | v1.2 — Sound effects ✅ |
+| `SPEC-IMPLEMENTED-v2.0-P01-01-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect ✅ |
+| `SPEC-IMPLEMENTED-v2.0-P01-02-admin-transfer.md` | v2.0 — Voluntary admin transfer ✅ |
+| `SPEC-IMPLEMENTED-v2.0-P01-03-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading ✅ |
+| `SPEC-IMPLEMENTED-v2.0-P02-01-room-codes.md` | v2.0 — 4-char alphanumeric room codes ✅ |
+| `SPEC-IMPLEMENTED-v2.0-P03-01-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis ✅ |

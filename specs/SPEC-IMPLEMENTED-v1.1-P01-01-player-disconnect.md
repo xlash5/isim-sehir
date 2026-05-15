@@ -14,7 +14,7 @@ Currently when a player loses connection or closes their tab, the remaining play
 2. **Broadcast:** The remaining admin (or any player who detects the disconnect) broadcasts a `player-disconnected` message to all peers.
 3. **UI Feedback:** A snackbar/toast notification appears for all remaining players: *"OyuncuAdı ayrıldı."* (or localised equivalent).
 4. **Player Removal:** The disconnected player is removed from the `players` array in the game state.
-5. **Admin Transfer:** If the disconnected player was the admin, trigger admin transfer (see `SPEC-v1.1-admin-transfer.md`).
+5. **Admin Transfer:** If the disconnected player was the admin, trigger admin transfer (see `SPEC-IMPLEMENTED-v1.1-P01-02-admin-transfer.md`).
 6. **In-Game Disconnect:** If a disconnect happens mid-game, the round continues without them. Their unanswered categories are treated as blank (score 0).
 
 ## Technical Design
