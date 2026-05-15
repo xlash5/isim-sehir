@@ -4,6 +4,7 @@ import { usePeerStore } from '../stores/usePeerStore'
 import { useGameStore } from '../stores/useGameStore'
 import { useNotificationStore } from '../stores/useNotificationStore'
 import { playSound } from '../utils/sounds'
+import { validateMessage } from '../utils/messageValidator'
 import type { PeerMessage, GameRoom, Answer, Player } from '../types'
 
 function formatAdminTransferred(nickname: string): string {
@@ -69,7 +70,13 @@ export function PeerProvider({ children }: { children: ReactNode }) {
 
   const handleMessage = useCallback(
     (connId: string, data: unknown) => {
-      const msg = data as PeerMessage
+      const msg = validateMessage(data)
+      if (!msg) {
+        if (import.meta.env.DEV) {
+          console.warn('[Peer] Dropped invalid message', data)
+        }
+        return
+      }
       const store = gameStore.getState()
       const pStore = peerStore.getState()
 

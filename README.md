@@ -69,7 +69,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | v2.0 | P02 | Room code generation | ✅ |
 | v2.0 | P03 | Performance optimisations | ✅ |
 | **v2.1** | **P01** | **Server safeguards — CORS, IP rate limits, connection caps** | ✅ |
-| **v2.1** | **P01** | **Message schema validation — PeerJS payload type checking** | 📝 |
+| **v2.1** | **P01** | **Message schema validation — PeerJS payload type checking** | ✅ |
 | **v2.1** | **P01** | **Input sanitisation — XSS prevention layer** | 📝 |
 | **v2.1** | **P01** | **Language picker autocomplete — searchable dropdown** | 📝 |
 | **v2.1** | **P01** | **New languages — ES, PT, FR, DE locale files** | 📝 |

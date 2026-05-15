@@ -2,7 +2,7 @@
 
 > **Priority:** High
 > **Version target:** v2.1
-> **Status:** 📝 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -29,7 +29,7 @@ Currently every incoming `PeerMessage` is cast with `as` and processed directly.
 
 ## Acceptance Criteria
 
-- [ ] Valid messages pass through unchanged
-- [ ] Malformed messages (wrong types, missing fields, oversized strings) are dropped
-- [ ] No runtime errors from message validation
-- [ ] Console warning in dev for each dropped message
+- [x] Valid messages pass through unchanged
+- [x] Malformed messages (wrong types, missing fields, oversized strings) are dropped
+- [x] No runtime errors from message validation
+- [x] Console warning in dev for each dropped message

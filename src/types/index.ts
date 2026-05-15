@@ -79,6 +79,74 @@ export type PeerMessageType =
   | 'ping'
   | 'pong'
 
+export interface JoinRoomPayload {
+  id: string
+  nickname: string
+}
+
+export interface PlayerReadyPayload {
+  playerId: string
+  ready: boolean
+}
+
+export interface RoundStartPayload {
+  letter: string
+}
+
+export interface AnswersSubmitPayload {
+  answers: Answer[]
+}
+
+export interface RoundEndPayload {
+  roundScores: Record<string, number>
+  updatedPlayers: Player[]
+}
+
+export interface PlayerDisconnectedPayload {
+  playerId: string
+}
+
+export interface AdminTransferPayload {
+  newAdminId: string
+}
+
+export interface RoomStateSyncPayload {
+  room: GameRoom
+}
+
+export interface ReconnectPayload {
+  playerId: string
+  nickname: string
+}
+
+export interface ReconnectAcceptedPayload {
+  room: GameRoom
+  timer: number | null
+}
+
+export type SettingsUpdatePayload = Record<string, unknown>
+
+export interface PeerMessagePayloadMap {
+  'join-room': JoinRoomPayload
+  'player-ready': PlayerReadyPayload
+  'game-start': Record<string, never>
+  'round-start': RoundStartPayload
+  'answers-submit': AnswersSubmitPayload
+  'vote': Vote
+  'round-end': RoundEndPayload
+  'chat-message': ChatMessage
+  'settings-update': SettingsUpdatePayload
+  'player-disconnected': PlayerDisconnectedPayload
+  'admin-transfer': AdminTransferPayload
+  'room-state-sync': RoomStateSyncPayload
+  'heartbeat': Record<string, never>
+  'reconnect': ReconnectPayload
+  'reconnect-accepted': ReconnectAcceptedPayload
+  'admin-transfer-request': AdminTransferPayload
+  'ping': Record<string, never>
+  'pong': Record<string, never>
+}
+
 export interface PeerMessage {
   type: PeerMessageType
   senderId: string

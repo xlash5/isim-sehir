@@ -54,8 +54,9 @@ isim_sehir/
 │   │                                 # game-history, sound-effects
 │   ├── SPEC-IMPLEMENTED-v2.0-*.md   # connection-loss, admin-transfer,
 │   │                                 # mobile-responsive, room-codes, performance
-│   └── SPEC-DRAFT-v2.1-*.md        # server-safeguards, message-validation,
-│                                     # input-sanitization, language-picker,
+│   ├── SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md
+│   ├── SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md
+│   └── SPEC-DRAFT-v2.1-*.md        # input-sanitization, language-picker,
 │                                     # new-languages, rate-limiting, room-passwords,
 │                                     # stale-room-cleanup, lobby-category-visibility,
 │                                     # spectator-mode, lobby-auto-start
@@ -408,3 +409,4 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-IMPLEMENTED-v2.0-P02-01-room-codes.md` | v2.0 — 4-char alphanumeric room codes ✅ |
 | `SPEC-IMPLEMENTED-v2.0-P03-01-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md` | v2.1 — CORS, rate limiting, room caps, connection timeouts ✅ |
+| `SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md` | v2.1 — PeerJS message schema validation ✅ |
