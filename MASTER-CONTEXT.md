@@ -101,3 +101,19 @@ When all players are ready, minimum players met, and categories selected, a 10-s
 ## Specs
 
 All specs in [`specs/v2.1/`](./specs/v2.1/), [`specs/v2.2/`](./specs/v2.2/), and [`specs/v3.0/`](./specs/v3.0/). Implemented specs are renamed `SPEC-IMPLEMENTED-*`. See [`README.md`](./README.md) for the feature matrix.
+
+### v3.0 Specs
+
+| Priority | Feature | Status |
+|---|---|---|
+| **P01** | UX Rules & Behaviour Visibility | ✅ Implemented |
+| **P01** | Pre-Connection UX Guard — server health probe, gated buttons, banner | 🔵 Draft |
+| **P01** | Error Boundaries & Sentry | 🔵 Draft |
+| **P02** | Testing Strategy | 🔵 Draft |
+| **P02** | CI/CD Pipeline | 🔵 Draft |
+| **P02** | Docker Compose | 🔵 Draft |
+| **P02** | TypeScript Signalling Server | 🔵 Draft |
+| **P03** | Server Persistence | 🔵 Draft |
+| **P03** | Observability | 🔵 Draft |
+| **P03** | PWA Support | 🔵 Draft |
+| **P04** | Scale Beyond Mesh | 🔵 Draft |

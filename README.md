@@ -91,7 +91,14 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.2** | **P01** | **Locale-aware letter pool — alphabet adapts to admin's language** | ✅ |
 | **v3.0** | **P01** | **UX Rules & Behaviour Visibility — RulesPanel, PhaseIndicator, tooltips, chat tips, scoring drill-down** | ✅ |
 
-Detailed specifications in [`specs/`](./specs/). See [`specs/v3.0/`](./specs/v3.0/) for planned features.
+### Planned
+- **P01** Pre-Connection UX Guard — server health probe, gated buttons, connection banner on home page
+- **P01** Error Boundaries & Sentry — crash-safe React tree, production error monitoring
+- **P02** Testing strategy, CI/CD pipeline, Docker Compose, TypeScript signalling server
+- **P03** Server persistence, observability, PWA support
+- **P04** Mesh scaling alternatives
+
+Detailed specifications in [`specs/`](./specs/). See [`specs/v3.0/`](./specs/v3.0/) for all planned features.
 
 ## Development
 
