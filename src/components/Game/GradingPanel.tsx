@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { Box, Typography, Paper, Button, Chip, useMediaQuery, useTheme } from '@mui/material'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import ThumbDownIcon from '@mui/icons-material/ThumbDown'
@@ -16,7 +16,7 @@ interface Props {
   onComplete: () => void
 }
 
-export function GradingPanel({ onVote, onComplete }: Props) {
+export const GradingPanel = memo(function GradingPanel({ onVote, onComplete }: Props) {
   const room = useGameStore((s) => s.room)
   const gradingItems = useGameStore((s) => s.gradingItems)
   const myVotes = useGameStore((s) => s.myVotes)
@@ -249,4 +249,4 @@ export function GradingPanel({ onVote, onComplete }: Props) {
       {renderFooter()}
     </Box>
   )
-}
+})

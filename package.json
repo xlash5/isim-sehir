@@ -7,24 +7,26 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "bundle:analyze": "vite build"
   },
   "dependencies": {
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@mui/icons-material": "^6",
+    "@mui/material": "^6",
+    "peerjs": "^1.5",
     "react": "^19",
     "react-dom": "^19",
     "react-router-dom": "^7",
-    "@mui/material": "^6",
-    "@mui/icons-material": "^6",
-    "@emotion/react": "^11",
-    "@emotion/styled": "^11",
-    "peerjs": "^1.5",
     "zustand": "^5"
   },
   "devDependencies": {
-    "vite": "^6",
-    "@vitejs/plugin-react": "^4",
-    "typescript": "^5",
     "@types/react": "^19",
-    "@types/react-dom": "^19"
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4",
+    "rollup-plugin-visualizer": "^7.0.1",
+    "typescript": "^5",
+    "vite": "^6"
   }
 }

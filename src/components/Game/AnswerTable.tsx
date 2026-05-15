@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { Box, TextField, Typography, Paper, Button, Chip, useMediaQuery, useTheme } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -16,7 +16,7 @@ interface Props {
   onSubmit: () => void
 }
 
-export function AnswerTable({ onSubmit }: Props) {
+export const AnswerTable = memo(function AnswerTable({ onSubmit }: Props) {
   const room = useGameStore((s) => s.room)
   const answers = useGameStore((s) => s.answers)
   const setAnswer = useGameStore((s) => s.setAnswer)
@@ -133,4 +133,4 @@ export function AnswerTable({ onSubmit }: Props) {
       )}
     </Box>
   )
-}
+})

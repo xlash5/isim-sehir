@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, memo } from 'react'
 import { Box, Typography, Paper, Button, useMediaQuery, useTheme } from '@mui/material'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import { useGameStore } from '../../stores/useGameStore'
@@ -12,7 +12,7 @@ interface Props {
   onPlayAgain?: () => void
 }
 
-export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain }: Props) {
+export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain }: Props) {
   const room = useGameStore((s) => s.room)
   const scores = useGameStore((s) => s.scores)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
@@ -161,4 +161,4 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
       {renderActionButtons()}
     </Box>
   )
-}
+})

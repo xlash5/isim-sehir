@@ -390,4 +390,4 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-v2.0-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect ✅ |
 | `SPEC-v2.0-admin-transfer.md` | v2.0 — Voluntary admin transfer ✅ |
 | `SPEC-v2.0-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading ✅ |
-| `SPEC-v2.0-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis |
+| `SPEC-v2.0-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis ✅ |

@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { ThemeProvider, CssBaseline, IconButton, Box, useMediaQuery, useTheme } from '@mui/material'
+import { ThemeProvider, CssBaseline, IconButton, Box, CircularProgress, useMediaQuery, useTheme } from '@mui/material'
 import Brightness4Icon from '@mui/icons-material/Brightness4'
 import Brightness7Icon from '@mui/icons-material/Brightness7'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
@@ -13,10 +13,12 @@ import { ConnectionStatus } from './components/common/ConnectionStatus'
 import { NotificationSnackbar } from './components/common/NotificationSnackbar'
 import { SessionRestore } from './components/common/SessionRestore'
 import { HomePage } from './pages/HomePage'
-import { LobbyPage } from './pages/LobbyPage'
-import { GamePage } from './pages/GamePage'
-import { HistoryPage } from './pages/HistoryPage'
 import { isSoundEnabled, setSoundEnabled } from './utils/sounds'
+
+const LobbyPage = lazy(() => import('./pages/LobbyPage').then(m => ({ default: m.LobbyPage })))
+const GamePage = lazy(() => import('./pages/GamePage').then(m => ({ default: m.GamePage })))
+const HistoryPage = lazy(() => import('./pages/HistoryPage').then(m => ({ default: m.HistoryPage })))
+
 
 export default function App() {
   const [mode, setMode] = useState<'dark' | 'light'>(() =>
@@ -76,13 +78,15 @@ export default function App() {
               <ConnectionStatus />
               <NotificationSnackbar />
               <SessionRestore />
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/room/:roomId" element={<LobbyPage />} />
-                <Route path="/game/:roomId" element={<GamePage />} />
-                <Route path="/history" element={<HistoryPage />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+              <Suspense fallback={<CircularProgress />}>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/room/:roomId" element={<LobbyPage />} />
+                  <Route path="/game/:roomId" element={<GamePage />} />
+                  <Route path="/history" element={<HistoryPage />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </Suspense>
             </PeerProvider>
           </Box>
         </LocaleProvider>
