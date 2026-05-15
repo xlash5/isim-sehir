@@ -2,7 +2,7 @@
 
 > **Priority:** Medium
 > **Version target:** v2.1
-> **Status:** 📝 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -30,7 +30,7 @@ A fast-spamming peer could flood the mesh with `chat-message`, `vote`, or rapid 
 
 ## Acceptance Criteria
 
-- [ ] Normal chat flow (1 msg / 5 sec) is never blocked
-- [ ] Rapid-fire messages beyond limits are silently dropped
-- [ ] Persistently abusive peers are muted after 3 violations
-- [ ] Admin actions are never rate-limited
+- [x] Normal chat flow (1 msg / 5 sec) is never blocked
+- [x] Rapid-fire messages beyond limits are silently dropped
+- [x] Persistently abusive peers are muted after 3 violations
+- [x] Admin actions are never rate-limited

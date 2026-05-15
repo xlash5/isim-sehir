@@ -59,9 +59,10 @@ isim_sehir/
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md   # Autocomplete language picker ✅
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md     # ES, PT, FR, DE locales ✅
-│   └── SPEC-DRAFT-v2.1-*.md        # rate-limiting, room-passwords,
-│                                     # stale-room-cleanup, lobby-category-visibility,
-│                                     # spectator-mode, lobby-auto-start
+│   ├── SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md     # Rate limiting on peer messages ✅
+│   └── SPEC-DRAFT-v2.1-*.md        # room-passwords, stale-room-cleanup,
+│                                     # lobby-category-visibility, spectator-mode,
+│                                     # lobby-auto-start
 │
 └── src/
     ├── main.tsx            # ReactDOM entry
@@ -119,6 +120,7 @@ isim_sehir/
         └── utils/
             ├── categories.ts     # 33 built-in category keys + helper
             ├── letters.ts        # Turkish letter pool (28 letters) + helpers
+            ├── rateLimiter.ts    # Per-peer rate limiter for message spam
             ├── scoring.ts        # Score calculation (unique=10pts, shared=5pts)
             ├── session.ts        # Persisted session (1hr TTL in localStorage)
             ├── history.ts        # Game history localStorage (max 50 entries)
@@ -420,3 +422,4 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md` | v2.1 — XSS prevention, input sanitization ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md` | v2.1 — Autocomplete language picker ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md` | v2.1 — ES, PT, FR, DE locale files ✅ |
+| `SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md` | v2.1 — Rate limiting on peer messages ✅ |

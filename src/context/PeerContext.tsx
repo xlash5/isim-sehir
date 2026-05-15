@@ -6,6 +6,7 @@ import { useNotificationStore } from '../stores/useNotificationStore'
 import { playSound } from '../utils/sounds'
 import { validateMessage } from '../utils/messageValidator'
 import { sanitizeString } from '../utils/sanitize'
+import { RateLimiter } from '../utils/rateLimiter'
 import type { PeerMessage, GameRoom, Answer, Player } from '../types'
 
 function formatAdminTransferred(nickname: string): string {
@@ -57,6 +58,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
   const pingMonitorRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const reconnectAttemptsRef = useRef(0)
   const reconnectIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const rateLimiterRef = useRef<RateLimiter>(new RateLimiter())
 
   const gameStore = useGameStore
   const peerStore = usePeerStore
@@ -80,6 +82,11 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       }
       const store = gameStore.getState()
       const pStore = peerStore.getState()
+
+      const isAdmin = store.room?.adminId === msg.senderId
+      if (!rateLimiterRef.current.allow(connId, msg.type, isAdmin)) {
+        return
+      }
 
       switch (msg.type) {
         case 'join-room': {
