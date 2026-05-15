@@ -22,6 +22,7 @@ export function PlayerList() {
 
   const handleTransfer = () => {
     if (!transferTarget) return
+    useGameStore.getState().transferAdmin(transferTarget)
     broadcastMessage({
       type: 'admin-transfer-request',
       senderId: localPlayerId!,
