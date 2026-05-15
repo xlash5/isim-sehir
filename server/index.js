@@ -4,6 +4,7 @@ const PORT = parseInt(process.env.PORT || '9000', 10)
 const MAX_PEERS_PER_ROOM = parseInt(process.env.MAX_PEERS_PER_ROOM || '8', 10)
 const MAX_CONNECTIONS_PER_SEC = parseInt(process.env.MAX_CONNECTIONS_PER_SEC || '5', 10)
 const CONNECTION_TIMEOUT_MS = parseInt(process.env.CONNECTION_TIMEOUT_MS || '30000', 10)
+const ROOM_TTL_MINUTES = parseInt(process.env.ROOM_TTL_MINUTES || '5', 10)
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173,https://isim-sehir-phi.vercel.app')
   .split(',')
   .map(s => s.trim())
@@ -42,6 +43,7 @@ function isIpRateLimited(ip) {
 
 const roomMembers = new Map()
 const peerToRoom = new Map()
+const peers = new Map()
 
 function logReject(reason, detail) {
   console.log(`[REJECT] ${reason}: ${JSON.stringify(detail)}`)
@@ -72,6 +74,13 @@ peerServer.on('connection', (client) => {
   if (isRoomCode(peerId)) {
     const count = roomMembers.get(peerId)?.size ?? 0
     console.log(`[ROOM] Admin ${peerId} connected, room has ${count} tracked member(s)`)
+  }
+
+  const existing = peers.get(peerId)
+  if (existing) {
+    existing.connectionCount++
+  } else {
+    peers.set(peerId, { createdAt: Date.now(), connectionCount: 1 })
   }
 })
 
@@ -113,6 +122,11 @@ peerServer.on('disconnect', (client) => {
   const peerId = client.getId()
   console.log(`[DISCONNECT] Peer ${peerId}`)
 
+  const entry = peers.get(peerId)
+  if (entry) {
+    entry.connectionCount = Math.max(0, entry.connectionCount - 1)
+  }
+
   const roomCode = peerToRoom.get(peerId)
   if (roomCode) {
     const members = roomMembers.get(roomCode)
@@ -146,8 +160,23 @@ setInterval(() => {
   }
 }, 60000).unref()
 
+setInterval(() => {
+  const ttl = ROOM_TTL_MINUTES * 60 * 1000
+  const now = Date.now()
+  for (const [peerId, entry] of peers) {
+    if (entry.connectionCount > 0) continue
+    const age = now - entry.createdAt
+    if (age >= ttl) {
+      const ageMinutes = (age / 60000).toFixed(1)
+      console.log(`[CLEANUP] Destroying stale peer ${peerId}, age=${ageMinutes}m`)
+      peers.delete(peerId)
+    }
+  }
+}, 60000).unref()
+
 console.log(`PeerJS signaling server starting on port ${PORT}`)
 console.log(`  Allowed origins:       ${ALLOWED_ORIGINS.join(', ')}`)
 console.log(`  Max peers per room:    ${MAX_PEERS_PER_ROOM}`)
 console.log(`  Max connections/sec/IP: ${MAX_CONNECTIONS_PER_SEC}`)
 console.log(`  Connection timeout:    ${CONNECTION_TIMEOUT_MS}ms`)
+console.log(`  Room TTL:              ${ROOM_TTL_MINUTES}m`)

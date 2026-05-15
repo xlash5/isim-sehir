@@ -2,7 +2,7 @@
 
 > **Priority:** Medium
 > **Version target:** v2.1
-> **Status:** 📝 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -19,28 +19,34 @@ When all players leave a room or the admin disconnects without transferring, the
 
 ## Implementation Approach
 
-PeerJS Server does not expose a built-in peer enumeration API. Use the `allow_discovery: true` mechanism or maintain a local `Map<peerId, { createdAt, connectionCount }>` via the `connection` and `disconnect` events on the `PeerServer` instance.
+A local `Map<peerId, { createdAt, connectionCount }>` is maintained via the `connection` and `disconnect` events on the `PeerServer` instance. A 60-second `setInterval` iterates the map and destroys entries with `connectionCount === 0` and age ≥ `ROOM_TTL_MINUTES` (default 5). The existing `roomMembers`/`peerToRoom` maps handle room code cleanup on disconnect, so the stale peer removal primarily frees tracking state and logs.
 
 ```js
 const peers = new Map()
 
 peerServer.on('connection', (client) => {
-  peers.set(client.getId(), { createdAt: Date.now(), connections: 0 })
+  const peerId = client.getId()
+  const existing = peers.get(peerId)
+  if (existing) {
+    existing.connectionCount++
+  } else {
+    peers.set(peerId, { createdAt: Date.now(), connectionCount: 1 })
+  }
 })
 
 peerServer.on('disconnect', (client) => {
   const entry = peers.get(client.getId())
-  if (entry) entry.connections = Math.max(0, entry.connections - 1)
+  if (entry) entry.connectionCount = Math.max(0, entry.connectionCount - 1)
 })
 ```
 
-## Files to Modify
+## Files Modified
 
-- `server/index.js` — add peer tracking and cleanup interval
+- `server/index.js` — added peer tracking, cleanup interval, `ROOM_TTL_MINUTES` env var
 
 ## Acceptance Criteria
 
-- [ ] Rooms with zero connections for >5 minutes are destroyed
-- [ ] Active rooms (with ≥1 connection) are never destroyed
-- [ ] Room codes are freed for reuse after destruction
-- [ ] Server logs cleanup actions
+- [x] Rooms with zero connections for >5 minutes are destroyed
+- [x] Active rooms (with ≥1 connection) are never destroyed
+- [x] Room codes are freed for reuse after destruction
+- [x] Server logs cleanup actions

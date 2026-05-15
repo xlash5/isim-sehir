@@ -61,8 +61,8 @@ isim_sehir/
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md     # ES, PT, FR, DE locales ✅
 │   ├── SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md     # Rate limiting on peer messages ✅
 │   ├── SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md  # Room passwords / private rooms ✅
-│   └── SPEC-DRAFT-v2.1-*.md        # stale-room-cleanup,
-│                                     # lobby-category-visibility, spectator-mode,
+│   ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md # Stale room cleanup ✅
+│   └── SPEC-DRAFT-v2.1-*.md        # lobby-category-visibility, spectator-mode,
 │                                     # lobby-auto-start
 │
 └── src/
@@ -379,6 +379,7 @@ Navigation guards:
 | `MAX_PEERS_PER_ROOM` | `8` | Hard cap on connected peers per room |
 | `MAX_CONNECTIONS_PER_SEC` | `5` | IP-level rate limit (connections/sec) |
 | `CONNECTION_TIMEOUT_MS` | `30000` | Idle peer expiry in ms |
+| `ROOM_TTL_MINUTES` | `5` | Stale peer cleanup threshold in minutes |
 | `ALLOWED_ORIGINS` | `http://localhost:5173,https://isim-sehir-phi.vercel.app` | CORS-allowed origins (comma-separated) |
 
 ---
@@ -425,3 +426,4 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md` | v2.1 — ES, PT, FR, DE locale files ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md` | v2.1 — Rate limiting on peer messages ✅ |
 | `SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md` | v2.1 — Room passwords / private rooms ✅ |
+| `SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md` | v2.1 — Stale room cleanup / abandoned room reclamation ✅ |
