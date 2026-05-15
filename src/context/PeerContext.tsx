@@ -205,7 +205,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             const ack: PeerMessage = {
               type: 'reconnect-accepted',
               senderId: storeState.localPlayerId!,
-              payload: { room: fresh.room },
+              payload: { room: fresh.room, timer: fresh.timer },
             }
             const conn = pStore.connections.get(connId)
             if (conn) conn.send(ack)
@@ -222,12 +222,12 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           break
         }
         case 'reconnect-accepted': {
-          const reconnPayload = msg.payload as { room: GameRoom }
+          const reconnPayload = msg.payload as { room: GameRoom; timer: number | null }
           if (reconnPayload.room) {
-            console.log('[Peer] Reconnect accepted, applying room state')
+            console.log('[Peer] Reconnect accepted, applying room state and timer')
             adminPlayerIdRef.current = reconnPayload.room.adminId
             lastHeartbeatAtRef.current = Date.now()
-            gameStore.setState({ room: reconnPayload.room })
+            gameStore.setState({ room: reconnPayload.room, timer: reconnPayload.timer ?? null })
           }
           break
         }

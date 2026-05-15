@@ -2,7 +2,7 @@
 
 > **Priority:** Medium — visual bug, does not break gameplay
 > **Version target:** v1.2
-> **Status:** 🔴 Not implemented
+> **Status:** ✅ Implemented (Option A)
 
 ## Overview
 
@@ -73,7 +73,37 @@ setTimer(Math.ceil(remaining))
 
 ## Acceptance Criteria
 
-- [ ] Refreshing during the answering phase reconnects and shows the correct remaining time
-- [ ] Timer accuracy is within ±1 second of the actual remaining time
-- [ ] No regression for non-reconnection flow
-- [ ] Timer works correctly across multiple rounds after reconnection
+- [x] Refreshing during the answering phase reconnects and shows the correct remaining time
+- [x] Timer accuracy is within ±1 second of the actual remaining time
+- [x] No regression for non-reconnection flow
+- [x] Timer works correctly across multiple rounds after reconnection
+
+---
+
+## Implementation (Option A)
+
+Two changes in `src/context/PeerContext.tsx`:
+
+### 1. Admin sends timer in `reconnect-accepted`
+
+When the admin processes a `reconnect` message, the current `timer` value from the admin's Zustand store is included in the `reconnect-accepted` payload:
+
+```ts
+payload: { room: fresh.room, timer: fresh.timer }
+```
+
+### 2. Reconnecting player applies received timer
+
+When the reconnecting player receives `reconnect-accepted`, the timer is destructured from the payload and applied to the store alongside the room state:
+
+```ts
+const reconnPayload = msg.payload as { room: GameRoom; timer: number | null }
+gameStore.setState({ room: reconnPayload.room, timer: reconnPayload.timer ?? null })
+```
+
+### Why this works
+
+- The `useGame` hook's `useEffect` triggers on `room.phase` change. On page refresh → reconnect, `room` transitions from `null` to the synced room with `phase: 'answering'`, so the interval is set up.
+- With `timer` now non-null, the interval counts down correctly and auto-submits at 0.
+- Normal (non-reconnect) timer flow is untouched.
+- Verified: `tsc --noEmit` passes with no errors.

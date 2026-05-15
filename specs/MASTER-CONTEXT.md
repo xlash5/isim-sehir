@@ -208,7 +208,7 @@ lobby → wheel → answering → grading → round-results → wheel → ... �
 | `player-disconnected` | Detector→All | `{ playerId }` |
 | `admin-transfer` | Detector→All | `{ newAdminId }` |
 | `reconnect` | Reconnecting→Admin | `{ playerId, nickname }` |
-| `reconnect-accepted` | Admin→Reconnecting | `{ room: GameRoom }` |
+| `reconnect-accepted` | Admin→Reconnecting | `{ room: GameRoom, timer: number \| null }` |
 
 ### Network Topology
 
@@ -376,5 +376,5 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-v1.2-custom-categories.md` | Custom category support |
 | `SPEC-v1.2-game-history.md` | Game history / replay ✅ |
 | `SPEC-v1.2-sound-effects.md` | Sound effects ✅ |
-| `SPEC-v1.2-timer-reconnect.md` | Timer + reconnect improvements |
+| `SPEC-v1.2-timer-reconnect.md` | Timer + reconnect improvements ✅ |
 | `SPEC-v2.0-major.md` | Major v2.0 plans |
