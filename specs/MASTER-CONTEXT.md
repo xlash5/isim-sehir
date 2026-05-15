@@ -207,6 +207,7 @@ lobby → wheel → answering → grading → round-results → wheel → ... �
 | `heartbeat` | Admin→All (8s interval) | `{}` |
 | `player-disconnected` | Detector→All | `{ playerId }` |
 | `admin-transfer` | Detector→All | `{ newAdminId }` |
+| `admin-transfer-request` | Admin→All | `{ newAdminId }` |
 | `reconnect` | Reconnecting→Admin | `{ playerId, nickname }` |
 | `reconnect-accepted` | Admin→Reconnecting | `{ room: GameRoom, timer: number \| null }` |
 
@@ -379,6 +380,6 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-v1.2-timer-reconnect.md` | Timer + reconnect improvements ✅ |
 | `SPEC-v2.0-room-codes.md` | v2.0 — 4-char alphanumeric room codes |
 | `SPEC-v2.0-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect |
-| `SPEC-v2.0-admin-transfer.md` | v2.0 — Voluntary admin transfer |
+| `SPEC-v2.0-admin-transfer.md` | v2.0 — Voluntary admin transfer ✅ |
 | `SPEC-v2.0-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading |
 | `SPEC-v2.0-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis |

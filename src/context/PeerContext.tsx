@@ -11,6 +11,13 @@ function formatAdminTransferred(nickname: string): string {
   return locale === 'en' ? `${nickname} is the new admin.` : `${nickname} yeni admin oldu.`
 }
 
+function formatAdminTransferredByRequest(oldAdmin: string, newAdmin: string): string {
+  const locale = (typeof localStorage !== 'undefined' ? localStorage.getItem('locale') : null) || 'tr'
+  return locale === 'en'
+    ? `${oldAdmin} transferred admin to ${newAdmin}.`
+    : `${oldAdmin} admin yetkisini ${newAdmin} kullanıcısına devretti.`
+}
+
 function formatPlayerDisconnected(nickname: string): string {
   const locale = (typeof localStorage !== 'undefined' ? localStorage.getItem('locale') : null) || 'tr'
   return locale === 'en' ? `${nickname} left the game.` : `${nickname} oyundan ayrıldı.`
@@ -189,6 +196,23 @@ export function PeerProvider({ children }: { children: ReactNode }) {
               playerId: 'system',
               nickname: 'System',
               text: formatAdminTransferred(newAdmin.nickname),
+              timestamp: Date.now(),
+            })
+          }
+          break
+        }
+        case 'admin-transfer-request': {
+          const atrPayload = msg.payload as { newAdminId: string }
+          store.transferAdmin(atrPayload.newAdminId)
+          adminPlayerIdRef.current = atrPayload.newAdminId
+          const atrState = gameStore.getState()
+          const oldAdminPlayer = atrState.room?.players.find((p) => p.id === msg.senderId)
+          const newAdminPlayer = atrState.room?.players.find((p) => p.id === atrPayload.newAdminId)
+          if (oldAdminPlayer && newAdminPlayer) {
+            store.addChatMessage({
+              playerId: 'system',
+              nickname: 'System',
+              text: formatAdminTransferredByRequest(oldAdminPlayer.nickname, newAdminPlayer.nickname),
               timestamp: Date.now(),
             })
           }

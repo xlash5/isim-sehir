@@ -161,5 +161,12 @@ const tr: Record<string, string> = {
 
   'sound.enabled': 'Ses Açık',
   'sound.disabled': 'Ses Kapalı',
+
+  'admin.transfer': 'Admini Devret',
+  'admin.transferConfirm': 'Admin yetkisini {nickname} kullanıcısına devretmek istediğine emin misin?',
+  'admin.transferYes': 'Evet, Devret',
+  'admin.transferNo': 'Hayır',
+
+  'system.adminTransferredByRequest': '{oldAdmin} admin yetkisini {newAdmin} kullanıcısına devretti.',
 }
 export default tr

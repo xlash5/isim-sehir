@@ -161,5 +161,12 @@ const en: Record<string, string> = {
 
   'sound.enabled': 'Sound On',
   'sound.disabled': 'Sound Off',
+
+  'admin.transfer': 'Transfer Admin',
+  'admin.transferConfirm': 'Are you sure you want to transfer admin to {nickname}?',
+  'admin.transferYes': 'Yes, Transfer',
+  'admin.transferNo': 'No',
+
+  'system.adminTransferredByRequest': '{oldAdmin} transferred admin to {newAdmin}.',
 }
 export default en

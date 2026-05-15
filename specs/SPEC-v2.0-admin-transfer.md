@@ -2,7 +2,7 @@
 
 > **Priority:** High
 > **Version target:** v2.0
-> **Status:** 🔴 Not implemented
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -41,8 +41,8 @@ export type PeerMessageType =
 
 ## Acceptance Criteria
 
-- [ ] Admin sees a transfer button next to each non-admin player
-- [ ] Button is hidden during active game phases (wheel, answering, grading)
-- [ ] Confirmation dialog appears on click
-- [ ] On confirm, admin is transferred and all players are notified
-- [ ] Chat shows a system message about the transfer
+- [x] Admin sees a transfer button next to each non-admin player
+- [x] Button is hidden during active game phases (wheel, answering, grading)
+- [x] Confirmation dialog appears on click
+- [x] On confirm, admin is transferred and all players are notified
+- [x] Chat shows a system message about the transfer
