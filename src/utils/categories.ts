@@ -1,3 +1,7 @@
+export function isBuiltinCategory(key: string): boolean {
+  return CATEGORY_KEYS.includes(key)
+}
+
 export const CATEGORY_KEYS: string[] = [
   'isim_erkek',
   'isim_kadin',

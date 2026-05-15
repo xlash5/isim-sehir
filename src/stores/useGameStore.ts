@@ -49,6 +49,7 @@ const defaultSettings: GameSettings = {
   totalRounds: 3,
   roundDuration: 60,
   letterPool: TURKISH_LETTERS,
+  customCategories: [],
 }
 
 export const useGameStore = create<GameState>((set, get) => ({

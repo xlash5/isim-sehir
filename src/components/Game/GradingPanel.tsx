@@ -3,6 +3,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import ThumbDownIcon from '@mui/icons-material/ThumbDown'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
+import { CATEGORY_KEYS } from '../../utils/categories'
 
 interface Props {
   onVote: (answerId: string, isValid: boolean) => void
@@ -55,7 +56,7 @@ export function GradingPanel({ onVote, onComplete }: Props) {
         return (
           <Paper key={category} sx={{ p: 2 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5, color: 'primary.light' }}>
-              {t(`category.${category}`)}
+              {CATEGORY_KEYS.includes(category) ? t(`category.${category}`) : category}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               {answersInCategory.map((answer) => {

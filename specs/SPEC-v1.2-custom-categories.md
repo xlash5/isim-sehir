@@ -2,7 +2,7 @@
 
 > **Priority:** Medium — enhancement feature
 > **Version target:** v1.2
-> **Status:** 🔴 Not implemented
+> **Status:** 🟢 Implemented
 
 ## Overview
 
@@ -67,11 +67,17 @@ removeCustomCategory: (name: string) => { /* remove, broadcast */ }
 
 ## Acceptance Criteria
 
-- [ ] Admin can add a custom category via text input
-- [ ] Custom category appears in the selection list with a visual distinction
-- [ ] Custom category can be selected/deselected like built-in ones
-- [ ] Custom category can be removed by admin before game starts
-- [ ] Max 5 custom categories enforced
-- [ ] Duplicate names (against built-in or other custom) are rejected
-- [ ] All players see the custom categories in the answer phase
-- [ ] Custom categories are not persisted between sessions
+- [x] Admin can add a custom category via text input
+- [x] Custom category appears in the selection list with a visual distinction
+- [x] Custom category can be selected/deselected like built-in ones
+- [x] Custom category can be removed by admin before game starts
+- [x] Max 5 custom categories enforced
+- [x] Duplicate names (against built-in or other custom) are rejected
+- [x] All players see the custom categories in the answer phase
+- [x] Custom categories are not persisted between sessions
+
+## Implementation Notes
+
+- `GameRoom.availableCustomCategories` was **not** added — `GameSettings.customCategories` on the room state serves the same purpose without maintaining two copies of the data.
+- The store actions `addCustomCategory`/`removeCustomCategory` were implemented as local state in `GameSettingsPanel.tsx` rather than standalone Zustand actions, since the store has no access to `broadcastMessage`. The final `customCategories` array is broadcast as part of the existing `settings-update` message on Save.
+- Visual distinction uses italic typography + `primary.light` color (no emoji, following project conventions).

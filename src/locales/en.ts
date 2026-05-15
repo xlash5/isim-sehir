@@ -47,6 +47,13 @@ const en: Record<string, string> = {
   'settings.letterDisplaySelected': '{count} letters selected',
   'settings.minCategories': 'You must select at least 3 categories',
   'settings.seconds': '{value} seconds',
+  'settings.customCategories': 'Custom Categories',
+  'settings.addCustomCategory': 'Add',
+  'settings.customCategoryPlaceholder': 'Category name...',
+  'settings.customCategoryLimit': 'Max 5 custom categories',
+  'settings.customCategoryEmpty': 'Category name cannot be empty',
+  'settings.customCategoryMaxLength': 'Max 30 characters',
+  'settings.customCategoryDuplicate': 'This category name already exists',
 
   'game.wheel.spinning': 'Spinning...',
   'game.wheel.letter': 'Selected Letter',

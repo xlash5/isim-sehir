@@ -4,6 +4,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
+import { CATEGORY_KEYS } from '../../utils/categories'
 
 interface Props {
   onSubmit: () => void
@@ -50,20 +51,23 @@ export function AnswerTable({ onSubmit }: Props) {
 
       <Paper sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {categories.map((category) => (
-            <TextField
-              key={category}
-              label={t(`category.${category}`)}
-              placeholder={t('game.answering.placeholder', { category: t(`category.${category}`) })}
-              value={answers.get(category) ?? ''}
-              onChange={(e) => {
-                if (e.target.value.length <= 50) setAnswer(category, e.target.value)
-              }}
-              disabled={isSubmitting}
-              size="small"
-              fullWidth
-            />
-          ))}
+          {categories.map((category) => {
+            const catLabel = CATEGORY_KEYS.includes(category) ? t(`category.${category}`) : category
+            return (
+              <TextField
+                key={category}
+                label={catLabel}
+                placeholder={t('game.answering.placeholder', { category: catLabel })}
+                value={answers.get(category) ?? ''}
+                onChange={(e) => {
+                  if (e.target.value.length <= 50) setAnswer(category, e.target.value)
+                }}
+                disabled={isSubmitting}
+                size="small"
+                fullWidth
+              />
+            )
+          })}
         </Box>
       </Paper>
       {!isSubmitting && (

@@ -47,6 +47,13 @@ const tr: Record<string, string> = {
   'settings.letterDisplaySelected': '{count} harf seçili',
   'settings.minCategories': 'En az 3 kategori seçmelisiniz',
   'settings.seconds': '{value} saniye',
+  'settings.customCategories': 'Özel Kategoriler',
+  'settings.addCustomCategory': 'Ekle',
+  'settings.customCategoryPlaceholder': 'Kategori adı...',
+  'settings.customCategoryLimit': 'En fazla 5 özel kategori eklenebilir',
+  'settings.customCategoryEmpty': 'Kategori adı boş olamaz',
+  'settings.customCategoryMaxLength': 'En fazla 30 karakter',
+  'settings.customCategoryDuplicate': 'Bu kategori adı zaten mevcut',
 
   'game.wheel.spinning': 'Dönüyor...',
   'game.wheel.letter': 'Seçilen Harf',

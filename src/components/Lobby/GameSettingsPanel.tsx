@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import {
   Paper, Typography, Box, FormControl, InputLabel, Select, MenuItem,
-  Chip, Button, Slider, OutlinedInput, Checkbox, ListItemText,
+  Chip, Button, Slider, OutlinedInput, Checkbox, ListItemText, TextField,
+  IconButton,
 } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
+import CloseIcon from '@mui/icons-material/Close'
 import { useGameStore } from '../../stores/useGameStore'
 import { usePeer } from '../../context/PeerContext'
 import { useLocale } from '../../locales'
@@ -27,12 +29,16 @@ export function GameSettingsPanel() {
   const [roundDuration, setRoundDuration] = useState<number | null>(settings?.roundDuration ?? 60)
   const [letterMode, setLetterMode] = useState<'all' | 'select'>('all')
   const [selectedLetters, setSelectedLetters] = useState<string[]>([])
+  const [customCategories, setCustomCategories] = useState<string[]>(settings?.customCategories ?? [])
+  const [customInput, setCustomInput] = useState('')
+  const [customInputError, setCustomInputError] = useState<string | null>(null)
 
   useEffect(() => {
     if (settings) {
       setCategories(settings.categories)
       setTotalRounds(settings.totalRounds)
       setRoundDuration(settings.roundDuration)
+      setCustomCategories(settings.customCategories)
     }
   }, [settings])
 
@@ -45,6 +51,7 @@ export function GameSettingsPanel() {
       totalRounds,
       roundDuration,
       letterPool: letterMode === 'all' ? TURKISH_LETTERS : selectedLetters,
+      customCategories,
     }
     updateSettings(newSettings)
     broadcastMessage({
@@ -58,6 +65,35 @@ export function GameSettingsPanel() {
   const letterDisplay = letterMode === 'all'
     ? t('settings.letterDisplayAll')
     : t('settings.letterDisplaySelected', { count: selectedLetters.length })
+
+  const handleAddCustom = () => {
+    const name = customInput.trim()
+    if (!name) {
+      setCustomInputError(t('settings.customCategoryEmpty'))
+      return
+    }
+    if (name.length > 30) {
+      setCustomInputError(t('settings.customCategoryMaxLength'))
+      return
+    }
+    const allCategoryKeys = [...CATEGORY_KEYS, ...customCategories]
+    if (allCategoryKeys.some((k) => k.toLowerCase() === name.toLowerCase())) {
+      setCustomInputError(t('settings.customCategoryDuplicate'))
+      return
+    }
+    if (customCategories.length >= 5) return
+    setCustomCategories((prev) => [...prev, name])
+    setCustomInput('')
+    setCustomInputError(null)
+  }
+
+  const handleRemoveCustom = (name: string) => {
+    setCustomCategories((prev) => prev.filter((c) => c !== name))
+    setCategories((prev) => prev.filter((c) => c !== name))
+  }
+
+  const getCategoryLabel = (key: string) =>
+    CATEGORY_KEYS.includes(key) ? t(`category.${key}`) : key
 
   return (
     <Paper sx={{ p: 2 }}>
@@ -80,6 +116,12 @@ export function GameSettingsPanel() {
           <Typography variant="body2">
             <strong>{t('settings.letterPool')}:</strong> {letterDisplay}
           </Typography>
+          {settings.customCategories.length > 0 && (
+            <Typography variant="body2">
+              <strong>{t('settings.customCategories')}:</strong>{' '}
+              {settings.customCategories.join(', ')}
+            </Typography>
+          )}
           {isAdmin && (
             <Button size="small" variant="outlined" onClick={() => setEditMode(true)} disabled={isAdminReady} sx={{ mt: 1 }}>
               {t('settings.edit')}
@@ -101,7 +143,7 @@ export function GameSettingsPanel() {
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((v) => (
-                    <Chip key={v} label={t(`category.${v}`)} size="small" />
+                    <Chip key={v} label={getCategoryLabel(v)} size="small" />
                   ))}
                 </Box>
               )}
@@ -112,6 +154,26 @@ export function GameSettingsPanel() {
                   <ListItemText primary={t(`category.${key}`)} />
                 </MenuItem>
               ))}
+              {customCategories.map((name) => (
+                <MenuItem key={name} value={name}>
+                  <Checkbox checked={categories.includes(name)} />
+                  <ListItemText
+                    primary={name}
+                    primaryTypographyProps={{ fontStyle: 'italic', color: 'primary.light' }}
+                  />
+                  <IconButton
+                    size="small"
+                    edge="end"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleRemoveCustom(name)
+                    }}
+                    sx={{ ml: 1 }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                </MenuItem>
+              ))}
             </Select>
             {categories.length < 3 && categories.length > 0 && (
               <Typography variant="caption" color="error">
@@ -119,6 +181,42 @@ export function GameSettingsPanel() {
               </Typography>
             )}
           </FormControl>
+
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+            <TextField
+              size="small"
+              value={customInput}
+              onChange={(e) => {
+                setCustomInput(e.target.value)
+                setCustomInputError(null)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleAddCustom()
+                }
+              }}
+              placeholder={t('settings.customCategoryPlaceholder')}
+              disabled={customCategories.length >= 5}
+              error={!!customInputError}
+              helperText={customInputError}
+              sx={{ flexGrow: 1 }}
+            />
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleAddCustom}
+              disabled={customCategories.length >= 5}
+              sx={{ mt: 0.5, whiteSpace: 'nowrap' }}
+            >
+              {t('settings.addCustomCategory')}
+            </Button>
+          </Box>
+          {customCategories.length >= 5 && (
+            <Typography variant="caption" color="text.secondary">
+              {t('settings.customCategoryLimit')}
+            </Typography>
+          )}
 
           <Box>
             <Typography variant="body2" gutterBottom>

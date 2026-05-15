@@ -19,6 +19,7 @@ export interface GameSettings {
   totalRounds: number
   roundDuration: number | null
   letterPool: string[]
+  customCategories: string[]
 }
 
 export interface Answer {
