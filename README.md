@@ -27,6 +27,7 @@ letter across ~33 categories. Peers grade each other's answers.
 - 4-character alphanumeric room codes (v2.0)
 - Peer grading with changeable votes until admin finalizes
 - Cumulative score + per-round breakdown (unique=10pts, shared=5pts)
+- Locale-aware letter pool — adapts to admin's language (Turkish, English, German, Spanish, French, Portuguese alphabets) (v2.2)
 - Turkish letter pool (28 letters, Ğ excluded)
 - Configurable rounds, round duration, letter pool
 - Spectator mode — join as read-only observer with distinct badge (v2.1)
@@ -81,6 +82,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.1** | **P02** | **Lobby category visibility — real-time chip display** | ✅ |
 | **v2.1** | **P03** | **Spectator mode — read-only game observers** | ✅ |
 | **v2.1** | **P03** | **Lobby auto-start — countdown when all ready** | ✅ |
+| **v2.2** | **P01** | **Locale-aware letter pool — alphabet adapts to admin's language** | 📝 |
 
 Detailed specifications in [`specs/`](./specs/).
 

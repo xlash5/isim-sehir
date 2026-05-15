@@ -78,7 +78,8 @@ isim_sehir/
 │       ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md    # Stale room cleanup ✅
 │       ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
 │       ├── SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md        # Spectator mode ✅
-│       └── SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md            # Lobby auto-start 📝
+│       ├── SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md            # Lobby auto-start 📝
+│       └── SPEC-DRAFT-v2.2-P01-01-locale-letter-pool.md          # Locale-aware letter pool 📝
 │
 └── src/
     ├── main.tsx            # ReactDOM entry
@@ -346,6 +347,7 @@ Navigation guards:
 - 28 Turkish letters: A B C Ç D E F G H I İ J K L M N O Ö P R S Ş T U Ü V Y Z
 - Letter `Ğ` is excluded (no words start with it)
 - Can be filtered to a subset via settings
+- **v2.2 (draft):** Default pool adapts to admin's locale — Turkish, English, German, Spanish, French, Portuguese alphabets supported
 
 ---
 
@@ -445,4 +447,5 @@ cd server && npm start   # PeerJS on :9000
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md` | v2.1 — Stale room cleanup / abandoned room reclamation ✅ |
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md` | v2.1 — Real-time category chip display for all players ✅ |
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers ✅ |
-| `v2.1/SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready 📝 |
+| `v2.1/SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready ✅ |
+| `v2.2/SPEC-DRAFT-v2.2-P01-01-locale-letter-pool.md` | v2.2 — Locale-aware letter pool 📝 |
