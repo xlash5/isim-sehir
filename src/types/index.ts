@@ -76,6 +76,8 @@ export type PeerMessageType =
   | 'reconnect'
   | 'reconnect-accepted'
   | 'admin-transfer-request'
+  | 'ping'
+  | 'pong'
 
 export interface PeerMessage {
   type: PeerMessageType

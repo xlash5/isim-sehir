@@ -168,5 +168,9 @@ const tr: Record<string, string> = {
   'admin.transferNo': 'Hayır',
 
   'system.adminTransferredByRequest': '{oldAdmin} admin yetkisini {newAdmin} kullanıcısına devretti.',
+
+  'connection.connected': 'Bağlı',
+  'connection.reconnecting': 'Yeniden bağlanıyor...',
+  'connection.disconnected': 'Bağlantı koptu',
 }
 export default tr

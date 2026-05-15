@@ -50,6 +50,11 @@ export function PeerProvider({ children }: { children: ReactNode }) {
   const heartbeatSenderRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const heartbeatMonitorRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const isAdoptingPeerRef = useRef(false)
+  const lastPongTimestampsRef = useRef<Map<string, number>>(new Map())
+  const pingSenderRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const pingMonitorRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const reconnectAttemptsRef = useRef(0)
+  const reconnectIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const gameStore = useGameStore
   const peerStore = usePeerStore
@@ -153,6 +158,34 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         case 'heartbeat':
           lastHeartbeatAtRef.current = Date.now()
           break
+        case 'ping': {
+          const pongMsg: PeerMessage = {
+            type: 'pong',
+            senderId: localPlayerIdRef.current ?? '',
+            payload: {},
+          }
+          pStore.connections.get(connId)?.send(pongMsg)
+          break
+        }
+        case 'pong': {
+          lastPongTimestampsRef.current.set(connId, Date.now())
+          const pStore = peerStore.getState()
+          const now = Date.now()
+          let allRecent = pStore.connections.size > 0
+          for (const peerId of pStore.connections.keys()) {
+            const lastPong = lastPongTimestampsRef.current.get(peerId) ?? 0
+            if (now - lastPong > 15000) { allRecent = false; break }
+          }
+          if (allRecent && pStore.connectionStatus !== 'connected') {
+            pStore.setConnectionStatus('connected')
+            reconnectAttemptsRef.current = 0
+            if (reconnectIntervalRef.current) {
+              clearInterval(reconnectIntervalRef.current)
+              reconnectIntervalRef.current = null
+            }
+          }
+          break
+        }
         case 'player-disconnected': {
           const { playerId } = msg.payload as { playerId: string }
           const currentState = gameStore.getState()
@@ -290,6 +323,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         conn.on('open', () => {
           console.log(`[Peer] Incoming connection open from ${conn.peer}`)
           addConnection(conn.peer, conn)
+          lastPongTimestampsRef.current.set(conn.peer, Date.now())
           const store = gameStore.getState()
           if (store.room?.adminId === store.localPlayerId && store.room) {
             conn.send({
@@ -340,6 +374,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             peerToPlayerMap.current.delete(conn.peer)
           }
           removeConnection(conn.peer)
+          lastPongTimestampsRef.current.delete(conn.peer)
         }
         conn.on('close', handleIncomingClose)
         conn.on('error', handleIncomingClose)
@@ -366,6 +401,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       conn.on('open', () => {
         console.log(`[Peer] Connection open to ${targetId}`)
         addConnection(targetId, conn)
+        lastPongTimestampsRef.current.set(targetId, Date.now())
         conn.send({
           type: 'join-room',
           senderId: localPlayerIdRef.current ?? '',
@@ -385,6 +421,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const activeConn = peerStore.getState().connections.get(targetId)
           if (activeConn !== conn) return
           removeConnection(targetId)
+          lastPongTimestampsRef.current.delete(targetId)
           lastHeartbeatAtRef.current = Date.now()
           const store = gameStore.getState()
           if (!store.room) return
@@ -447,6 +484,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       conn.on('open', () => {
         console.log(`[Peer] Reconnect connection open to ${targetId}`)
         addConnection(targetId, conn)
+        lastPongTimestampsRef.current.set(targetId, Date.now())
         conn.send({
           type: 'reconnect',
           senderId: localPlayerIdRef.current ?? '',
@@ -463,6 +501,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         const activeConn = peerStore.getState().connections.get(targetId)
         if (activeConn !== conn) return
         removeConnection(targetId)
+        lastPongTimestampsRef.current.delete(targetId)
         lastHeartbeatAtRef.current = Date.now()
         const store = gameStore.getState()
         if (!store.room) return
@@ -540,6 +579,8 @@ export function PeerProvider({ children }: { children: ReactNode }) {
 
   broadcastRef.current = broadcastMessage
   sendMessageRef.current = sendMessage
+  const connectToPeerRef = useRef(connectToPeer)
+  connectToPeerRef.current = connectToPeer
 
   const disconnectAll = useCallback(() => {
     disconnect()
@@ -629,6 +670,95 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (pingSenderRef.current) return
+    pingSenderRef.current = setInterval(() => {
+      const msg: PeerMessage = {
+        type: 'ping',
+        senderId: localPlayerIdRef.current ?? '',
+        payload: {},
+      }
+      broadcastRef.current(msg)
+    }, 10000)
+    return () => {
+      if (pingSenderRef.current) {
+        clearInterval(pingSenderRef.current)
+        pingSenderRef.current = null
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    pingMonitorRef.current = setInterval(() => {
+      const pStore = peerStore.getState()
+      const gStore = gameStore.getState()
+      const now = Date.now()
+
+      if (!gStore.room) {
+        pStore.setConnectionStatus('connected')
+        return
+      }
+
+      const connections = pStore.connections
+      if (connections.size === 0) return
+
+      let allRecent = true
+      let anyStale = false
+
+      for (const peerId of connections.keys()) {
+        const lastPong = lastPongTimestampsRef.current.get(peerId) ?? 0
+        if (now - lastPong > 15000) {
+          allRecent = false
+          if (lastPong > 0) anyStale = true
+        }
+      }
+
+      const currentStatus = pStore.connectionStatus
+
+      if (allRecent) {
+        if (currentStatus !== 'connected') {
+          pStore.setConnectionStatus('connected')
+          reconnectAttemptsRef.current = 0
+          if (reconnectIntervalRef.current) {
+            clearInterval(reconnectIntervalRef.current)
+            reconnectIntervalRef.current = null
+          }
+        }
+      } else if (anyStale && currentStatus === 'connected') {
+        pStore.setConnectionStatus('reconnecting')
+        if (!reconnectIntervalRef.current) {
+          reconnectAttemptsRef.current = 0
+          reconnectIntervalRef.current = setInterval(() => {
+            reconnectAttemptsRef.current++
+            if (reconnectAttemptsRef.current > 6) {
+              peerStore.getState().setConnectionStatus('disconnected')
+              if (reconnectIntervalRef.current) {
+                clearInterval(reconnectIntervalRef.current)
+                reconnectIntervalRef.current = null
+              }
+              return
+            }
+            const gStoreState = gameStore.getState()
+            if (gStoreState.room && gStoreState.localPlayerId !== gStoreState.room.adminId) {
+              connectToPeerRef.current(gStoreState.room.code)
+            }
+          }, 5000)
+        }
+      }
+    }, 5000)
+
+    return () => {
+      if (pingMonitorRef.current) {
+        clearInterval(pingMonitorRef.current)
+        pingMonitorRef.current = null
+      }
+      if (reconnectIntervalRef.current) {
+        clearInterval(reconnectIntervalRef.current)
+        reconnectIntervalRef.current = null
+      }
+    }
+  }, [peerStore, gameStore])
 
   return (
     <PeerContext.Provider value={{ createPeer, connectToPeer, reconnectToPeer, sendMessage, broadcastMessage, disconnectAll }}>

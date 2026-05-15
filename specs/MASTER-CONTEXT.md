@@ -160,11 +160,12 @@ Other peers → handleMessage → Store Action → Re-render
    - `scores: Record<string, number>` — per-round scores
    - 25+ actions (createRoom, joinRoom, startRound, submitAnswers, etc.)
 
-2. **usePeerStore** — Connection management
-   - `peer: Peer | null`
-   - `connections: Map<string, DataConnection>` — peerId → connection
-   - `peerId: string | null`
-   - `isConnected: boolean`
+ 2. **usePeerStore** — Connection management
+    - `peer: Peer | null`
+    - `connections: Map<string, DataConnection>` — peerId → connection
+    - `peerId: string | null`
+    - `isConnected: boolean`
+    - `connectionStatus: 'connected' | 'reconnecting' | 'disconnected'` — ping/pong health
 
 3. **useNotificationStore** — Simple snackbar
    - `message: string | null`
@@ -205,6 +206,8 @@ lobby → wheel → answering → grading → round-results → wheel → ... �
 | `round-end` | Admin→All | `{ roundScores, updatedPlayers }` |
 | `chat-message` | Player→All | `ChatMessage` |
 | `heartbeat` | Admin→All (8s interval) | `{}` |
+| `ping` | Any→All (10s interval) | `{}` |
+| `pong` | Any→Target | `{}` |
 | `player-disconnected` | Detector→All | `{ playerId }` |
 | `admin-transfer` | Detector→All | `{ newAdminId }` |
 | `admin-transfer-request` | Admin→All | `{ newAdminId }` |
@@ -217,6 +220,9 @@ lobby → wheel → answering → grading → round-results → wheel → ... �
 - Admin peer ID = room code (6-digit string)
 - Non-admin peers get random PeerJS IDs
 - Heartbeat every 8s from admin; monitor checks every 5s, detects stale after 25s
+- Ping/pong every 10s between all peers; pong monitor checks every 5s, marks stale after 15s
+- Connection status indicator: 🟢 connected (all pongs recent), 🟡 reconnecting (some stale, auto-reconnect active), 🔴 disconnected (all stale / reconnect failed)
+- Auto-reconnect on stale connection: retries every 5s up to 6 attempts (30s), then falls to disconnected
 - On admin disconnect: first remaining player adopts room code as peer ID and becomes admin
 - On non-admin disconnect: removed from player list, admin transfer if they were admin
 
@@ -381,7 +387,7 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-v1.2-sound-effects.md` | Sound effects ✅ |
 | `SPEC-v1.2-timer-reconnect.md` | Timer + reconnect improvements ✅ |
 | `SPEC-v2.0-room-codes.md` | v2.0 — 4-char alphanumeric room codes |
-| `SPEC-v2.0-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect |
+| `SPEC-v2.0-connection-loss.md` | v2.0 — Ping/pong, connection indicator, auto-reconnect ✅ |
 | `SPEC-v2.0-admin-transfer.md` | v2.0 — Voluntary admin transfer ✅ |
 | `SPEC-v2.0-mobile-responsive.md` | v2.0 — Mobile responsive layout, bottom sheet grading |
 | `SPEC-v2.0-performance.md` | v2.0 — Memoisation, lazy loading, bundle analysis |

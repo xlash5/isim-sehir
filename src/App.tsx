@@ -9,6 +9,7 @@ import { darkTheme, lightTheme } from './theme'
 import { PeerProvider } from './context/PeerContext'
 import { LocaleProvider } from './locales'
 import { LanguageSwitcher } from './components/common/LanguageSwitcher'
+import { ConnectionStatus } from './components/common/ConnectionStatus'
 import { NotificationSnackbar } from './components/common/NotificationSnackbar'
 import { SessionRestore } from './components/common/SessionRestore'
 import { HomePage } from './pages/HomePage'
@@ -56,6 +57,7 @@ export default function App() {
               {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
             <PeerProvider>
+              <ConnectionStatus />
               <NotificationSnackbar />
               <SessionRestore />
               <Routes>

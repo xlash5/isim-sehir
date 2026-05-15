@@ -168,5 +168,9 @@ const en: Record<string, string> = {
   'admin.transferNo': 'No',
 
   'system.adminTransferredByRequest': '{oldAdmin} transferred admin to {newAdmin}.',
+
+  'connection.connected': 'Connected',
+  'connection.reconnecting': 'Reconnecting...',
+  'connection.disconnected': 'Disconnected',
 }
 export default en

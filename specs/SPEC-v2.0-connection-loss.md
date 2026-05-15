@@ -2,7 +2,7 @@
 
 > **Priority:** High
 > **Version target:** v2.0
-> **Status:** 🔴 Not implemented
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -65,8 +65,8 @@ type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected'
 
 ## Acceptance Criteria
 
-- [ ] Ping/pong messages are exchanged every 10s
-- [ ] Connection status indicator is visible and accurate
-- [ ] Temporary network interruptions do not cause data loss
-- [ ] Auto-reconnect restores the player to the correct game state
-- [ ] Re-sync on reconnect works for game phase, timer, and player list
+- [x] Ping/pong messages are exchanged every 10s
+- [x] Connection status indicator is visible and accurate
+- [x] Temporary network interruptions do not cause data loss
+- [x] Auto-reconnect restores the player to the correct game state
+- [x] Re-sync on reconnect works for game phase, timer, and player list
