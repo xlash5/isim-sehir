@@ -147,5 +147,16 @@ const tr: Record<string, string> = {
 
   'system.adminTransferred': '{nickname} yeni admin oldu.',
   'system.playerDisconnected': '{nickname} oyundan ayrıldı.',
+
+  'history.title': 'Oyun Geçmişi',
+  'history.noGames': 'Henüz oyun geçmişi yok.',
+  'history.clearAll': 'Temizle',
+  'history.clearConfirm': 'Tüm geçmiş silinsin mi?',
+  'history.played': '{date} — {count} oyuncu, {rounds} tur',
+  'history.rank': '{rank}. — {score} puan',
+  'history.round': 'Tur {n} — Harf: {letter}',
+  'history.back': 'Geri',
+  'history.clearSuccess': 'Oyun geçmişi temizlendi.',
+  'history.cleared': 'Geçmiş',
 }
 export default tr

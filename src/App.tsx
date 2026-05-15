@@ -12,6 +12,7 @@ import { SessionRestore } from './components/common/SessionRestore'
 import { HomePage } from './pages/HomePage'
 import { LobbyPage } from './pages/LobbyPage'
 import { GamePage } from './pages/GamePage'
+import { HistoryPage } from './pages/HistoryPage'
 
 export default function App() {
   const [mode, setMode] = useState<'dark' | 'light'>(() =>
@@ -45,6 +46,7 @@ export default function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/room/:roomId" element={<LobbyPage />} />
                 <Route path="/game/:roomId" element={<GamePage />} />
+                <Route path="/history" element={<HistoryPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </PeerProvider>

@@ -11,6 +11,7 @@ import { Scoreboard } from '../components/Game/Scoreboard'
 import { Timer } from '../components/common/Timer'
 import { ChatBox } from '../components/common/ChatBox'
 import { calculateScore } from '../utils/scoring'
+import { saveGameToHistory } from '../utils/history'
 import type { PeerMessage } from '../types'
 import { clearSession } from '../utils/session'
 
@@ -81,6 +82,10 @@ export function GamePage() {
   }
 
   const handlePlayAgain = () => {
+    const currentRoom = useGameStore.getState().room
+    if (currentRoom) {
+      saveGameToHistory(currentRoom, localPlayerId, useGameStore.getState().localNickname ?? '')
+    }
     store.resetGame()
     broadcastMessage({
       type: 'game-start',
@@ -91,6 +96,10 @@ export function GamePage() {
   }
 
   const handleBackToLobby = () => {
+    const currentRoom = useGameStore.getState().room
+    if (currentRoom) {
+      saveGameToHistory(currentRoom, localPlayerId, useGameStore.getState().localNickname ?? '')
+    }
     clearSession()
     store.resetGame()
     navigate(`/room/${room.code}`)

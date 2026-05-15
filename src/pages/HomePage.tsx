@@ -7,6 +7,7 @@ import SportsEsportsIcon from '@mui/icons-material/SportsEsports'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import LinkIcon from '@mui/icons-material/Link'
 import VpnKeyIcon from '@mui/icons-material/VpnKey'
+import HistoryIcon from '@mui/icons-material/History'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeerStore } from '../stores/usePeerStore'
 import { usePeer } from '../context/PeerContext'
@@ -212,6 +213,17 @@ export function HomePage() {
             </Alert>
           )}
         </Paper>
+
+        <Box sx={{ textAlign: 'center' }}>
+          <Button
+            size="small"
+            startIcon={<HistoryIcon />}
+            onClick={() => navigate('/history')}
+            sx={{ color: 'text.secondary', textTransform: 'none' }}
+          >
+            {t('history.cleared')}
+          </Button>
+        </Box>
       </Box>
     </Container>
   )

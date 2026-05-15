@@ -147,5 +147,16 @@ const en: Record<string, string> = {
 
   'system.adminTransferred': '{nickname} is the new admin.',
   'system.playerDisconnected': '{nickname} left the game.',
+
+  'history.title': 'Game History',
+  'history.noGames': 'No game history yet.',
+  'history.clearAll': 'Clear All',
+  'history.clearConfirm': 'Delete all history?',
+  'history.played': '{date} — {count} players, {rounds} rounds',
+  'history.rank': '{rank}th — {score} pts',
+  'history.round': 'Round {n} — Letter: {letter}',
+  'history.back': 'Back',
+  'history.clearSuccess': 'Game history cleared.',
+  'history.cleared': 'History',
 }
 export default en

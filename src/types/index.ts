@@ -87,3 +87,34 @@ export interface GradingItem {
   nickname: string
   answers: { category: string; value: string; answerId: string }[]
 }
+
+export interface HistoryAnswer {
+  category: string
+  value: string
+  points: number
+}
+
+export interface HistoryPlayer {
+  nickname: string
+  rank: number
+  score: number
+}
+
+export interface HistoryRound {
+  round: number
+  letter: string
+  yourAnswers: HistoryAnswer[]
+}
+
+export interface GameHistoryEntry {
+  id: string
+  date: string
+  roomCode: string
+  playerCount: number
+  totalRounds: number
+  yourNickname: string
+  yourRank: number
+  yourScore: number
+  players: HistoryPlayer[]
+  rounds: HistoryRound[]
+}
