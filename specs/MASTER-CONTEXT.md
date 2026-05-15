@@ -103,12 +103,13 @@ isim_sehir/
     │   ├── tr.ts             # Turkish translations
     │   └── en.ts             # English translations
     │
-    └── utils/
-        ├── categories.ts     # 33 built-in category keys + helper
-        ├── letters.ts        # Turkish letter pool (28 letters) + helpers
-        ├── scoring.ts        # Score calculation (unique=10pts, shared=5pts)
-        ├── session.ts        # Persisted session (1hr TTL in localStorage)
-        └── history.ts        # Game history localStorage (max 50 entries)
+        └── utils/
+            ├── categories.ts     # 33 built-in category keys + helper
+            ├── letters.ts        # Turkish letter pool (28 letters) + helpers
+            ├── scoring.ts        # Score calculation (unique=10pts, shared=5pts)
+            ├── session.ts        # Persisted session (1hr TTL in localStorage)
+            ├── history.ts        # Game history localStorage (max 50 entries)
+            └── sounds.ts         # Sound manager (Web Audio API tones, localStorage toggle)
 ```
 
 ---
@@ -374,6 +375,6 @@ cd server && npm start   # PeerJS on :9000
 | `SPEC-v1.1-state-persistence.md` | Session restore on refresh |
 | `SPEC-v1.2-custom-categories.md` | Custom category support |
 | `SPEC-v1.2-game-history.md` | Game history / replay ✅ |
-| `SPEC-v1.2-sound-effects.md` | Sound effects |
+| `SPEC-v1.2-sound-effects.md` | Sound effects ✅ |
 | `SPEC-v1.2-timer-reconnect.md` | Timer + reconnect improvements |
 | `SPEC-v2.0-major.md` | Major v2.0 plans |

@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material'
 import { TURKISH_LETTERS } from '../../utils/letters'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
+import { playSound } from '../../utils/sounds'
 
 interface Props {
   onComplete: (letter: string) => void
@@ -39,6 +40,7 @@ export function SlotMachine({ onComplete }: Props) {
       if (elapsed >= totalDuration) {
         setDisplayLetter(pendingLetter)
         setIsSpinning(false)
+        playSound('letter-reveal')
         setTimeout(() => {
           setShowResult(true)
           setTimeout(() => onCompleteRef.current(pendingLetter), 1000)
@@ -55,6 +57,7 @@ export function SlotMachine({ onComplete }: Props) {
       }
 
       setDisplayLetter(randomLetter())
+      playSound('wheel-tick')
       timeoutId = setTimeout(scheduleNext, interval)
     }
 

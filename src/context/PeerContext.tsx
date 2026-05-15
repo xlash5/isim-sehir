@@ -3,6 +3,7 @@ import { Peer } from 'peerjs'
 import { usePeerStore } from '../stores/usePeerStore'
 import { useGameStore } from '../stores/useGameStore'
 import { useNotificationStore } from '../stores/useNotificationStore'
+import { playSound } from '../utils/sounds'
 import type { PeerMessage, GameRoom, Answer, Player } from '../types'
 
 function formatAdminTransferred(nickname: string): string {
@@ -64,6 +65,9 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         case 'join-room': {
           const payload = msg.payload as { id: string; nickname: string }
           console.log(`[Peer] join-room from ${payload.nickname} (${payload.id})`)
+          if (payload.id !== store.localPlayerId) {
+            playSound('player-connect')
+          }
           store.addPlayer({ id: payload.id, nickname: payload.nickname, isAdmin: false, isReady: false, score: 0 })
           peerToPlayerMap.current.set(connId, { playerId: payload.id, nickname: payload.nickname })
           const fresh = gameStore.getState()
@@ -148,6 +152,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const player = currentState.room?.players.find((p) => p.id === playerId)
           const nickname = player?.nickname ?? playerId
           const wasAdmin = currentState.room?.adminId === playerId
+          playSound('player-disconnect')
           store.removePlayer(playerId)
           if (wasAdmin) {
             const fresh = gameStore.getState()
@@ -281,6 +286,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           if (mapping) {
             const store = gameStore.getState()
             const wasAdmin = store.room?.adminId === mapping.playerId
+            playSound('player-disconnect')
             const disconnectMsg: PeerMessage = {
               type: 'player-disconnected',
               senderId: store.localPlayerId!,
@@ -363,6 +369,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const adminStillExists = store.room.players.some((p) => p.id === adminId)
           if (!adminStillExists) return
           const adminPlayer = store.room.players.find((p) => p.id === adminId)
+          playSound('player-disconnect')
           broadcastRef.current({
             type: 'player-disconnected',
             senderId: store.localPlayerId!,
@@ -440,6 +447,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         const adminStillExists = store.room.players.some((p) => p.id === adminId)
         if (!adminStillExists) return
         const adminPlayer = store.room.players.find((p) => p.id === adminId)
+        playSound('player-disconnect')
         broadcastRef.current({
           type: 'player-disconnected',
           senderId: store.localPlayerId!,
@@ -550,6 +558,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         const adminStillExists = store.room.players.some((p) => p.id === adminId)
         if (!adminStillExists) return
         const adminPlayer = store.room.players.find((p) => p.id === adminId)
+        playSound('player-disconnect')
         broadcastRef.current({
           type: 'player-disconnected',
           senderId: store.localPlayerId!,

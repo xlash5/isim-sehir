@@ -2,7 +2,7 @@
 
 > **Priority:** Low — enhancement feature
 > **Version target:** v1.2
-> **Status:** 🔴 Not implemented
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -85,8 +85,8 @@ Each `SoundEvent` maps to a specific tone pattern (frequency, duration, waveform
 
 ## Acceptance Criteria
 
-- [ ] Sound effects play at appropriate game events
-- [ ] Sound toggle works and persists
-- [ ] Sounds are off by default
-- [ ] Web Audio API tones are pleasant, not jarring
-- [ ] No external audio file dependencies
+- [x] Sound effects play at appropriate game events
+- [x] Sound toggle works and persists
+- [x] Sounds are off by default
+- [x] Web Audio API tones are pleasant, not jarring
+- [x] No external audio file dependencies

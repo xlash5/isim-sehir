@@ -1,7 +1,9 @@
+import { useEffect, useRef } from 'react'
 import { Box, Typography, Paper, Button } from '@mui/material'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
+import { playSound } from '../../utils/sounds'
 
 interface Props {
   isGameOver: boolean
@@ -15,6 +17,20 @@ export function Scoreboard({ isGameOver, onNextRound, onBackToLobby, onPlayAgain
   const scores = useGameStore((s) => s.scores)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
   const { t } = useLocale()
+  const hasPlayedRef = useRef(false)
+
+  useEffect(() => {
+    if (hasPlayedRef.current) return
+    if (!room) return
+    hasPlayedRef.current = true
+    if (isGameOver) {
+      const sorted = [...room.players].sort((a, b) => b.score - a.score)
+      const isWinner = sorted[0]?.id === localPlayerId
+      playSound(isWinner ? 'game-over-victory' : 'game-over-defeat')
+    } else {
+      playSound('round-results')
+    }
+  }, [isGameOver, room, localPlayerId])
 
   if (!room) return null
 

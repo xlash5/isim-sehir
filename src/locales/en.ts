@@ -158,5 +158,8 @@ const en: Record<string, string> = {
   'history.back': 'Back',
   'history.clearSuccess': 'Game history cleared.',
   'history.cleared': 'History',
+
+  'sound.enabled': 'Sound On',
+  'sound.disabled': 'Sound Off',
 }
 export default en

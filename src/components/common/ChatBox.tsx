@@ -4,6 +4,7 @@ import SendIcon from '@mui/icons-material/Send'
 import ChatIcon from '@mui/icons-material/Chat'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
+import { playSound } from '../../utils/sounds'
 
 interface Props {
   onSend: (text: string) => void
@@ -14,7 +15,18 @@ export function ChatBox({ onSend }: Props) {
   const messages = useGameStore((s) => s.chatMessages)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
   const listRef = useRef<HTMLUListElement>(null)
+  const prevLenRef = useRef(0)
   const { t } = useLocale()
+
+  useEffect(() => {
+    if (messages.length > prevLenRef.current) {
+      const last = messages[messages.length - 1]
+      if (last && last.playerId !== 'system' && last.playerId !== localPlayerId) {
+        playSound('chat-message')
+      }
+    }
+    prevLenRef.current = messages.length
+  }, [messages, localPlayerId])
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })

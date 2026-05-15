@@ -158,5 +158,8 @@ const tr: Record<string, string> = {
   'history.back': 'Geri',
   'history.clearSuccess': 'Oyun geçmişi temizlendi.',
   'history.cleared': 'Geçmiş',
+
+  'sound.enabled': 'Ses Açık',
+  'sound.disabled': 'Ses Kapalı',
 }
 export default tr

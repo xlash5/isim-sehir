@@ -5,6 +5,7 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
 import { CATEGORY_KEYS } from '../../utils/categories'
+import { playSound } from '../../utils/sounds'
 
 interface Props {
   onSubmit: () => void
@@ -75,7 +76,7 @@ export function AnswerTable({ onSubmit }: Props) {
           variant="contained"
           size="large"
           startIcon={<SendIcon />}
-          onClick={onSubmit}
+          onClick={() => { playSound('answer-submit'); onSubmit() }}
           sx={{ alignSelf: 'center' }}
         >
           {t('game.answering.submit')}

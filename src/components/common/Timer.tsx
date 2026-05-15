@@ -1,10 +1,20 @@
+import { useEffect, useRef } from 'react'
 import { Typography, Box } from '@mui/material'
 import HourglassTopIcon from '@mui/icons-material/HourglassTop'
 import { useGameStore } from '../../stores/useGameStore'
+import { playSound } from '../../utils/sounds'
 
 export function Timer() {
   const timer = useGameStore((s) => s.timer)
   const duration = useGameStore((s) => s.room?.settings.roundDuration)
+  const prevTimerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (timer !== null && timer <= 5 && timer > 0 && prevTimerRef.current !== timer) {
+      playSound('timer-warning')
+    }
+    prevTimerRef.current = timer
+  }, [timer])
 
   if (timer === null || duration === null) return null
 
