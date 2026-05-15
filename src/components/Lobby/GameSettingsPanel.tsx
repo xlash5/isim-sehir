@@ -18,6 +18,7 @@ export function GameSettingsPanel() {
   const room = useGameStore((s) => s.room)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
   const updateSettings = useGameStore((s) => s.updateSettings)
+  const setSettingsEditMode = useGameStore((s) => s.setSettingsEditMode)
   const { broadcastMessage } = usePeer()
   const { t } = useLocale()
 
@@ -64,6 +65,7 @@ export function GameSettingsPanel() {
       payload: newSettings,
     } as PeerMessage)
     setEditMode(false)
+    setSettingsEditMode(false)
   }
 
   const letterDisplay = letterMode === 'all'
@@ -143,7 +145,7 @@ export function GameSettingsPanel() {
             </Typography>
           )}
           {isAdmin && (
-            <Button size="small" variant="outlined" onClick={() => setEditMode(true)} disabled={isAdminReady} sx={{ mt: 1 }}>
+            <Button size="small" variant="outlined" onClick={() => { setEditMode(true); setSettingsEditMode(true) }} disabled={isAdminReady} sx={{ mt: 1 }}>
               {t('settings.edit')}
             </Button>
           )}
@@ -316,7 +318,7 @@ export function GameSettingsPanel() {
             <Button variant="contained" onClick={handleSave} disabled={categories.length < 3}>
               {t('settings.save')}
             </Button>
-            <Button variant="text" onClick={() => setEditMode(false)}>
+            <Button variant="text" onClick={() => { setEditMode(false); setSettingsEditMode(false) }}>
               {t('settings.cancel')}
             </Button>
           </Box>

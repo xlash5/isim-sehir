@@ -26,6 +26,7 @@ const en: Record<string, string> = {
   'lobby.notReady': 'Not Ready',
   'lobby.ready_toggle': 'Ready',
   'lobby.startGame': 'Start Game',
+  'lobby.startNow': 'Start Now',
   'lobby.waitingForPlayers': 'At least 2 players are required to start the game.',
   'lobby.settings': 'Game Settings',
   'lobby.exit': 'Exit',

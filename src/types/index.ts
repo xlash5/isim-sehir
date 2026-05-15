@@ -82,12 +82,18 @@ export type PeerMessageType =
   | 'pong'
   | 'join-rejected'
   | 'spectate-request'
+  | 'countdown-sync'
+  | 'countdown-cancel'
 
 export interface JoinRoomPayload {
   id: string
   nickname: string
   password?: string
   isSpectator?: boolean
+}
+
+export interface CountdownSyncPayload {
+  remaining: number
 }
 
 export interface SpectateRequestPayload {
@@ -162,6 +168,8 @@ export interface PeerMessagePayloadMap {
   'pong': Record<string, never>
   'join-rejected': JoinRejectedPayload
   'spectate-request': SpectateRequestPayload
+  'countdown-sync': CountdownSyncPayload
+  'countdown-cancel': Record<string, never>
 }
 
 export interface PeerMessage {

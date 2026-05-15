@@ -26,6 +26,7 @@ const pt: Record<string, string> = {
   'lobby.notReady': 'Não Pronto',
   'lobby.ready_toggle': 'Pronto',
   'lobby.startGame': 'Iniciar Jogo',
+  'lobby.startNow': 'Iniciar Agora',
   'lobby.waitingForPlayers': 'São necessários pelo menos 2 jogadores para começar.',
   'lobby.settings': 'Configurações',
   'lobby.exit': 'Sair',

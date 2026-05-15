@@ -26,6 +26,7 @@ const tr: Record<string, string> = {
   'lobby.notReady': 'Hazır Değil',
   'lobby.ready_toggle': 'Hazır',
   'lobby.startGame': 'Oyuna Başla',
+  'lobby.startNow': 'Şimdi Başlat',
   'lobby.waitingForPlayers': 'Oyunun başlaması için en az 2 oyuncu gereklidir.',
   'lobby.settings': 'Oyun Ayarları',
   'lobby.exit': 'Çıkış',

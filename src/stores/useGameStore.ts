@@ -15,6 +15,8 @@ interface GameState {
   isSubmitting: boolean
   scores: Record<string, number>
   joinRejectedReason: string | null
+  countdown: number | null
+  settingsEditMode: boolean
 
   setLocalPlayer: (id: string, nickname: string) => void
   setJoinRejected: (reason: string) => void
@@ -40,6 +42,8 @@ interface GameState {
   setScores: (scores: Record<string, number>) => void
   setTimer: (value: number | null) => void
   tickTimer: () => void
+  setCountdown: (value: number | null) => void
+  setSettingsEditMode: (value: boolean) => void
   addChatMessage: (msg: ChatMessage) => void
   addRound: (round: Round) => void
   nextRound: () => void
@@ -68,6 +72,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   isSubmitting: false,
   scores: {},
   joinRejectedReason: null,
+  countdown: null,
+  settingsEditMode: false,
 
   setLocalPlayer: (id, nickname) => set({ localPlayerId: id, localNickname: nickname }),
 
@@ -308,6 +314,10 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setTimer: (value) => set({ timer: value }),
 
+  setCountdown: (value) => set({ countdown: value }),
+
+  setSettingsEditMode: (value) => set({ settingsEditMode: value }),
+
   tickTimer: () =>
     set((state) => {
       if (state.timer !== null && state.timer > 0) {
@@ -377,5 +387,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       timer: null,
       isSubmitting: false,
       scores: {},
+      countdown: null,
+      settingsEditMode: false,
     }),
 }))

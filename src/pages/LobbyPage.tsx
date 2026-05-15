@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Box, Container, Grid2 as Grid, Typography, Button, Paper, Tooltip, useMediaQuery, useTheme,
@@ -15,7 +15,8 @@ import { PlayerList } from '../components/Lobby/PlayerList'
 import { GameSettingsPanel } from '../components/Lobby/GameSettingsPanel'
 import { ChatBox } from '../components/common/ChatBox'
 import { CopyCode } from '../components/common/CopyCode'
-import type { PeerMessage } from '../types'
+import type { PeerMessage, CountdownSyncPayload } from '../types'
+import { getRandomLetter } from '../utils/letters'
 import { clearSession } from '../utils/session'
 
 export function LobbyPage() {
@@ -29,24 +30,11 @@ export function LobbyPage() {
   const resetRoom = useGameStore((s) => s.resetRoom)
   const { broadcastMessage, disconnectAll } = usePeer()
   const { startGame, sendChatMessage } = useGame()
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      const s = useGameStore.getState()
-      console.log('[DEBUG] room?.players:', s.room?.players.map((p) => ({ n: p.nickname, ready: p.isReady, admin: p.isAdmin })))
-      console.log('[DEBUG] room?.adminId:', s.room?.adminId)
-      console.log('[DEBUG] localPlayerId:', s.localPlayerId)
-      console.log('[DEBUG] localNickname:', s.localNickname)
-      console.log('[DEBUG] conditions:', {
-        isAdmin: s.room?.adminId === s.localPlayerId,
-        allReady: s.room?.players.every((p) => p.isReady),
-        hasEnoughPlayers: (s.room?.players.length ?? 0) >= 2,
-        hasCategories: (s.room?.settings.categories.length ?? 0) >= 3,
-        catCount: s.room?.settings.categories.length,
-      })
-    }, 3000)
-    return () => clearInterval(id)
-  }, [])
+  const countdown = useGameStore((s) => s.countdown)
+  const setCountdown = useGameStore((s) => s.setCountdown)
+  const settingsEditMode = useGameStore((s) => s.settingsEditMode)
+  const setSettingsEditMode = useGameStore((s) => s.setSettingsEditMode)
+  const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
     if (room && room.phase !== 'lobby') {
@@ -73,6 +61,58 @@ export function LobbyPage() {
   const hasCategories = room.settings.categories.length >= 3
   const isSpectator = currentPlayer?.isSpectator ?? false
 
+  useEffect(() => {
+    if (!isAdmin) {
+      return
+    }
+
+    const conditions = allReady && hasEnoughPlayers && hasCategories && !settingsEditMode
+
+    if (!conditions && countdownIntervalRef.current !== null) {
+      clearInterval(countdownIntervalRef.current)
+      countdownIntervalRef.current = null
+      setCountdown(null)
+      broadcastMessage({ type: 'countdown-cancel', senderId: localPlayerId!, payload: {} } as PeerMessage)
+      return
+    }
+
+    if (conditions && countdownIntervalRef.current === null) {
+      setCountdown(10)
+      broadcastMessage({ type: 'countdown-sync', senderId: localPlayerId!, payload: { remaining: 10 } } as PeerMessage)
+      countdownIntervalRef.current = setInterval(() => {
+        const s = useGameStore.getState()
+        const actives = s.room?.players.filter((p) => !p.isSpectator) ?? []
+        const stillMet = actives.every((p) => p.isReady) && actives.length >= 2 && (s.room?.settings.categories.length ?? 0) >= 3 && !s.settingsEditMode
+
+        if (!stillMet) {
+          clearInterval(countdownIntervalRef.current!)
+          countdownIntervalRef.current = null
+          s.setCountdown(null)
+          broadcastMessage({ type: 'countdown-cancel', senderId: s.localPlayerId!, payload: {} } as PeerMessage)
+          return
+        }
+
+        const current = s.countdown
+        if (current !== null && current <= 1) {
+          clearInterval(countdownIntervalRef.current!)
+          countdownIntervalRef.current = null
+          s.setCountdown(null)
+          broadcastMessage({ type: 'game-start', senderId: s.localPlayerId!, payload: {} } as PeerMessage)
+          s.setPhase('wheel')
+          const letter = getRandomLetter(s.room?.settings.letterPool)
+          broadcastMessage({ type: 'round-start', senderId: s.localPlayerId!, payload: { letter } } as PeerMessage)
+          s.setPendingLetter(letter)
+          navigate(`/game/${s.room?.code}`)
+          return
+        }
+
+        const next = (current ?? 10) - 1
+        s.setCountdown(next)
+        broadcastMessage({ type: 'countdown-sync', senderId: s.localPlayerId!, payload: { remaining: next } } as PeerMessage)
+      }, 1000)
+    }
+  }, [isAdmin, allReady, hasEnoughPlayers, hasCategories, settingsEditMode])
+
   const handleToggleReady = () => {
     if (!hasCategories) return
     const newReady = !currentPlayer?.isReady
@@ -85,6 +125,12 @@ export function LobbyPage() {
   }
 
   const handleGameStart = () => {
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current)
+      countdownIntervalRef.current = null
+    }
+    setCountdown(null)
+    broadcastMessage({ type: 'countdown-cancel', senderId: localPlayerId!, payload: {} } as PeerMessage)
     startGame()
     navigate(`/game/${room.code}`)
   }
@@ -113,40 +159,80 @@ export function LobbyPage() {
         </Grid>
 
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
-          {!isSpectator && (
-            <Tooltip title={!hasCategories ? t('lobby.needCategories') : ''}>
-              <span>
+          {countdown !== null ? (
+            <>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    border: '4px solid',
+                    borderColor: 'primary.main',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    animation: 'pulse 1s ease-in-out infinite',
+                    '@keyframes pulse': {
+                      '0%, 100%': { transform: 'scale(1)', opacity: 1 },
+                      '50%': { transform: 'scale(1.05)', opacity: 0.8 },
+                    },
+                  }}
+                >
+                  <Typography variant="h3" color="primary" sx={{ fontWeight: 700 }}>
+                    {countdown}
+                  </Typography>
+                </Box>
+                {isAdmin && (
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    onClick={handleGameStart}
+                  >
+                    {t('lobby.startNow')}
+                  </Button>
+                )}
+              </Box>
+            </>
+          ) : (
+            <>
+              {!isSpectator && (
+                <Tooltip title={!hasCategories ? t('lobby.needCategories') : ''}>
+                  <span>
+                    <Button
+                      variant={currentPlayer?.isReady ? 'outlined' : 'contained'}
+                      size="large"
+                      disabled={!hasCategories}
+                      fullWidth={isMobile}
+                      startIcon={currentPlayer?.isReady ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
+                      onClick={handleToggleReady}
+                      sx={isMobile ? { minHeight: 44 } : {}}
+                    >
+                      {t('lobby.ready_toggle')}
+                    </Button>
+                  </span>
+                </Tooltip>
+              )}
+              {isSpectator && (
+                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 1 }}>
+                  {t('lobby.spectatorNotice')}
+                </Typography>
+              )}
+              {isAdmin && allReady && hasEnoughPlayers && hasCategories && (
                 <Button
-                  variant={currentPlayer?.isReady ? 'outlined' : 'contained'}
+                  variant="contained"
+                  color="secondary"
                   size="large"
-                  disabled={!hasCategories}
                   fullWidth={isMobile}
-                  startIcon={currentPlayer?.isReady ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
-                  onClick={handleToggleReady}
+                  startIcon={<RocketLaunchIcon />}
+                  onClick={handleGameStart}
                   sx={isMobile ? { minHeight: 44 } : {}}
                 >
-                  {t('lobby.ready_toggle')}
+                  {t('lobby.startGame')}
                 </Button>
-              </span>
-            </Tooltip>
-          )}
-          {isSpectator && (
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 1 }}>
-              {t('lobby.spectatorNotice')}
-            </Typography>
-          )}
-          {isAdmin && allReady && hasEnoughPlayers && hasCategories && (
-            <Button
-              variant="contained"
-              color="secondary"
-              size="large"
-              fullWidth={isMobile}
-              startIcon={<RocketLaunchIcon />}
-              onClick={handleGameStart}
-              sx={isMobile ? { minHeight: 44 } : {}}
-            >
-              {t('lobby.startGame')}
-            </Button>
+              )}
+            </>
           )}
         </Box>
         {!hasEnoughPlayers && (

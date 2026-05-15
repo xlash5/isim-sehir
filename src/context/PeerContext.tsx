@@ -7,7 +7,7 @@ import { playSound } from '../utils/sounds'
 import { validateMessage } from '../utils/messageValidator'
 import { sanitizeString } from '../utils/sanitize'
 import { RateLimiter } from '../utils/rateLimiter'
-import type { PeerMessage, GameRoom, Answer, Player } from '../types'
+import type { PeerMessage, GameRoom, Answer, Player, CountdownSyncPayload } from '../types'
 
 function formatAdminTransferred(nickname: string): string {
   const locale = (typeof localStorage !== 'undefined' ? localStorage.getItem('locale') : null) || 'tr'
@@ -353,6 +353,16 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           }
           break
         }
+        case 'countdown-sync': {
+          const cp = msg.payload as CountdownSyncPayload
+          if (typeof cp.remaining === 'number') {
+            gameStore.getState().setCountdown(cp.remaining)
+          }
+          break
+        }
+        case 'countdown-cancel':
+          gameStore.getState().setCountdown(null)
+          break
         case 'round-end': {
           const reP = msg.payload as { roundScores: Record<string, number>; updatedPlayers: Player[] }
           gameStore.setState({ scores: reP.roundScores })
