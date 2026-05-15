@@ -84,7 +84,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.1** | **P03** | **Lobby auto-start — countdown when all ready** | ✅ |
 | **v2.2** | **P01** | **Locale-aware letter pool — alphabet adapts to admin's language** | ✅ |
 
-Detailed specifications in [`specs/`](./specs/).
+Detailed specifications in [`specs/`](./specs/). See [`specs/v3.0/`](./specs/v3.0/) for planned features.
 
 ## Development
 

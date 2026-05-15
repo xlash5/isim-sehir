@@ -46,7 +46,7 @@ isim_sehir/
 │   ├── package.json        # Server deps (peer only)
 │   └── index.js            # PeerJS signaling server
 │
-├── specs/                  # Feature specifications (v1.0–v2.1)
+├── specs/                  # Feature specifications (v1.0–v3.0)
 │   ├── MASTER-CONTEXT.md
 │   ├── v1.0/
 │   │   └── SPEC-v1.0.md
@@ -67,19 +67,30 @@ isim_sehir/
 │   │   ├── SPEC-IMPLEMENTED-v2.0-P01-03-mobile-responsive.md
 │   │   ├── SPEC-IMPLEMENTED-v2.0-P02-01-room-codes.md
 │   │   └── SPEC-IMPLEMENTED-v2.0-P03-01-performance.md
-│   └── v2.1/
-│       ├── SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md     # Server safeguards ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md    # Message validation ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md    # XSS prevention ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md       # Autocomplete picker ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md         # ES, PT, FR, DE locales ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md         # Rate limiting ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md        # Room passwords ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md    # Stale room cleanup ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md        # Spectator mode ✅
-│       ├── SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md      # Lobby auto-start ✅
-│       └── SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md    # Locale-aware letter pool ✅
+│   ├── v2.1/
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md     # Server safeguards ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md    # Message validation ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md    # XSS prevention ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P01-04-language-picker.md       # Autocomplete picker ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P01-05-new-languages.md         # ES, PT, FR, DE locales ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P02-01-rate-limiting.md         # Rate limiting ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P02-02-room-passwords.md        # Room passwords ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md    # Stale room cleanup ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md        # Spectator mode ✅
+│   │   ├── SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md      # Lobby auto-start ✅
+│   │   └── SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md    # Locale-aware letter pool ✅
+│   └── v3.0/
+│       ├── SPEC-v3.0-P01-01-ux-rules-visibility.md               # Rules visibility 🔵
+│       ├── SPEC-v3.0-P01-02-error-boundary-sentry.md             # Error boundary + Sentry 🔵
+│       ├── SPEC-v3.0-P02-01-testing-strategy.md                  # Unit/integration/E2E tests 🔵
+│       ├── SPEC-v3.0-P02-02-ci-cd-pipeline.md                    # GitHub Actions CI/CD 🔵
+│       ├── SPEC-v3.0-P02-03-docker-compose.md                    # Docker Compose dev env 🔵
+│       ├── SPEC-v3.0-P02-04-typescript-server.md                 # TS migration (server) 🔵
+│       ├── SPEC-v3.0-P03-01-server-persistence.md                # Server-side game history 🔵
+│       ├── SPEC-v3.0-P03-02-observability.md                     # Health + metrics + logging 🔵
+│       ├── SPEC-v3.0-P03-03-pwa-support.md                       # PWA + service worker 🔵
+│       └── SPEC-v3.0-P04-01-scale-beyond-mesh.md                 # SFU architecture research 🔵
 │
 └── src/
     ├── main.tsx            # ReactDOM entry
@@ -449,3 +460,13 @@ cd server && npm start   # PeerJS on :9000
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers ✅ |
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready ✅ |
 | `v2.2/SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md` | v2.2 — Locale-aware letter pool ✅ |
+| `v3.0/SPEC-v3.0-P01-01-ux-rules-visibility.md` | v3.0 — Rules visibility, phase indicators, tooltips 🔵 |
+| `v3.0/SPEC-v3.0-P01-02-error-boundary-sentry.md` | v3.0 — Error boundaries + Sentry crash reporting 🔵 |
+| `v3.0/SPEC-v3.0-P02-01-testing-strategy.md` | v3.0 — Unit, integration & E2E test strategy 🔵 |
+| `v3.0/SPEC-v3.0-P02-02-ci-cd-pipeline.md` | v3.0 — GitHub Actions CI/CD pipeline 🔵 |
+| `v3.0/SPEC-v3.0-P02-03-docker-compose.md` | v3.0 — Docker Compose for local development 🔵 |
+| `v3.0/SPEC-v3.0-P02-04-typescript-server.md` | v3.0 — TypeScript migration for signalling server 🔵 |
+| `v3.0/SPEC-v3.0-P03-01-server-persistence.md` | v3.0 — Server-side game history & leaderboard 🔵 |
+| `v3.0/SPEC-v3.0-P03-02-observability.md` | v3.0 — Health endpoint, metrics, structured logging 🔵 |
+| `v3.0/SPEC-v3.0-P03-03-pwa-support.md` | v3.0 — PWA manifest, service worker, offline support 🔵 |
+| `v3.0/SPEC-v3.0-P04-01-scale-beyond-mesh.md` | v3.0 — SFU architecture research & mesh scaling 🔵 |
