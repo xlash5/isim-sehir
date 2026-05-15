@@ -2,7 +2,7 @@
 
 > **Priority:** High
 > **Version target:** v2.2
-> **Status:** 📝 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 

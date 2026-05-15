@@ -118,4 +118,5 @@ cd server && npm install && npm start   # http://localhost:9000
 | `MAX_PEERS_PER_ROOM` | `8` | Hard cap on connected peers per room |
 | `MAX_CONNECTIONS_PER_SEC` | `5` | IP-level rate limit (connections/sec) |
 | `CONNECTION_TIMEOUT_MS` | `30000` | Idle peer expiry in ms |
+| `ROOM_TTL_MINUTES` | `5` | Stale peer cleanup threshold in minutes |
 | `ALLOWED_ORIGINS` | `http://localhost:5173,https://isim-sehir-phi.vercel.app` | CORS-allowed origins (comma-separated) |

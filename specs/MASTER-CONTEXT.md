@@ -78,8 +78,8 @@ isim_sehir/
 │       ├── SPEC-IMPLEMENTED-v2.1-P02-03-stale-room-cleanup.md    # Stale room cleanup ✅
 │       ├── SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md  # Category chips ✅
 │       ├── SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md        # Spectator mode ✅
-│       ├── SPEC-DRAFT-v2.1-P03-02-lobby-auto-start.md            # Lobby auto-start 📝
-│       └── SPEC-DRAFT-v2.2-P01-01-locale-letter-pool.md          # Locale-aware letter pool 📝
+│       ├── SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md      # Lobby auto-start ✅
+│       └── SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md    # Locale-aware letter pool ✅
 │
 └── src/
     ├── main.tsx            # ReactDOM entry
@@ -448,4 +448,4 @@ cd server && npm start   # PeerJS on :9000
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P02-04-lobby-category-visibility.md` | v2.1 — Real-time category chip display for all players ✅ |
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P03-01-spectator-mode.md` | v2.1 — Read-only game observers ✅ |
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready ✅ |
-| `v2.2/SPEC-DRAFT-v2.2-P01-01-locale-letter-pool.md` | v2.2 — Locale-aware letter pool 📝 |
+| `v2.2/SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md` | v2.2 — Locale-aware letter pool ✅ |
