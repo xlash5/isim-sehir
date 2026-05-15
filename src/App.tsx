@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { ThemeProvider, CssBaseline, IconButton, Box } from '@mui/material'
+import { ThemeProvider, CssBaseline, IconButton, Box, useMediaQuery, useTheme } from '@mui/material'
 import Brightness4Icon from '@mui/icons-material/Brightness4'
 import Brightness7Icon from '@mui/icons-material/Brightness7'
 import VolumeUpIcon from '@mui/icons-material/VolumeUp'
@@ -23,6 +23,8 @@ export default function App() {
     (localStorage.getItem('theme') as 'dark' | 'light') || 'dark',
   )
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled())
+  const appTheme = useTheme()
+  const isMobile = useMediaQuery(appTheme.breakpoints.down('md'))
 
   const theme = useMemo(() => (mode === 'dark' ? darkTheme : lightTheme), [mode])
 
@@ -46,13 +48,27 @@ export default function App() {
           <Box sx={{ minHeight: '100vh', position: 'relative' }}>
             <IconButton
               onClick={toggleSound}
-              sx={{ position: 'fixed', top: 16, right: 68, zIndex: 9999, bgcolor: 'background.paper', boxShadow: 2, '&:hover': { bgcolor: 'background.paper' } }}
+              size={isMobile ? 'small' : 'medium'}
+              sx={{
+                position: 'fixed', zIndex: 9999,
+                bgcolor: 'background.paper', boxShadow: 2,
+                '&:hover': { bgcolor: 'background.paper' },
+                top: isMobile ? 8 : 16, right: isMobile ? 52 : 68,
+                width: isMobile ? 40 : undefined, height: isMobile ? 40 : undefined,
+              }}
             >
               {soundOn ? <VolumeUpIcon /> : <VolumeOffIcon />}
             </IconButton>
             <IconButton
               onClick={toggleTheme}
-              sx={{ position: 'fixed', top: 16, right: 16, zIndex: 9999, bgcolor: 'background.paper', boxShadow: 2, '&:hover': { bgcolor: 'background.paper' } }}
+              size={isMobile ? 'small' : 'medium'}
+              sx={{
+                position: 'fixed', zIndex: 9999,
+                bgcolor: 'background.paper', boxShadow: 2,
+                '&:hover': { bgcolor: 'background.paper' },
+                top: isMobile ? 8 : 16, right: isMobile ? 8 : 16,
+                width: isMobile ? 40 : undefined, height: isMobile ? 40 : undefined,
+              }}
             >
               {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>

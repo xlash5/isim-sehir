@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Box, Container, Grid2 as Grid, Typography, Button, Paper, Tooltip,
+  Box, Container, Grid2 as Grid, Typography, Button, Paper, Tooltip, useMediaQuery, useTheme,
 } from '@mui/material'
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -21,6 +21,8 @@ import { clearSession } from '../utils/session'
 export function LobbyPage() {
   const navigate = useNavigate()
   const { t } = useLocale()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const room = useGameStore((s) => s.room)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
   const setPlayerReady = useGameStore((s) => s.setPlayerReady)
@@ -108,15 +110,17 @@ export function LobbyPage() {
           </Grid>
         </Grid>
 
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
           <Tooltip title={!hasCategories ? t('lobby.needCategories') : ''}>
             <span>
               <Button
                 variant={currentPlayer?.isReady ? 'outlined' : 'contained'}
                 size="large"
                 disabled={!hasCategories}
+                fullWidth={isMobile}
                 startIcon={currentPlayer?.isReady ? <CheckCircleIcon /> : <HourglassEmptyIcon />}
                 onClick={handleToggleReady}
+                sx={isMobile ? { minHeight: 44 } : {}}
               >
                 {t('lobby.ready_toggle')}
               </Button>
@@ -127,8 +131,10 @@ export function LobbyPage() {
               variant="contained"
               color="secondary"
               size="large"
+              fullWidth={isMobile}
               startIcon={<RocketLaunchIcon />}
               onClick={handleGameStart}
+              sx={isMobile ? { minHeight: 44 } : {}}
             >
               {t('lobby.startGame')}
             </Button>

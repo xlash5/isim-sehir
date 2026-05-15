@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Box, TextField, Button, Typography, Paper, Divider, Container, Alert, CircularProgress,
+  Box, TextField, Button, Typography, Paper, Divider, Container, Alert, CircularProgress, useMediaQuery, useTheme,
 } from '@mui/material'
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
@@ -19,6 +19,8 @@ import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
 export function HomePage() {
   const navigate = useNavigate()
   const { t } = useLocale()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [nickname, setNickname] = useState('')
   const [joinCode, setJoinCode] = useState('')
   const [nicknameError, setNicknameError] = useState('')
@@ -164,7 +166,7 @@ export function HomePage() {
             startIcon={<AddCircleIcon />}
             onClick={handleCreateRoom}
             disabled={loading}
-            sx={{ mb: 1.5 }}
+            sx={{ mb: 1.5, minHeight: isMobile ? 44 : undefined }}
           >
             {t('home.createRoom')}
           </Button>
@@ -194,6 +196,7 @@ export function HomePage() {
             startIcon={<LinkIcon />}
             onClick={handleJoinRoom}
             disabled={joinCode.length !== 6 || loading}
+            sx={{ minHeight: isMobile ? 44 : undefined }}
           >
             {t('home.joinRoom')}
           </Button>

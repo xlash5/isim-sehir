@@ -1,4 +1,4 @@
-import { Box, Tooltip } from '@mui/material'
+import { Box, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import { usePeerStore } from '../../stores/usePeerStore'
 import type { ConnectionStatus as ConnectionStatusType } from '../../stores/usePeerStore'
 import { useLocale } from '../../locales'
@@ -18,17 +18,19 @@ const LOCALE_KEYS: Record<ConnectionStatusType, string> = {
 export function ConnectionStatus() {
   const connectionStatus = usePeerStore((s) => s.connectionStatus)
   const { t } = useLocale()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
     <Tooltip title={t(LOCALE_KEYS[connectionStatus])}>
       <Box
         sx={{
-          position: 'fixed',
-          top: 20,
-          left: 16,
+          position: isMobile ? 'absolute' : 'fixed',
+          top: isMobile ? 14 : 20,
+          left: isMobile ? 14 : 16,
           zIndex: 9999,
-          width: 12,
-          height: 12,
+          width: isMobile ? 10 : 12,
+          height: isMobile ? 10 : 12,
           borderRadius: '50%',
           bgcolor: COLORS[connectionStatus],
           boxShadow: 2,
