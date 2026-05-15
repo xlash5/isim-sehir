@@ -8,6 +8,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import LinkIcon from '@mui/icons-material/Link'
 import VpnKeyIcon from '@mui/icons-material/VpnKey'
 import HistoryIcon from '@mui/icons-material/History'
+import LockIcon from '@mui/icons-material/Lock'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeerStore } from '../stores/usePeerStore'
 import { usePeer } from '../context/PeerContext'
@@ -16,6 +17,7 @@ import { saveSession } from '../utils/session'
 import { sanitizeString } from '../utils/sanitize'
 import { useLocale } from '../locales'
 import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
+import type { PeerMessage } from '../types'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -29,7 +31,7 @@ export function HomePage() {
   const [loading, setLoading] = useState(false)
   const [peerError, setPeerError] = useState(false)
   const peerId = usePeerStore((s) => s.peerId)
-  const { createPeer, connectToPeer } = usePeer()
+  const { createPeer, connectToPeer, sendMessage } = usePeer()
   const setLocalPlayer = useGameStore((s) => s.setLocalPlayer)
   const createRoom = useGameStore((s) => s.createRoom)
   const joinRoom = useGameStore((s) => s.joinRoom)
@@ -38,25 +40,81 @@ export function HomePage() {
   const navigatedRef = useRef(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const nicknameRef = useRef('')
+  const [roomPassword, setRoomPassword] = useState('')
+  const [joinPassword, setJoinPassword] = useState('')
+  const [joinError, setJoinError] = useState('')
+  const joinPasswordRef = useRef('')
+  const awaitingJoinApprovalRef = useRef(false)
 
   useEffect(() => {
     if (peerId && pendingActionRef.current && !navigatedRef.current) {
-      navigatedRef.current = true
       if (timerRef.current) clearTimeout(timerRef.current)
       setLoading(false)
       const code = roomCodeRef.current!
       if (pendingActionRef.current === 'join') {
         joinRoom(code)
-        connectToPeer(code)
+        connectToPeer(code, joinPasswordRef.current)
+        if (joinPasswordRef.current) {
+          pendingActionRef.current = null
+          awaitingJoinApprovalRef.current = true
+          return
+        }
       } else {
-        createRoom(code)
+        createRoom(code, roomPassword)
       }
+      navigatedRef.current = true
       saveSession(peerId, useGameStore.getState().localPlayerId!, nicknameRef.current, code)
       setPeerError(false)
       navigate(`/room/${code}`)
       pendingActionRef.current = null
     }
   }, [peerId, joinRoom, createRoom, connectToPeer, navigate])
+
+  const joinRejectedReason = useGameStore((s) => s.joinRejectedReason)
+  const room = useGameStore((s) => s.room)
+
+  useEffect(() => {
+    if (!awaitingJoinApprovalRef.current) return
+    if (joinRejectedReason) {
+      awaitingJoinApprovalRef.current = false
+      setLoading(false)
+      setJoinError(joinRejectedReason === 'wrong-password' ? t('home.wrongPassword') : t('error.roomFull'))
+      useGameStore.getState().clearJoinRejected()
+      return
+    }
+    if (room && room.adminId && room.players.length > 1) {
+      awaitingJoinApprovalRef.current = false
+      setLoading(false)
+      saveSession(peerId!, useGameStore.getState().localPlayerId!, nicknameRef.current, room.code)
+      navigate(`/room/${room.code}`)
+    }
+  }, [joinRejectedReason, room, peerId, navigate, t])
+
+  const handleRetryJoin = () => {
+    if (!joinPassword) return
+    setJoinError('')
+    setLoading(true)
+    joinPasswordRef.current = joinPassword
+    awaitingJoinApprovalRef.current = true
+    const msg: PeerMessage = {
+      type: 'join-room',
+      senderId: useGameStore.getState().localPlayerId!,
+      payload: {
+        id: useGameStore.getState().localPlayerId!,
+        nickname: nicknameRef.current,
+        password: joinPasswordRef.current,
+      },
+    } as PeerMessage
+    sendMessage(roomCodeRef.current!, msg)
+    setTimeout(() => {
+      if (awaitingJoinApprovalRef.current) {
+        awaitingJoinApprovalRef.current = false
+        setLoading(false)
+        setJoinError(t('home.joinTimeout'))
+        useGameStore.getState().clearJoinRejected()
+      }
+    }, 15000)
+  }
 
   const startPeerTimeout = () => {
     if (timerRef.current) clearTimeout(timerRef.current)
@@ -95,6 +153,7 @@ export function HomePage() {
     pendingActionRef.current = 'create'
     navigatedRef.current = false
     setPeerError(false)
+    setJoinError('')
     setLoading(true)
     startPeerTimeout()
   }
@@ -112,12 +171,24 @@ export function HomePage() {
     nicknameRef.current = clean
     setLocalPlayer(playerId, clean)
     roomCodeRef.current = trimmed
+    joinPasswordRef.current = joinPassword
     createPeer()
     pendingActionRef.current = 'join'
     navigatedRef.current = false
     setPeerError(false)
+    setJoinError('')
     setLoading(true)
     startPeerTimeout()
+    if (joinPassword) {
+      setTimeout(() => {
+        if (awaitingJoinApprovalRef.current) {
+          awaitingJoinApprovalRef.current = false
+          setLoading(false)
+          setJoinError(t('home.joinTimeout'))
+          useGameStore.getState().clearJoinRejected()
+        }
+      }, 15000)
+    }
   }
 
   return (
@@ -163,6 +234,17 @@ export function HomePage() {
             helperText={nicknameError}
             sx={{ mb: 2 }}
           />
+          <TextField
+            fullWidth
+            label={t('home.roomPassword')}
+            placeholder={t('home.roomPasswordPlaceholder')}
+            value={roomPassword}
+            onChange={(e) => {
+              if (e.target.value.length <= 30) setRoomPassword(e.target.value)
+            }}
+            sx={{ mb: 1.5 }}
+            slotProps={{ htmlInput: { style: { fontFamily: 'monospace' } } }}
+          />
           <Button
             fullWidth
             variant="contained"
@@ -193,6 +275,17 @@ export function HomePage() {
               slotProps={{ htmlInput: { style: { fontFamily: 'monospace', letterSpacing: 4, fontSize: '1.2rem' } } }}
             />
           </Box>
+          <TextField
+            fullWidth
+            label={t('home.roomPassword')}
+            placeholder={t('home.roomPasswordPlaceholder')}
+            value={joinPassword}
+            onChange={(e) => {
+              if (e.target.value.length <= 30) setJoinPassword(e.target.value)
+            }}
+            sx={{ mb: 1.5 }}
+            slotProps={{ htmlInput: { style: { fontFamily: 'monospace' } } }}
+          />
           <Button
             fullWidth
             variant="outlined"
@@ -212,6 +305,20 @@ export function HomePage() {
                 {t('home.connecting')}
               </Typography>
             </Box>
+          )}
+
+          {joinError && (
+            <Alert
+              severity="error"
+              sx={{ mt: 2 }}
+              action={
+                <Button size="small" color="inherit" onClick={handleRetryJoin}>
+                  {t('common.retry')}
+                </Button>
+              }
+            >
+              {joinError}
+            </Alert>
           )}
 
           {peerError && (

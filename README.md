@@ -39,6 +39,7 @@ letter across ~33 categories. Peers grade each other's answers.
 - Voluntary admin transfer in lobby/round-results/game-over (v2.0)
 - Player disconnect notifications (snackbar + chat message) (v1.1)
 - Session persistence on page refresh with dialog + auto-reconnect (v1.1)
+- Optional room passwords for private games (v2.1)
 
 ### UI & UX
 - Dark/light theme toggle (persisted to localStorage)
@@ -74,7 +75,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.1** | **P01** | **Language picker autocomplete — searchable dropdown** | ✅ |
 | **v2.1** | **P01** | **New languages — ES, PT, FR, DE locale files** | ✅ |
 | **v2.1** | **P02** | **Rate limiting — anti-spam on peer messages** | ✅ |
-| **v2.1** | **P02** | **Room passwords — optional private rooms** | 📝 |
+| **v2.1** | **P02** | **Room passwords — optional private rooms** | ✅ |
 | **v2.1** | **P02** | **Stale room cleanup — abandoned room reclamation** | 📝 |
 | **v2.1** | **P02** | **Lobby category visibility — real-time chip display** | 📝 |
 | **v2.1** | **P03** | **Spectator mode — read-only game observers** | 📝 |

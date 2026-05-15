@@ -5,7 +5,7 @@ const VALID_TYPES = new Set<PeerMessageType>([
   'answers-submit', 'vote', 'round-end', 'chat-message',
   'settings-update', 'player-disconnected', 'admin-transfer',
   'room-state-sync', 'heartbeat', 'reconnect', 'reconnect-accepted',
-  'admin-transfer-request', 'ping', 'pong',
+  'admin-transfer-request', 'ping', 'pong', 'join-rejected',
 ])
 
 function isString(v: unknown): v is string {
@@ -111,6 +111,10 @@ const validators: Record<string, (payload: unknown) => boolean> = {
   },
   'ping': (p) => p === undefined || (isRecord(p) && Object.keys(p).length === 0),
   'pong': (p) => p === undefined || (isRecord(p) && Object.keys(p).length === 0),
+  'join-rejected': (p) => {
+    if (!isRecord(p)) return false
+    return isString(p.reason) && ['wrong-password', 'room-full', 'duplicate-nickname'].includes(p.reason)
+  },
 }
 
 export function validateMessage(data: unknown): PeerMessage | null {

@@ -28,7 +28,7 @@ function formatPlayerDisconnected(nickname: string): string {
 
 interface PeerContextType {
   createPeer: (id?: string) => void
-  connectToPeer: (peerId: string) => void
+  connectToPeer: (peerId: string, password?: string) => void
   reconnectToPeer: (targetId: string) => void
   sendMessage: (targetId: string, message: PeerMessage) => void
   broadcastMessage: (message: PeerMessage) => void
@@ -90,9 +90,22 @@ export function PeerProvider({ children }: { children: ReactNode }) {
 
       switch (msg.type) {
         case 'join-room': {
-          const payload = msg.payload as { id: string; nickname: string }
+          const payload = msg.payload as { id: string; nickname: string; password?: string }
           const cleanNickname = sanitizeString(payload.nickname, 20)
           console.log(`[Peer] join-room from ${cleanNickname} (${payload.id})`)
+          const currentState = gameStore.getState()
+          const roomPassword = currentState.room?.settings.roomPassword
+          if (roomPassword && payload.password !== roomPassword) {
+            console.log(`[Peer] join-room rejected: wrong password from ${cleanNickname}`)
+            const rejectMsg: PeerMessage = {
+              type: 'join-rejected',
+              senderId: currentState.localPlayerId!,
+              payload: { reason: 'wrong-password' },
+            }
+            const conn = pStore.connections.get(connId)
+            if (conn && conn.open) conn.send(rejectMsg)
+            return
+          }
           if (payload.id !== store.localPlayerId) {
             playSound('player-connect')
           }
@@ -181,6 +194,12 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             payload: {},
           }
           pStore.connections.get(connId)?.send(pongMsg)
+          break
+        }
+        case 'join-rejected': {
+          const reason = (msg.payload as { reason: string }).reason
+          console.log(`[Peer] Join rejected: ${reason}`)
+          gameStore.getState().setJoinRejected(reason)
           break
         }
         case 'pong': {
@@ -410,7 +429,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
   )
 
   const connectToPeer = useCallback(
-    (targetId: string) => {
+    (targetId: string, password?: string) => {
       const currentPeer = peerStore.getState().peer
       if (!currentPeer) { console.warn('[Peer] No peer to connect with'); return }
       console.log(`[Peer] Connecting to ${targetId}`)
@@ -425,6 +444,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           payload: {
             id: localPlayerIdRef.current,
             nickname: localNicknameRef.current,
+            ...(password ? { password } : {}),
           },
         } as PeerMessage)
         conn.on('data', (data) => {

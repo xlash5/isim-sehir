@@ -14,6 +14,10 @@ const de: Record<string, string> = {
   'home.nicknameRequired': 'Bitte gib einen Spitznamen ein',
   'home.nicknameTooLong': 'Der Spitzname darf maximal 20 Zeichen lang sein',
   'home.invalidCode': 'Gib einen gültigen Code ein (4-6 Zeichen, Buchstaben und Zahlen)',
+  'home.roomPassword': 'Raum-Passwort (optional)',
+  'home.roomPasswordPlaceholder': 'Passwort festlegen...',
+  'home.wrongPassword': 'Falsches Passwort. Bitte versuche es erneut.',
+  'home.joinTimeout': 'Beitrittsanfrage abgelaufen. Bitte versuche es erneut.',
   'home.login': 'Anmelden',
 
   'lobby.players': 'Spieler ({count})',
@@ -54,6 +58,8 @@ const de: Record<string, string> = {
   'settings.customCategoryEmpty': 'Der Kategoriename darf nicht leer sein',
   'settings.customCategoryMaxLength': 'Maximal 30 Zeichen',
   'settings.customCategoryDuplicate': 'Dieser Kategoriename existiert bereits',
+  'settings.roomPassword': 'Raum-Passwort',
+  'settings.roomPasswordPlaceholder': 'Passwort festlegen...',
 
   'game.wheel.spinning': 'Dreht...',
   'game.wheel.letter': 'Ausgewählter Buchstabe',
@@ -93,6 +99,7 @@ const de: Record<string, string> = {
   'common.confirm': 'Bestätigen',
   'common.copy': 'Kopieren',
   'common.copied': 'Raumcode kopiert!',
+  'common.retry': 'Wiederholen',
 
   'restore.title': 'Zum Spiel Zurückkehren',
   'restore.message': 'Möchtest du zum Spiel zurückkehren? Verbinde als {nickname} mit Raum {roomCode}.',

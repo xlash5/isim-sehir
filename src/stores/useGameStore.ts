@@ -14,10 +14,13 @@ interface GameState {
   timer: number | null
   isSubmitting: boolean
   scores: Record<string, number>
+  joinRejectedReason: string | null
 
   setLocalPlayer: (id: string, nickname: string) => void
-  createRoom: (code?: string) => void
-  joinRoom: (code: string) => void
+  setJoinRejected: (reason: string) => void
+  clearJoinRejected: () => void
+  createRoom: (code?: string, password?: string) => void
+  joinRoom: (code: string, password?: string) => void
   addPlayer: (player: Player) => void
   removePlayer: (playerId: string) => void
   transferAdmin: (newAdminId: string) => void
@@ -64,10 +67,15 @@ export const useGameStore = create<GameState>((set, get) => ({
   timer: null,
   isSubmitting: false,
   scores: {},
+  joinRejectedReason: null,
 
   setLocalPlayer: (id, nickname) => set({ localPlayerId: id, localNickname: nickname }),
 
-  createRoom: (code?: string) => {
+  setJoinRejected: (reason) => set({ joinRejectedReason: reason }),
+
+  clearJoinRejected: () => set({ joinRejectedReason: null }),
+
+  createRoom: (code?: string, password?: string) => {
     const roomCode = code ?? Math.floor(100000 + Math.random() * 900000).toString()
     const id = get().localPlayerId ?? crypto.randomUUID()
     const nickname = get().localNickname ?? 'Oyuncu'
@@ -76,7 +84,7 @@ export const useGameStore = create<GameState>((set, get) => ({
         code: roomCode,
         adminId: id,
         players: [player],
-        settings: { ...defaultSettings },
+        settings: { ...defaultSettings, ...(password ? { roomPassword: password } : {}) },
         phase: 'lobby',
         currentRound: 0,
         currentLetter: null,
@@ -86,7 +94,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       set({ room, localPlayerId: id })
   },
 
-  joinRoom: (code) => {
+  joinRoom: (code, _password) => {
     const id = get().localPlayerId ?? crypto.randomUUID()
     const nickname = get().localNickname ?? 'Oyuncu'
     const player: Player = { id, nickname, isAdmin: false, isReady: false, score: 0 }

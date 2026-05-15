@@ -20,6 +20,7 @@ export interface GameSettings {
   roundDuration: number | null
   letterPool: string[]
   customCategories: string[]
+  roomPassword?: string
 }
 
 export interface Answer {
@@ -78,10 +79,16 @@ export type PeerMessageType =
   | 'admin-transfer-request'
   | 'ping'
   | 'pong'
+  | 'join-rejected'
 
 export interface JoinRoomPayload {
   id: string
   nickname: string
+  password?: string
+}
+
+export interface JoinRejectedPayload {
+  reason: 'wrong-password' | 'room-full' | 'duplicate-nickname'
 }
 
 export interface PlayerReadyPayload {
@@ -145,6 +152,7 @@ export interface PeerMessagePayloadMap {
   'admin-transfer-request': AdminTransferPayload
   'ping': Record<string, never>
   'pong': Record<string, never>
+  'join-rejected': JoinRejectedPayload
 }
 
 export interface PeerMessage {

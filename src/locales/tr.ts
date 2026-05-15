@@ -14,6 +14,10 @@ const tr: Record<string, string> = {
   'home.nicknameRequired': 'Lütfen bir rumuz girin',
   'home.nicknameTooLong': 'Rumuz en fazla 20 karakter olabilir',
   'home.invalidCode': 'Geçerli bir oda kodu girin (4-6 karakter, harf ve rakam)',
+  'home.roomPassword': 'Oda Şifresi (isteğe bağlı)',
+  'home.roomPasswordPlaceholder': 'Şifre belirleyin...',
+  'home.wrongPassword': 'Yanlış şifre. Lütfen tekrar deneyin.',
+  'home.joinTimeout': 'Odaya katılma zaman aşımına uğradı. Lütfen tekrar deneyin.',
   'home.login': 'Giriş',
 
   'lobby.players': 'Oyuncular ({count})',
@@ -54,6 +58,8 @@ const tr: Record<string, string> = {
   'settings.customCategoryEmpty': 'Kategori adı boş olamaz',
   'settings.customCategoryMaxLength': 'En fazla 30 karakter',
   'settings.customCategoryDuplicate': 'Bu kategori adı zaten mevcut',
+  'settings.roomPassword': 'Oda Şifresi',
+  'settings.roomPasswordPlaceholder': 'Şifre belirleyin...',
 
   'game.wheel.spinning': 'Dönüyor...',
   'game.wheel.letter': 'Seçilen Harf',
@@ -93,6 +99,7 @@ const tr: Record<string, string> = {
   'common.confirm': 'Onayla',
   'common.copy': 'Kopyala',
   'common.copied': 'Oda kodu kopyalandı!',
+  'common.retry': 'Tekrar Dene',
 
   'restore.title': 'Oyuna Geri Dön',
   'restore.message': 'Oyuna geri dönmek ister misin? {nickname} olarak {roomCode} odasına bağlan.',

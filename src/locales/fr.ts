@@ -14,6 +14,10 @@ const fr: Record<string, string> = {
   'home.nicknameRequired': 'Veuillez entrer un pseudo',
   'home.nicknameTooLong': 'Le pseudo peut comporter au maximum 20 caractères',
   'home.invalidCode': 'Entrez un code valide (4-6 caractères, lettres et chiffres)',
+  'home.roomPassword': 'Mot de passe de la salle (optionnel)',
+  'home.roomPasswordPlaceholder': 'Définir un mot de passe...',
+  'home.wrongPassword': 'Mot de passe incorrect. Veuillez réessayer.',
+  'home.joinTimeout': 'La demande d\'adhésion a expiré. Veuillez réessayer.',
   'home.login': 'Connexion',
 
   'lobby.players': 'Joueurs ({count})',
@@ -54,6 +58,8 @@ const fr: Record<string, string> = {
   'settings.customCategoryEmpty': 'Le nom de la catégorie ne peut pas être vide',
   'settings.customCategoryMaxLength': 'Maximum 30 caractères',
   'settings.customCategoryDuplicate': 'Ce nom de catégorie existe déjà',
+  'settings.roomPassword': 'Mot de passe de la salle',
+  'settings.roomPasswordPlaceholder': 'Définir un mot de passe...',
 
   'game.wheel.spinning': 'Tourne...',
   'game.wheel.letter': 'Lettre Sélectionnée',
@@ -93,6 +99,7 @@ const fr: Record<string, string> = {
   'common.confirm': 'Confirmer',
   'common.copy': 'Copier',
   'common.copied': 'Code de la salle copié !',
+  'common.retry': 'Réessayer',
 
   'restore.title': 'Retour à la Partie',
   'restore.message': 'Voulez-vous revenir à la partie ? Connectez-vous en tant que {nickname} à la salle {roomCode}.',

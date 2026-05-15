@@ -14,6 +14,10 @@ const en: Record<string, string> = {
   'home.nicknameRequired': 'Please enter a nickname',
   'home.nicknameTooLong': 'Nickname can be at most 20 characters',
   'home.invalidCode': 'Enter a valid room code (4-6 characters, letters & numbers)',
+  'home.roomPassword': 'Room Password (optional)',
+  'home.roomPasswordPlaceholder': 'Set a password...',
+  'home.wrongPassword': 'Wrong password. Please try again.',
+  'home.joinTimeout': 'Join request timed out. Please try again.',
   'home.login': 'Login',
 
   'lobby.players': 'Players ({count})',
@@ -54,6 +58,8 @@ const en: Record<string, string> = {
   'settings.customCategoryEmpty': 'Category name cannot be empty',
   'settings.customCategoryMaxLength': 'Max 30 characters',
   'settings.customCategoryDuplicate': 'This category name already exists',
+  'settings.roomPassword': 'Room Password',
+  'settings.roomPasswordPlaceholder': 'Set a password...',
 
   'game.wheel.spinning': 'Spinning...',
   'game.wheel.letter': 'Selected Letter',
@@ -93,6 +99,7 @@ const en: Record<string, string> = {
   'common.confirm': 'Confirm',
   'common.copy': 'Copy',
   'common.copied': 'Room code copied!',
+  'common.retry': 'Retry',
 
   'restore.title': 'Return to Game',
   'restore.message': 'Do you want to return to the game? Connect as {nickname} to room {roomCode}.',

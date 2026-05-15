@@ -14,6 +14,10 @@ const es: Record<string, string> = {
   'home.nicknameRequired': 'Por favor, introduce un apodo',
   'home.nicknameTooLong': 'El apodo puede tener como máximo 20 caracteres',
   'home.invalidCode': 'Introduce un código válido (4-6 caracteres, letras y números)',
+  'home.roomPassword': 'Contraseña de Sala (opcional)',
+  'home.roomPasswordPlaceholder': 'Establecer una contraseña...',
+  'home.wrongPassword': 'Contraseña incorrecta. Inténtalo de nuevo.',
+  'home.joinTimeout': 'La solicitud de unión expiró. Inténtalo de nuevo.',
   'home.login': 'Iniciar Sesión',
 
   'lobby.players': 'Jugadores ({count})',
@@ -54,6 +58,8 @@ const es: Record<string, string> = {
   'settings.customCategoryEmpty': 'El nombre de la categoría no puede estar vacío',
   'settings.customCategoryMaxLength': 'Máximo 30 caracteres',
   'settings.customCategoryDuplicate': 'Este nombre de categoría ya existe',
+  'settings.roomPassword': 'Contraseña de Sala',
+  'settings.roomPasswordPlaceholder': 'Establecer una contraseña...',
 
   'game.wheel.spinning': 'Girando...',
   'game.wheel.letter': 'Letra Seleccionada',
@@ -93,6 +99,7 @@ const es: Record<string, string> = {
   'common.confirm': 'Confirmar',
   'common.copy': 'Copiar',
   'common.copied': '¡Código de sala copiado!',
+  'common.retry': 'Reintentar',
 
   'restore.title': 'Volver al Juego',
   'restore.message': '¿Quieres volver al juego? Conéctate como {nickname} a la sala {roomCode}.',

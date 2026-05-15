@@ -33,6 +33,7 @@ export function GameSettingsPanel() {
   const [customCategories, setCustomCategories] = useState<string[]>(settings?.customCategories ?? [])
   const [customInput, setCustomInput] = useState('')
   const [customInputError, setCustomInputError] = useState<string | null>(null)
+  const [roomPassword, setRoomPassword] = useState(settings?.roomPassword ?? '')
 
   useEffect(() => {
     if (settings) {
@@ -40,6 +41,7 @@ export function GameSettingsPanel() {
       setTotalRounds(settings.totalRounds)
       setRoundDuration(settings.roundDuration)
       setCustomCategories(settings.customCategories)
+      setRoomPassword(settings.roomPassword ?? '')
     }
   }, [settings])
 
@@ -47,12 +49,13 @@ export function GameSettingsPanel() {
 
   const handleSave = () => {
     if (categories.length < 3) return
-    const newSettings = {
+    const newSettings: Record<string, unknown> = {
       categories,
       totalRounds,
       roundDuration,
       letterPool: letterMode === 'all' ? TURKISH_LETTERS : selectedLetters,
       customCategories,
+      roomPassword: roomPassword || undefined,
     }
     updateSettings(newSettings)
     broadcastMessage({
@@ -121,6 +124,11 @@ export function GameSettingsPanel() {
             <Typography variant="body2">
               <strong>{t('settings.customCategories')}:</strong>{' '}
               {settings.customCategories.join(', ')}
+            </Typography>
+          )}
+          {settings.roomPassword && (
+            <Typography variant="body2">
+              <strong>{t('settings.roomPassword')}:</strong> ********
             </Typography>
           )}
           {isAdmin && (
@@ -218,6 +226,17 @@ export function GameSettingsPanel() {
               {t('settings.customCategoryLimit')}
             </Typography>
           )}
+
+          <TextField
+            size="small"
+            fullWidth
+            label={t('settings.roomPassword')}
+            placeholder={t('settings.roomPasswordPlaceholder')}
+            value={roomPassword}
+            onChange={(e) => {
+              if (e.target.value.length <= 30) setRoomPassword(e.target.value)
+            }}
+          />
 
           <Box>
             <Typography variant="body2" gutterBottom>
