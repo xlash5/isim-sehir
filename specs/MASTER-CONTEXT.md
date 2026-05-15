@@ -330,6 +330,8 @@ Navigation guards:
 - **State updates propagate via PeerJS broadcast**: no server-side authoritative state
 - **Game settings changes only by admin**; admin must not be ready to edit
 - **Only admin can start game, start rounds, finalize grading**
+- Admin can voluntarily transfer privileges to another player in the lobby (lobby/round-results/game-over phases) via a button in PlayerList
+- `broadcastMessage` sends to all *other* peers — the sender must update their own local store explicitly
 - Timer auto-submits answers when it hits 0
 - Chat includes system messages for disconnect/admin transfer
 - Snackbar notifications for disconnects
