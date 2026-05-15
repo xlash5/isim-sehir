@@ -196,6 +196,13 @@ const es: Record<string, string> = {
   'connection.connected': 'Conectado',
   'connection.reconnecting': 'Reconectando...',
   'connection.disconnected': 'Desconectado',
+  'connection.probing': 'Comprobando servidor…',
+  'connection.unreachable': 'No se pudo conectar al servidor. Actualice la página o inténtelo más tarde.',
+  'connection.retry': 'Reintentar Conexión',
+  'connection.reconnected': 'Conexión del servidor restablecida.',
+  'tooltip.connecting': 'Comprobando conexión con el servidor, espere por favor…',
+  'tooltip.serverDown': 'Servidor inaccesible. Intente de nuevo cuando se establezca la conexión.',
+  'tooltip.serverDownAction': 'El servidor no está disponible. Intente de nuevo cuando esté conectado.',
 
   'home.howToPlay': 'Cómo Jugar',
 

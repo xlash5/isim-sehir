@@ -196,6 +196,13 @@ const pt: Record<string, string> = {
   'connection.connected': 'Conectado',
   'connection.reconnecting': 'Reconectando...',
   'connection.disconnected': 'Desconectado',
+  'connection.probing': 'Verificando servidor…',
+  'connection.unreachable': 'Não foi possível alcançar o servidor. Atualize a página ou tente novamente mais tarde.',
+  'connection.retry': 'Tentar Conexão Novamente',
+  'connection.reconnected': 'Conexão com o servidor restaurada.',
+  'tooltip.connecting': 'Verificando conexão com o servidor, aguarde…',
+  'tooltip.serverDown': 'Servidor inacessível. Tente novamente quando a conexão for estabelecida.',
+  'tooltip.serverDownAction': 'O servidor está offline. Tente novamente quando estiver conectado.',
 
   'home.howToPlay': 'Como Jogar',
 

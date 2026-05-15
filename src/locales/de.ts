@@ -196,6 +196,13 @@ const de: Record<string, string> = {
   'connection.connected': 'Verbunden',
   'connection.reconnecting': 'Wiederverbinde...',
   'connection.disconnected': 'Getrennt',
+  'connection.probing': 'Server wird überprüft…',
+  'connection.unreachable': 'Server nicht erreichbar. Bitte aktualisieren Sie die Seite oder versuchen Sie es später erneut.',
+  'connection.retry': 'Verbindung Wiederholen',
+  'connection.reconnected': 'Serververbindung wiederhergestellt.',
+  'tooltip.connecting': 'Serververbindung wird geprüft, bitte warten…',
+  'tooltip.serverDown': 'Server nicht erreichbar. Bitte versuchen Sie es erneut, wenn die Verbindung hergestellt ist.',
+  'tooltip.serverDownAction': 'Server nicht erreichbar. Bitte versuchen Sie es erneut, wenn eine Verbindung besteht.',
 
   'home.howToPlay': 'Spielanleitung',
 

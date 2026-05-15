@@ -2,7 +2,7 @@
 
 > **Priority:** P01 — every user hits this on every visit; silent failure causes confusion
 > **Version target:** v3.0
-> **Status:** 🔵 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 

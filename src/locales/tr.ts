@@ -263,5 +263,12 @@ const tr: Record<string, string> = {
   'connection.connected': 'Bağlı',
   'connection.reconnecting': 'Yeniden bağlanıyor...',
   'connection.disconnected': 'Bağlantı koptu',
+  'connection.probing': 'Sunucu kontrol ediliyor…',
+  'connection.unreachable': 'Sunucuya bağlanılamadı. Lütfen sayfayı yenileyin veya daha sonra tekrar deneyin.',
+  'connection.retry': 'Tekrar Dene',
+  'connection.reconnected': 'Sunucu bağlantısı yeniden kuruldu.',
+  'tooltip.connecting': 'Sunucu kontrol ediliyor, lütfen bekleyin…',
+  'tooltip.serverDown': 'Sunucuya bağlanılamadı. Bağlantı kurulduğunda tekrar deneyin.',
+  'tooltip.serverDownAction': 'Sunucu kapalı. Bağlantı kurulduğunda tekrar deneyin.',
 }
 export default tr

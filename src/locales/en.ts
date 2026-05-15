@@ -263,5 +263,12 @@ const en: Record<string, string> = {
   'connection.connected': 'Connected',
   'connection.reconnecting': 'Reconnecting...',
   'connection.disconnected': 'Disconnected',
+  'connection.probing': 'Checking server…',
+  'connection.unreachable': 'Could not reach server. Please refresh or try again later.',
+  'connection.retry': 'Retry Connection',
+  'connection.reconnected': 'Server connection restored.',
+  'tooltip.connecting': 'Checking server connection, please wait…',
+  'tooltip.serverDown': 'Server unreachable. Please try again when the connection is established.',
+  'tooltip.serverDownAction': 'Server is down. Please try again once connected.',
 }
 export default en

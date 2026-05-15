@@ -33,7 +33,9 @@ export function HomePage() {
   const [nicknameError, setNicknameError] = useState('')
   const [codeError, setCodeError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [peerError, setPeerError] = useState(false)
+  const [peerError, setPeerError] = useState<string | null>(null)
+  const serverReachable = usePeerStore((s) => s.serverReachable)
+  const { probeServer } = usePeerStore()
   const peerId = usePeerStore((s) => s.peerId)
   const { createPeer, connectToPeer, sendMessage } = usePeer()
   const setLocalPlayer = useGameStore((s) => s.setLocalPlayer)
@@ -50,6 +52,29 @@ export function HomePage() {
   const joinPasswordRef = useRef('')
   const awaitingJoinApprovalRef = useRef(false)
   const [isSpectator, setIsSpectator] = useState(false)
+  const [showConnectedBanner, setShowConnectedBanner] = useState(false)
+  const prevReachableRef = useRef<boolean | null>(null)
+  const reconnectBannerRef = useRef(false)
+
+  useEffect(() => {
+    probeServer()
+    const interval = setInterval(probeServer, 30000)
+    return () => clearInterval(interval)
+  }, [probeServer])
+
+  useEffect(() => {
+    const prev = prevReachableRef.current
+    prevReachableRef.current = serverReachable
+    if (serverReachable === true) {
+      reconnectBannerRef.current = prev === false
+      setShowConnectedBanner(true)
+      const timer = setTimeout(() => setShowConnectedBanner(false), 3000)
+      return () => clearTimeout(timer)
+    } else {
+      setShowConnectedBanner(false)
+    }
+  }, [serverReachable])
+
   const isSpectatorRef = useRef(false)
 
   useEffect(() => {
@@ -74,7 +99,7 @@ export function HomePage() {
       }
       navigatedRef.current = true
       saveSession(peerId, useGameStore.getState().localPlayerId!, nicknameRef.current, code)
-      setPeerError(false)
+      setPeerError(null)
       navigate(`/room/${code}`)
       pendingActionRef.current = null
     }
@@ -128,14 +153,15 @@ export function HomePage() {
 
   const startPeerTimeout = () => {
     if (timerRef.current) clearTimeout(timerRef.current)
+    const timeout = serverReachable === true ? 5000 : 10000
     timerRef.current = setTimeout(() => {
       if (!peerId && pendingActionRef.current) {
         setLoading(false)
-        setPeerError(true)
+        setPeerError(t('home.connectionError'))
         pendingActionRef.current = null
         navigatedRef.current = false
       }
-    }, 10000)
+    }, timeout)
   }
 
   const validateNickname = (): boolean => {
@@ -153,6 +179,10 @@ export function HomePage() {
 
   const handleCreateRoom = () => {
     if (!validateNickname()) return
+    if (usePeerStore.getState().serverReachable === false) {
+      setPeerError(t('tooltip.serverDownAction'))
+      return
+    }
     const playerId = crypto.randomUUID()
     const clean = sanitizeString(nickname.trim(), 20)
     nicknameRef.current = clean
@@ -162,7 +192,7 @@ export function HomePage() {
     createPeer(code)
     pendingActionRef.current = 'create'
     navigatedRef.current = false
-    setPeerError(false)
+    setPeerError(null)
     setJoinError('')
     setLoading(true)
     startPeerTimeout()
@@ -170,6 +200,10 @@ export function HomePage() {
 
   const handleJoinRoom = () => {
     if (!validateNickname()) return
+    if (usePeerStore.getState().serverReachable === false) {
+      setPeerError(t('tooltip.serverDownAction'))
+      return
+    }
     const trimmed = joinCode.trim().toUpperCase()
     if (!trimmed || trimmed.length < 4 || trimmed.length > 6 || !/^[A-Z0-9]{4,6}$/.test(trimmed)) {
       setCodeError(t('home.invalidCode'))
@@ -185,7 +219,7 @@ export function HomePage() {
     createPeer()
     pendingActionRef.current = 'join'
     navigatedRef.current = false
-    setPeerError(false)
+    setPeerError(null)
     setJoinError('')
     setLoading(true)
     startPeerTimeout()
@@ -225,6 +259,29 @@ export function HomePage() {
 
         <LanguageSwitcher />
 
+        {serverReachable === null && (
+          <Alert severity="info" icon={<CircularProgress size={16} />}>
+            {t('connection.probing')}
+          </Alert>
+        )}
+        {serverReachable === false && (
+          <Alert
+            severity="error"
+            action={
+              <Button size="small" color="inherit" onClick={probeServer}>
+                {t('connection.retry')}
+              </Button>
+            }
+          >
+            {t('connection.unreachable')}
+          </Alert>
+        )}
+        {showConnectedBanner && serverReachable === true && (
+          <Alert severity="success" icon={null}>
+            {reconnectBannerRef.current ? t('connection.reconnected') : t('connection.connected')}
+          </Alert>
+        )}
+
         <Paper sx={{ p: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
             <VpnKeyIcon fontSize="small" />
@@ -258,17 +315,31 @@ export function HomePage() {
               slotProps={{ htmlInput: { style: { fontFamily: 'monospace' } } }}
             />
           </Tooltip>
-          <Button
-            fullWidth
-            variant="contained"
-            size="large"
-            startIcon={<AddCircleIcon />}
-            onClick={handleCreateRoom}
-            disabled={loading}
-            sx={{ mb: 1.5, minHeight: isMobile ? 44 : undefined }}
+          <Tooltip
+            title={
+              serverReachable === null
+                ? t('tooltip.connecting')
+                : serverReachable === false
+                  ? t('tooltip.serverDown')
+                  : ''
+            }
+            arrow
+            disableHoverListener={serverReachable === true}
           >
-            {t('home.createRoom')}
-          </Button>
+            <span>
+              <Button
+                fullWidth
+                variant="contained"
+                size="large"
+                startIcon={<AddCircleIcon />}
+                onClick={handleCreateRoom}
+                disabled={loading || serverReachable !== true}
+                sx={{ mb: 1.5, minHeight: isMobile ? 44 : undefined }}
+              >
+                {t('home.createRoom')}
+              </Button>
+            </span>
+          </Tooltip>
 
           <Divider sx={{ my: 2 }}>{t('home.or')}</Divider>
 
@@ -319,17 +390,31 @@ export function HomePage() {
               sx={{ mb: 1.5, ml: 0 }}
             />
           </Tooltip>
-          <Button
-            fullWidth
-            variant="outlined"
-            size="large"
-            startIcon={<LinkIcon />}
-            onClick={handleJoinRoom}
-            disabled={joinCode.length < 4 || loading}
-            sx={{ minHeight: isMobile ? 44 : undefined }}
+          <Tooltip
+            title={
+              serverReachable === null
+                ? t('tooltip.connecting')
+                : serverReachable === false
+                  ? t('tooltip.serverDown')
+                  : ''
+            }
+            arrow
+            disableHoverListener={serverReachable === true}
           >
-            {t('home.joinRoom')}
-          </Button>
+            <span>
+              <Button
+                fullWidth
+                variant="outlined"
+                size="large"
+                startIcon={<LinkIcon />}
+                onClick={handleJoinRoom}
+                disabled={joinCode.length < 4 || loading || serverReachable !== true}
+                sx={{ minHeight: isMobile ? 44 : undefined }}
+              >
+                {t('home.joinRoom')}
+              </Button>
+            </span>
+          </Tooltip>
 
           {loading && (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 2 }}>
@@ -356,7 +441,7 @@ export function HomePage() {
 
           {peerError && (
             <Alert severity="error" sx={{ mt: 2 }}>
-              {t('home.connectionError')}
+              {peerError}
             </Alert>
           )}
         </Paper>
