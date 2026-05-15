@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
-import { Typography, Box } from '@mui/material'
+import { Typography, Box, Tooltip } from '@mui/material'
 import HourglassTopIcon from '@mui/icons-material/HourglassTop'
 import { useGameStore } from '../../stores/useGameStore'
+import { useLocale } from '../../locales'
 import { playSound } from '../../utils/sounds'
 
 export function Timer() {
+  const { t } = useLocale()
   const timer = useGameStore((s) => s.timer)
   const duration = useGameStore((s) => s.room?.settings.roundDuration)
   const prevTimerRef = useRef<number | null>(null)
@@ -23,7 +25,9 @@ export function Timer() {
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <HourglassTopIcon color={isUrgent ? 'error' : 'primary'} />
+      <Tooltip title={t('tooltip.timerDisplay')} arrow>
+        <HourglassTopIcon color={isUrgent ? 'error' : 'primary'} />
+      </Tooltip>
       <Typography
         variant="h5"
         sx={{

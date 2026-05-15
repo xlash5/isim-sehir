@@ -15,9 +15,11 @@ import { PlayerList } from '../components/Lobby/PlayerList'
 import { GameSettingsPanel } from '../components/Lobby/GameSettingsPanel'
 import { ChatBox } from '../components/common/ChatBox'
 import { CopyCode } from '../components/common/CopyCode'
+import { InlineTip } from '../components/common/InlineTip'
 import type { PeerMessage, CountdownSyncPayload } from '../types'
 import { getRandomLetter } from '../utils/letters'
 import { clearSession } from '../utils/session'
+import { getTipForEvent } from '../utils/tips'
 
 export function LobbyPage() {
   const navigate = useNavigate()
@@ -122,6 +124,18 @@ export function LobbyPage() {
       senderId: localPlayerId,
       payload: { playerId: localPlayerId, ready: newReady },
     } as PeerMessage)
+
+    if (newReady) {
+      const tipKey = getTipForEvent('first-ready')
+      if (tipKey) {
+        useGameStore.getState().addChatMessage({
+          playerId: 'system',
+          nickname: '🎯',
+          text: t(tipKey),
+          timestamp: Date.now(),
+        })
+      }
+    }
   }
 
   const handleGameStart = () => {
@@ -198,7 +212,7 @@ export function LobbyPage() {
           ) : (
             <>
               {!isSpectator && (
-                <Tooltip title={!hasCategories ? t('lobby.needCategories') : ''}>
+                <Tooltip title={!hasCategories ? t('lobby.needCategories') : t('tooltip.readyToggle')}>
                   <span>
                     <Button
                       variant={currentPlayer?.isReady ? 'outlined' : 'contained'}
@@ -219,18 +233,23 @@ export function LobbyPage() {
                   {t('lobby.spectatorNotice')}
                 </Typography>
               )}
-              {isAdmin && allReady && hasEnoughPlayers && hasCategories && (
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="large"
-                  fullWidth={isMobile}
-                  startIcon={<RocketLaunchIcon />}
-                  onClick={handleGameStart}
-                  sx={isMobile ? { minHeight: 44 } : {}}
-                >
-                  {t('lobby.startGame')}
-                </Button>
+              {isAdmin && (
+                <Tooltip title={(!allReady || !hasEnoughPlayers || !hasCategories) ? t('tooltip.startGameDisabled') : ''}>
+                  <span>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      size="large"
+                      fullWidth={isMobile}
+                      startIcon={<RocketLaunchIcon />}
+                      onClick={handleGameStart}
+                      disabled={!allReady || !hasEnoughPlayers || !hasCategories}
+                      sx={isMobile ? { minHeight: 44 } : {}}
+                    >
+                      {t('lobby.startGame')}
+                    </Button>
+                  </span>
+                </Tooltip>
               )}
             </>
           )}

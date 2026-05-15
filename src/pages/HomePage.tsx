@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Box, TextField, Button, Typography, Paper, Divider, Container, Alert, CircularProgress, FormControlLabel, Switch, useMediaQuery, useTheme,
+  Box, TextField, Button, Typography, Paper, Divider, Container, Alert, CircularProgress, FormControlLabel, Switch, useMediaQuery, useTheme, Tooltip,
 } from '@mui/material'
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
@@ -10,6 +10,7 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey'
 import HistoryIcon from '@mui/icons-material/History'
 import LockIcon from '@mui/icons-material/Lock'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import SchoolIcon from '@mui/icons-material/School'
 import { useGameStore } from '../stores/useGameStore'
 import { usePeerStore } from '../stores/usePeerStore'
 import { usePeer } from '../context/PeerContext'
@@ -18,6 +19,7 @@ import { saveSession } from '../utils/session'
 import { sanitizeString } from '../utils/sanitize'
 import { useLocale } from '../locales'
 import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
+import { RulesPanel } from '../components/common/RulesPanel'
 import type { PeerMessage } from '../types'
 
 export function HomePage() {
@@ -26,6 +28,7 @@ export function HomePage() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const [nickname, setNickname] = useState('')
+  const [rulesOpen, setRulesOpen] = useState(false)
   const [joinCode, setJoinCode] = useState('')
   const [nicknameError, setNicknameError] = useState('')
   const [codeError, setCodeError] = useState('')
@@ -200,6 +203,7 @@ export function HomePage() {
 
   return (
     <Container maxWidth="sm">
+      <RulesPanel open={rulesOpen} onClose={() => setRulesOpen(false)} autoOpen />
       <Box
         sx={{
           minHeight: '100vh',
@@ -241,17 +245,19 @@ export function HomePage() {
             helperText={nicknameError}
             sx={{ mb: 2 }}
           />
-          <TextField
-            fullWidth
-            label={t('home.roomPassword')}
-            placeholder={t('home.roomPasswordPlaceholder')}
-            value={roomPassword}
-            onChange={(e) => {
-              if (e.target.value.length <= 30) setRoomPassword(e.target.value)
-            }}
-            sx={{ mb: 1.5 }}
-            slotProps={{ htmlInput: { style: { fontFamily: 'monospace' } } }}
-          />
+          <Tooltip title={t('tooltip.roomPassword')} arrow>
+            <TextField
+              fullWidth
+              label={t('home.roomPassword')}
+              placeholder={t('home.roomPasswordPlaceholder')}
+              value={roomPassword}
+              onChange={(e) => {
+                if (e.target.value.length <= 30) setRoomPassword(e.target.value)
+              }}
+              sx={{ mb: 1.5 }}
+              slotProps={{ htmlInput: { style: { fontFamily: 'monospace' } } }}
+            />
+          </Tooltip>
           <Button
             fullWidth
             variant="contained"
@@ -282,33 +288,37 @@ export function HomePage() {
               slotProps={{ htmlInput: { style: { fontFamily: 'monospace', letterSpacing: 4, fontSize: '1.2rem' } } }}
             />
           </Box>
-          <TextField
-            fullWidth
-            label={t('home.roomPassword')}
-            placeholder={t('home.roomPasswordPlaceholder')}
-            value={joinPassword}
-            onChange={(e) => {
-              if (e.target.value.length <= 30) setJoinPassword(e.target.value)
-            }}
-            sx={{ mb: 1.5 }}
-            slotProps={{ htmlInput: { style: { fontFamily: 'monospace' } } }}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isSpectator}
-                onChange={(e) => setIsSpectator(e.target.checked)}
-                size="small"
-              />
-            }
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <VisibilityIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                <Typography variant="body2">{t('home.joinAsSpectator')}</Typography>
-              </Box>
-            }
-            sx={{ mb: 1.5, ml: 0 }}
-          />
+          <Tooltip title={t('tooltip.roomPassword')} arrow>
+            <TextField
+              fullWidth
+              label={t('home.roomPassword')}
+              placeholder={t('home.roomPasswordPlaceholder')}
+              value={joinPassword}
+              onChange={(e) => {
+                if (e.target.value.length <= 30) setJoinPassword(e.target.value)
+              }}
+              sx={{ mb: 1.5 }}
+              slotProps={{ htmlInput: { style: { fontFamily: 'monospace' } } }}
+            />
+          </Tooltip>
+          <Tooltip title={t('tooltip.spectatorBadge')} arrow>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isSpectator}
+                  onChange={(e) => setIsSpectator(e.target.checked)}
+                  size="small"
+                />
+              }
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <VisibilityIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                  <Typography variant="body2">{t('home.joinAsSpectator')}</Typography>
+                </Box>
+              }
+              sx={{ mb: 1.5, ml: 0 }}
+            />
+          </Tooltip>
           <Button
             fullWidth
             variant="outlined"
@@ -351,7 +361,15 @@ export function HomePage() {
           )}
         </Paper>
 
-        <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: 2 }}>
+          <Button
+            size="small"
+            startIcon={<SchoolIcon />}
+            onClick={() => setRulesOpen(true)}
+            sx={{ color: 'text.secondary', textTransform: 'none' }}
+          >
+            {t('home.howToPlay')}
+          </Button>
           <Button
             size="small"
             startIcon={<HistoryIcon />}

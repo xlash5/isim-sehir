@@ -1,4 +1,4 @@
-import { Avatar, Typography, Box } from '@mui/material'
+import { Avatar, Typography, Box, Tooltip } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useLocale } from '../../locales'
 
@@ -33,9 +33,11 @@ export function PlayerAvatar({ nickname, isAdmin, isReady, isSpectator, size = 4
           {isAdmin && ' 👑'}
         </Typography>
         {isSpectator && (
-          <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-            {t('player.spectator')}
-          </Typography>
+          <Tooltip title={t('tooltip.spectatorBadge')} arrow>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+              {t('player.spectator')}
+            </Typography>
+          </Tooltip>
         )}
         {!isSpectator && isReady !== undefined && (
           <Typography variant="caption" sx={{ color: isReady ? 'success.main' : 'text.secondary' }}>

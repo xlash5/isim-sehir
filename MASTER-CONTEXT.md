@@ -39,6 +39,13 @@ Multiplayer peer-to-peer WebRTC version of the classic Turkish word game (simila
 | `src/components/Lobby/GameSettingsPanel.tsx` | Category/round/duration/letter pool/password editor (admin only) |
 | `src/components/Lobby/PlayerList.tsx` | Player roster with ready/spectator/admin transfer |
 | `src/types/index.ts` | All TypeScript types, PeerMessageType enum, payload interfaces |
+| `src/components/common/RulesPanel.tsx` | Interactive "How to Play" dialog with collapsible sections (v3.0) |
+| `src/components/common/PhaseIndicator.tsx` | Visual stepper showing current/completed/future phases (v3.0) |
+| `src/components/common/PhaseTransitionBanner.tsx` | Snackbar explaining phase changes (v3.0) |
+| `src/components/common/InlineTip.tsx` | "i" icon with MUI Tooltip (v3.0) |
+| `src/components/Game/ScoreBreakdown.tsx` | Per-category scoring drill-down dialog (v3.0) |
+| `src/utils/tips.ts` | Contextual tip pool keyed by game event (v3.0) |
+| `src/utils/rules.ts` | Rules section metadata + localStorage flag helpers (v3.0) |
 
 ## Stores
 
@@ -93,4 +100,4 @@ When all players are ready, minimum players met, and categories selected, a 10-s
 
 ## Specs
 
-All specs in [`specs/v2.1/`](./specs/v2.1/) and [`specs/v2.2/`](./specs/v2.2/). Implemented specs are renamed `SPEC-IMPLEMENTED-*`. See [`README.md`](./README.md) for the feature matrix.
+All specs in [`specs/v2.1/`](./specs/v2.1/), [`specs/v2.2/`](./specs/v2.2/), and [`specs/v3.0/`](./specs/v3.0/). Implemented specs are renamed `SPEC-IMPLEMENTED-*`. See [`README.md`](./README.md) for the feature matrix.

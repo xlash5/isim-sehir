@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
 import { Box, Container, Typography, Paper } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useGameStore } from '../stores/useGameStore'
@@ -11,9 +12,13 @@ import { GradingPanel } from '../components/Game/GradingPanel'
 import { Scoreboard } from '../components/Game/Scoreboard'
 import { Timer } from '../components/common/Timer'
 import { ChatBox } from '../components/common/ChatBox'
+import { PhaseIndicator } from '../components/common/PhaseIndicator'
+import { PhaseTransitionBanner } from '../components/common/PhaseTransitionBanner'
 import { calculateScore } from '../utils/scoring'
 import { saveGameToHistory } from '../utils/history'
-import type { PeerMessage } from '../types'
+import { getTipForEvent, resetTips } from '../utils/tips'
+import { incrementGamesPlayed, getGamesPlayedCount } from '../utils/rules'
+import type { PeerMessage, GamePhase, ChatMessage } from '../types'
 import { clearSession } from '../utils/session'
 
 export function GamePage() {
@@ -25,6 +30,10 @@ export function GamePage() {
   const room = useGameStore((s) => s.room)
   const phase = useGameStore((s) => s.room?.phase)
   const localPlayerId = useGameStore((s) => s.localPlayerId)
+  const addChatMessage = useGameStore((s) => s.addChatMessage)
+  const chatMessages = useGameStore((s) => s.chatMessages)
+  const prevPhaseRef = useRef<GamePhase | undefined>(undefined)
+  const tipSentRef = useRef<Set<string>>(new Set())
 
   if (!room || !localPlayerId) {
     return (
@@ -109,6 +118,46 @@ export function GamePage() {
     navigate(`/room/${room.code}`)
   }
 
+  useEffect(() => {
+    if (!phase) return
+    if (prevPhaseRef.current !== phase) {
+      const prev = prevPhaseRef.current
+      prevPhaseRef.current = phase
+
+      if (prev === 'wheel' && phase === 'answering') {
+        const tipKey = 'game-started'
+        if (!tipSentRef.current.has(tipKey)) {
+          tipSentRef.current.add(tipKey)
+          const tipMsgKey = getTipForEvent('game-started')
+          if (tipMsgKey) {
+            addChatMessage({ playerId: 'system', nickname: '🎯', text: t(tipMsgKey), timestamp: Date.now() })
+          }
+          incrementGamesPlayed()
+        }
+      }
+
+      if (prev === 'answering' && phase === 'grading') {
+        const tipKey = 'first-grading'
+        if (!tipSentRef.current.has(tipKey)) {
+          tipSentRef.current.add(tipKey)
+          const tipMsgKey = getTipForEvent('first-grading')
+          if (tipMsgKey) {
+            addChatMessage({ playerId: 'system', nickname: '🎯', text: t(tipMsgKey), timestamp: Date.now() })
+          }
+        }
+      }
+    }
+  }, [phase, t, addChatMessage])
+
+  const completedPhases: GamePhase[] = []
+  if (room) {
+    const phaseOrder: GamePhase[] = ['lobby', 'wheel', 'answering', 'grading', 'round-results', 'game-over']
+    const currentIdx = phaseOrder.indexOf(phase ?? 'lobby')
+    for (let i = 0; i < currentIdx; i++) {
+      completedPhases.push(phaseOrder[i])
+    }
+  }
+
   const showRoundResults = phase === 'round-results' || phase === 'game-over'
 
   return (
@@ -120,6 +169,8 @@ export function GamePage() {
           </Typography>
           <Timer />
         </Paper>
+        <PhaseIndicator currentPhase={phase ?? 'lobby'} completedPhases={completedPhases} />
+        <PhaseTransitionBanner />
 
         {isSpectator ? (
           <Paper sx={{ p: 4, textAlign: 'center' }}>

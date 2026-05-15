@@ -1,5 +1,5 @@
 import { useState, useEffect, memo } from 'react'
-import { Box, Typography, Paper, Button, Chip, useMediaQuery, useTheme } from '@mui/material'
+import { Box, Typography, Paper, Button, Chip, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import ThumbUpIcon from '@mui/icons-material/ThumbUp'
 import ThumbDownIcon from '@mui/icons-material/ThumbDown'
 import SwipeableDrawer from '@mui/material/SwipeableDrawer'
@@ -95,20 +95,24 @@ export const GradingPanel = memo(function GradingPanel({ onVote, onComplete }: P
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: isMobile ? '100%' : 'auto' }}>
             {!isOwnAnswer && (
               <>
-                <Button size="small"
-                  variant={hasVoted && myVotes[answer.answerId] ? 'contained' : 'outlined'}
-                  color="success" startIcon={<ThumbUpIcon />}
-                  onClick={() => onVote(answer.answerId, true)}
-                  sx={voteButtonSx}>
-                  {t('grading.valid')}
-                </Button>
-                <Button size="small"
-                  variant={hasVoted && !myVotes[answer.answerId] ? 'contained' : 'outlined'}
-                  color="error" startIcon={<ThumbDownIcon />}
-                  onClick={() => onVote(answer.answerId, false)}
-                  sx={voteButtonSx}>
-                  {t('grading.invalid')}
-                </Button>
+                <Tooltip title={t('tooltip.voteButtons')} arrow>
+                  <Button size="small"
+                    variant={hasVoted && myVotes[answer.answerId] ? 'contained' : 'outlined'}
+                    color="success" startIcon={<ThumbUpIcon />}
+                    onClick={() => onVote(answer.answerId, true)}
+                    sx={voteButtonSx}>
+                    {t('grading.valid')}
+                  </Button>
+                </Tooltip>
+                <Tooltip title={t('tooltip.voteButtons')} arrow>
+                  <Button size="small"
+                    variant={hasVoted && !myVotes[answer.answerId] ? 'contained' : 'outlined'}
+                    color="error" startIcon={<ThumbDownIcon />}
+                    onClick={() => onVote(answer.answerId, false)}
+                    sx={voteButtonSx}>
+                    {t('grading.invalid')}
+                  </Button>
+                </Tooltip>
               </>
             )}
             {isOwnAnswer && (
@@ -148,9 +152,11 @@ export const GradingPanel = memo(function GradingPanel({ onVote, onComplete }: P
   const renderFooter = () => (
     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
       {isAdmin && allVotesComplete ? (
-        <Button variant="contained" color="secondary" size="large" onClick={onComplete} sx={isMobile ? { minHeight: 44, width: '100%' } : {}}>
-          {t('grading.showResults')}
-        </Button>
+        <Tooltip title={t('tooltip.showResults')} arrow>
+          <Button variant="contained" color="secondary" size="large" onClick={onComplete} sx={isMobile ? { minHeight: 44, width: '100%' } : {}}>
+            {t('grading.showResults')}
+          </Button>
+        </Tooltip>
       ) : allVotesComplete ? (
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {t('grading.waitingAdmin')}

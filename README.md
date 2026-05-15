@@ -51,6 +51,12 @@ letter across ~33 categories. Peers grade each other's answers.
 - Sound effects via Web Audio API with toggle (v1.2)
 - Timer with reconnect-safe countdown (v1.2)
 - Performance: memoisation, lazy loading, bundle analysis (v2.0)
+- Interactive "How to Play" rules panel with collapsible sections (v3.0)
+- Visual phase indicator stepper (v3.0)
+- Phase transition banners explaining game flow (v3.0)
+- Inline tooltips on all non-obvious UI elements (v3.0)
+- Per-round scoring drill-down with verdict breakdown (v3.0)
+- Contextual chat tips on game events (v3.0)
 
 ## Architecture
 
@@ -83,6 +89,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v2.1** | **P03** | **Spectator mode — read-only game observers** | ✅ |
 | **v2.1** | **P03** | **Lobby auto-start — countdown when all ready** | ✅ |
 | **v2.2** | **P01** | **Locale-aware letter pool — alphabet adapts to admin's language** | ✅ |
+| **v3.0** | **P01** | **UX Rules & Behaviour Visibility — RulesPanel, PhaseIndicator, tooltips, chat tips, scoring drill-down** | ✅ |
 
 Detailed specifications in [`specs/`](./specs/). See [`specs/v3.0/`](./specs/v3.0/) for planned features.
 

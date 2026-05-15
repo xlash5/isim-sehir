@@ -1,9 +1,11 @@
-import { useEffect, useRef, memo } from 'react'
-import { Box, Typography, Paper, Button, useMediaQuery, useTheme } from '@mui/material'
+import { useState, useEffect, useRef, memo } from 'react'
+import { Box, Typography, Paper, Button, IconButton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
 import { playSound } from '../../utils/sounds'
+import { ScoreBreakdown } from './ScoreBreakdown'
 
 interface Props {
   isGameOver: boolean
@@ -20,6 +22,7 @@ export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, on
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const hasPlayedRef = useRef(false)
+  const [breakdownPlayer, setBreakdownPlayer] = useState<string | null>(null)
 
   useEffect(() => {
     if (hasPlayedRef.current) return
@@ -35,6 +38,9 @@ export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, on
   }, [isGameOver, room, localPlayerId])
 
   if (!room) return null
+
+  const breakdownPlayerId = (breakdownPlayer ?? localPlayerId) ?? ''
+  const breakdownNickname = room.players.find((p) => p.id === breakdownPlayerId)?.nickname ?? ''
 
   const isAdmin = room.adminId === localPlayerId
   const sorted = [...room.players].sort((a, b) => b.score - a.score)
@@ -65,7 +71,14 @@ export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, on
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
+    <>
+      <ScoreBreakdown
+        playerId={breakdownPlayerId}
+        nickname={breakdownNickname}
+        open={!!breakdownPlayer}
+        onClose={() => setBreakdownPlayer(null)}
+      />
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <EmojiEventsIcon color="secondary" />
         <Typography variant="h5" sx={{ fontWeight: 700 }}>
@@ -98,15 +111,22 @@ export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, on
                     {player.isAdmin && ' 👑'}
                   </Typography>
                 </Box>
-                <Box sx={{ textAlign: 'right' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                    {player.score}
-                  </Typography>
-                  {!isGameOver && roundScore > 0 && (
-                    <Typography variant="caption" sx={{ color: 'success.main', display: 'block', lineHeight: 1 }}>
-                      {t('scoreboard.thisRound', { score: roundScore })}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                      {player.score}
                     </Typography>
-                  )}
+                    {!isGameOver && roundScore > 0 && (
+                      <Typography variant="caption" sx={{ color: 'success.main', display: 'block', lineHeight: 1 }}>
+                        {t('scoreboard.thisRound', { score: roundScore })}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Tooltip title={t('tooltip.scoreBreakdown')} arrow>
+                    <IconButton size="small" onClick={() => setBreakdownPlayer(player.id)} sx={{ ml: 0.5 }}>
+                      <InfoOutlinedIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
               </Paper>
             )
@@ -142,15 +162,22 @@ export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, on
                     </Typography>
                   </Box>
                 </Box>
-                <Box sx={{ textAlign: 'right' }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                    {player.score}
-                  </Typography>
-                  {!isGameOver && roundScore > 0 && (
-                    <Typography variant="caption" sx={{ color: 'success.main', display: 'block', lineHeight: 1 }}>
-                      {t('scoreboard.thisRound', { score: roundScore })}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                      {player.score}
                     </Typography>
-                  )}
+                    {!isGameOver && roundScore > 0 && (
+                      <Typography variant="caption" sx={{ color: 'success.main', display: 'block', lineHeight: 1 }}>
+                        {t('scoreboard.thisRound', { score: roundScore })}
+                      </Typography>
+                    )}
+                  </Box>
+                  <Tooltip title={t('tooltip.scoreBreakdown')} arrow>
+                    <IconButton size="small" onClick={() => setBreakdownPlayer(player.id)} sx={{ ml: 0.5 }}>
+                      <InfoOutlinedIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
                 </Box>
               </Box>
             )
@@ -160,5 +187,6 @@ export const Scoreboard = memo(function Scoreboard({ isGameOver, onNextRound, on
 
       {renderActionButtons()}
     </Box>
+    </>
   )
 })

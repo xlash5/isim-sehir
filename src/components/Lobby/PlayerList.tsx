@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Paper, Typography, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import { Paper, Typography, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, Tooltip } from '@mui/material'
 import GroupIcon from '@mui/icons-material/Group'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
@@ -65,14 +65,16 @@ export function PlayerList() {
               />
             </Box>
             {canTransfer && p.id !== localPlayerId && !p.isSpectator && (
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<AdminPanelSettingsIcon />}
-                onClick={() => setTransferTarget(p.id)}
-              >
-                {t('admin.transfer')}
-              </Button>
+              <Tooltip title={t('tooltip.adminTransfer')} arrow>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<AdminPanelSettingsIcon />}
+                  onClick={() => setTransferTarget(p.id)}
+                >
+                  {t('admin.transfer')}
+                </Button>
+              </Tooltip>
             )}
           </Box>
         ))}

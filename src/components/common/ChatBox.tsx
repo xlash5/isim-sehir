@@ -51,10 +51,18 @@ export function ChatBox({ onSend }: Props) {
       >
         {messages.map((msg, i) => (
           <ListItem key={i} sx={{ px: 0, py: 0, flexDirection: 'column', alignItems: 'stretch' }}>
-            <Typography variant="caption" sx={{ color: msg.playerId === localPlayerId ? 'primary.light' : 'text.secondary', fontWeight: 600 }}>
-              {msg.nickname}:
-            </Typography>
-            <Typography variant="body2">{msg.text}</Typography>
+            {msg.playerId === 'system' ? (
+              <Typography variant="caption" sx={{ color: 'warning.main', fontStyle: 'italic', fontSize: '0.75rem' }}>
+                {msg.text}
+              </Typography>
+            ) : (
+              <>
+                <Typography variant="caption" sx={{ color: msg.playerId === localPlayerId ? 'primary.light' : 'text.secondary', fontWeight: 600 }}>
+                  {msg.nickname}:
+                </Typography>
+                <Typography variant="body2">{msg.text}</Typography>
+              </>
+            )}
           </ListItem>
         ))}
       </List>
