@@ -13,6 +13,7 @@ import { usePeerStore } from '../stores/usePeerStore'
 import { usePeer } from '../context/PeerContext'
 import { generateRoomCode } from '../utils/letters'
 import { saveSession } from '../utils/session'
+import { sanitizeString } from '../utils/sanitize'
 import { useLocale } from '../locales'
 import { LanguageSwitcher } from '../components/common/LanguageSwitcher'
 
@@ -85,8 +86,9 @@ export function HomePage() {
   const handleCreateRoom = () => {
     if (!validateNickname()) return
     const playerId = crypto.randomUUID()
-    nicknameRef.current = nickname.trim()
-    setLocalPlayer(playerId, nickname.trim())
+    const clean = sanitizeString(nickname.trim(), 20)
+    nicknameRef.current = clean
+    setLocalPlayer(playerId, clean)
     const code = generateRoomCode()
     roomCodeRef.current = code
     createPeer(code)
@@ -106,8 +108,9 @@ export function HomePage() {
     }
     setCodeError('')
     const playerId = crypto.randomUUID()
-    nicknameRef.current = nickname.trim()
-    setLocalPlayer(playerId, nickname.trim())
+    const clean = sanitizeString(nickname.trim(), 20)
+    nicknameRef.current = clean
+    setLocalPlayer(playerId, clean)
     roomCodeRef.current = trimmed
     createPeer()
     pendingActionRef.current = 'join'

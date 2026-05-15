@@ -12,6 +12,7 @@ import { useLocale } from '../../locales'
 import { CATEGORY_KEYS } from '../../utils/categories'
 import { TURKISH_LETTERS } from '../../utils/letters'
 import type { PeerMessage } from '../../types'
+import { sanitizeString } from '../../utils/sanitize'
 
 export function GameSettingsPanel() {
   const room = useGameStore((s) => s.room)
@@ -67,7 +68,7 @@ export function GameSettingsPanel() {
     : t('settings.letterDisplaySelected', { count: selectedLetters.length })
 
   const handleAddCustom = () => {
-    const name = customInput.trim()
+    const name = sanitizeString(customInput.trim(), 30)
     if (!name) {
       setCustomInputError(t('settings.customCategoryEmpty'))
       return

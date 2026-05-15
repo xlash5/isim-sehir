@@ -56,7 +56,8 @@ isim_sehir/
 │   │                                 # mobile-responsive, room-codes, performance
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-01-server-safeguards.md
 │   ├── SPEC-IMPLEMENTED-v2.1-P01-02-message-validation.md
-│   └── SPEC-DRAFT-v2.1-*.md        # input-sanitization, language-picker,
+│   ├── SPEC-IMPLEMENTED-v2.1-P01-03-input-sanitization.md
+│   └── SPEC-DRAFT-v2.1-*.md        # language-picker,
 │                                     # new-languages, rate-limiting, room-passwords,
 │                                     # stale-room-cleanup, lobby-category-visibility,
 │                                     # spectator-mode, lobby-auto-start

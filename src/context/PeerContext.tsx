@@ -5,6 +5,7 @@ import { useGameStore } from '../stores/useGameStore'
 import { useNotificationStore } from '../stores/useNotificationStore'
 import { playSound } from '../utils/sounds'
 import { validateMessage } from '../utils/messageValidator'
+import { sanitizeString } from '../utils/sanitize'
 import type { PeerMessage, GameRoom, Answer, Player } from '../types'
 
 function formatAdminTransferred(nickname: string): string {
@@ -83,12 +84,13 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       switch (msg.type) {
         case 'join-room': {
           const payload = msg.payload as { id: string; nickname: string }
-          console.log(`[Peer] join-room from ${payload.nickname} (${payload.id})`)
+          const cleanNickname = sanitizeString(payload.nickname, 20)
+          console.log(`[Peer] join-room from ${cleanNickname} (${payload.id})`)
           if (payload.id !== store.localPlayerId) {
             playSound('player-connect')
           }
-          store.addPlayer({ id: payload.id, nickname: payload.nickname, isAdmin: false, isReady: false, score: 0 })
-          peerToPlayerMap.current.set(connId, { playerId: payload.id, nickname: payload.nickname })
+          store.addPlayer({ id: payload.id, nickname: cleanNickname, isAdmin: false, isReady: false, score: 0 })
+          peerToPlayerMap.current.set(connId, { playerId: payload.id, nickname: cleanNickname })
           const fresh = gameStore.getState()
           if (fresh.room?.adminId === fresh.localPlayerId) {
             console.log('[Peer] Admin: sending room-state-sync to joiner')
@@ -260,11 +262,12 @@ export function PeerProvider({ children }: { children: ReactNode }) {
         }
         case 'reconnect': {
           const reconnectPayload = msg.payload as { playerId: string; nickname: string }
+          const cleanNickname = sanitizeString(reconnectPayload.nickname, 20)
           const storeState = gameStore.getState()
           if (storeState.room?.adminId === storeState.localPlayerId) {
-            console.log(`[Peer] Reconnect from ${reconnectPayload.nickname} (${reconnectPayload.playerId})`)
-            store.addPlayer({ id: reconnectPayload.playerId, nickname: reconnectPayload.nickname, isAdmin: false, isReady: false, score: 0 })
-            peerToPlayerMap.current.set(connId, { playerId: reconnectPayload.playerId, nickname: reconnectPayload.nickname })
+            console.log(`[Peer] Reconnect from ${cleanNickname} (${reconnectPayload.playerId})`)
+            store.addPlayer({ id: reconnectPayload.playerId, nickname: cleanNickname, isAdmin: false, isReady: false, score: 0 })
+            peerToPlayerMap.current.set(connId, { playerId: reconnectPayload.playerId, nickname: cleanNickname })
             const fresh = gameStore.getState()
             const ack: PeerMessage = {
               type: 'reconnect-accepted',

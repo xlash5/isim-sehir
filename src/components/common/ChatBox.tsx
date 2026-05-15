@@ -5,6 +5,7 @@ import ChatIcon from '@mui/icons-material/Chat'
 import { useGameStore } from '../../stores/useGameStore'
 import { useLocale } from '../../locales'
 import { playSound } from '../../utils/sounds'
+import { sanitizeString } from '../../utils/sanitize'
 
 interface Props {
   onSend: (text: string) => void
@@ -34,7 +35,7 @@ export function ChatBox({ onSend }: Props) {
 
   const handleSend = () => {
     if (!text.trim()) return
-    onSend(text.trim())
+    onSend(sanitizeString(text.trim(), 500))
     setText('')
   }
 

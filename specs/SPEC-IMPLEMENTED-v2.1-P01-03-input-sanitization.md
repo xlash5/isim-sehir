@@ -2,7 +2,7 @@
 
 > **Priority:** High
 > **Version target:** v2.1
-> **Status:** 📝 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
@@ -34,7 +34,7 @@ User-supplied strings (nicknames, chat messages, custom category names) are rend
 
 ## Acceptance Criteria
 
-- [ ] Input containing `<script>alert(1)</script>` is stripped to `alert(1)` or empty
-- [ ] Long inputs are truncated to max length
-- [ ] Normal inputs pass through unchanged
-- [ ] Existing behaviour (emoji, special chars like `ğ ü ş ı`) preserved
+- [x] Input containing `<script>alert(1)</script>` is stripped to `alert(1)` or empty
+- [x] Long inputs are truncated to max length
+- [x] Normal inputs pass through unchanged
+- [x] Existing behaviour (emoji, special chars like `ğ ü ş ı`) preserved
