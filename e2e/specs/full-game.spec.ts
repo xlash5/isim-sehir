@@ -9,7 +9,7 @@ test('play a full 2-player game through all phases', async ({ browser }) => {
   const code = await createRoom(host, 'Host')
 
   await host.getByRole('button', { name: 'Edit Settings' }).click()
-  await host.getByLabel('Categories').click()
+  await host.getByRole('combobox', { name: 'Categories' }).click()
 
   await host.getByRole('option', { name: 'Name (Male)' }).click()
   await host.getByRole('option', { name: 'City (Turkey)' }).click()

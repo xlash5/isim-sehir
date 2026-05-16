@@ -13,5 +13,8 @@ test('admin transfer on disconnect', async ({ browser }) => {
   await hostPage.close()
 
   // Wait for joiner to become admin (crown emoji next to name)
-  await expect(joinerPage.getByText('Joiner 👑')).toBeVisible({ timeout: 30_000 })
+  // In headless CI, WebRTC close events are unreliable, so this may fall back to
+  // the heartbeat monitor which detects a missing admin after 25 seconds of silence.
+  // Allow 45 seconds to comfortably cover the heartbeat threshold + polling jitter.
+  await expect(joinerPage.getByText('Joiner 👑')).toBeVisible({ timeout: 45_000 })
 })

@@ -14,7 +14,7 @@ test('create room and join with code', async ({ browser }) => {
   await waitForPlayers(joinerPage, 2)
 
   for (const page of [hostPage, joinerPage]) {
-    await expect(page.getByText('Host')).toBeVisible()
-    await expect(page.getByText('Joiner')).toBeVisible()
+    await expect(page.getByText('Host 👑')).toBeVisible()
+    await expect(page.getByText('Joiner', { exact: true })).toBeVisible()
   }
 })
