@@ -2,11 +2,11 @@
 
 > **Priority:** P02 — critical for regression safety but scoped to not block P01
 > **Version target:** v3.0
-> **Status:** 🔵 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
-The project has zero automated tests. This spec covers **Tier 3 — End-to-End Tests**: browser-level tests using Playwright with actual PeerJS connections. 2-3 smoke tests to validate critical user journeys — not a full suite.
+Adds **Tier 3 — End-to-End Tests**: browser-level tests using Playwright with actual PeerJS connections. 3 smoke tests validate critical user journeys — not a full suite.
 
 ## Requirements
 
@@ -35,17 +35,27 @@ import { defineConfig } from '@playwright/test'
 
 export default defineConfig({
   testDir: './specs',
-  fullyParallel: true,
+  fullyParallel: false,
   retries: 1,
+  workers: 1,
+  timeout: 60_000,
   use: {
     baseURL: 'http://localhost:5173',
     viewport: { width: 1280, height: 720 },
   },
-  webServer: {
-    command: 'npm run dev',
-    port: 5173,
-    reuseExistingServer: true,
-  },
+  webServer: [
+    {
+      command: 'npm run dev',
+      port: 5173,
+      reuseExistingServer: true,
+    },
+    {
+      command: 'node server/index.js',
+      port: 9000,
+      reuseExistingServer: true,
+      cwd: '.',
+    },
+  ],
 })
 ```
 
@@ -79,23 +89,24 @@ e2e/
 
 ### CI Integration
 
-- E2E tests run only on main (after deploy, or on demand).
-- Run on push to main.
+- E2E tests run as a separate `e2e` job in CI, after the `quality` job completes.
+- Runs on every PR and push to main.
 
-## Files to Create
+## Files Created
 
-- `e2e/playwright.config.ts`
-- `e2e/fixtures.ts`
-- `e2e/specs/create-and-join.spec.ts`
-- `e2e/specs/full-game.spec.ts`
-- `e2e/specs/admin-transfer.spec.ts`
+- `e2e/playwright.config.ts` — Playwright config with dual webServer (Vite + PeerJS)
+- `e2e/fixtures.ts` — Test helpers (createRoom, joinRoom, readyUp, etc.)
+- `e2e/specs/create-and-join.spec.ts` — Creates room, joins with code, verifies both in lobby
+- `e2e/specs/full-game.spec.ts` — 2-player game through all phases
+- `e2e/specs/admin-transfer.spec.ts` — Closes admin tab, verifies remaining player becomes admin
 
-## Files to Modify
+## Files Modified
 
-- `package.json` — add `test:e2e` script, `@playwright/test` devDependency
+- `package.json` — added `test:e2e` script, `@playwright/test` devDependency
+- `.github/workflows/ci.yml` — added `e2e` job with Playwright browser install
 
 ## Acceptance Criteria
 
-- [ ] `npm run test:e2e` runs 3 Playwright smoke tests and passes
-- [ ] Tests run in CI on push to main
-- [ ] No external services required beyond the app itself
+- [x] `npm run test:e2e` runs 3 Playwright smoke tests and passes
+- [x] Tests run in CI on push to main (separate `e2e` job)
+- [x] No external services required beyond the app itself

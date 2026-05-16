@@ -40,6 +40,7 @@ export function LobbyPage() {
 
   useEffect(() => {
     if (room && room.phase !== 'lobby') {
+      if (window.location.pathname.startsWith('/game/')) return
       navigate(`/game/${room.code}`)
     }
   }, [room?.phase, navigate])
@@ -99,12 +100,19 @@ export function LobbyPage() {
           clearInterval(countdownIntervalRef.current!)
           countdownIntervalRef.current = null
           s.setCountdown(null)
-          broadcastMessage({ type: 'game-start', senderId: s.localPlayerId!, payload: {} } as PeerMessage)
-          s.setPhase('wheel')
           const letter = getRandomLetter(s.room?.settings.letterPool)
+          useGameStore.setState((state) => {
+            if (!state.room) return state
+            return {
+              room: {
+                ...state.room,
+                pendingLetter: letter,
+                phase: 'wheel',
+              },
+            }
+          })
+          broadcastMessage({ type: 'game-start', senderId: s.localPlayerId!, payload: {} } as PeerMessage)
           broadcastMessage({ type: 'round-start', senderId: s.localPlayerId!, payload: { letter } } as PeerMessage)
-          s.setPendingLetter(letter)
-          navigate(`/game/${s.room?.code}`)
           return
         }
 
@@ -146,7 +154,6 @@ export function LobbyPage() {
     setCountdown(null)
     broadcastMessage({ type: 'countdown-cancel', senderId: localPlayerId!, payload: {} } as PeerMessage)
     startGame()
-    navigate(`/game/${room.code}`)
   }
 
   return (

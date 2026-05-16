@@ -160,8 +160,9 @@ export function GameSettingsPanel() {
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <FormControl size="small" fullWidth>
-            <InputLabel>{t('settings.categories')}</InputLabel>
+            <InputLabel id="categories-label">{t('settings.categories')}</InputLabel>
             <Select
+              labelId="categories-label"
               multiple
               value={categories}
               onChange={(e) => {
@@ -273,8 +274,9 @@ export function GameSettingsPanel() {
           </Box>
 
           <FormControl size="small" fullWidth>
-            <InputLabel>{t('settings.duration')}</InputLabel>
+            <InputLabel id="duration-label">{t('settings.duration')}</InputLabel>
             <Select
+              labelId="duration-label"
               value={roundDuration === null ? 'unlimited' : roundDuration}
               label={t('settings.duration')}
               onChange={(e) => {
@@ -290,8 +292,9 @@ export function GameSettingsPanel() {
           </FormControl>
 
           <FormControl size="small" fullWidth>
-            <InputLabel>{t('settings.letterPool')}</InputLabel>
+            <InputLabel id="letter-pool-mode-label">{t('settings.letterPool')}</InputLabel>
             <Select
+              labelId="letter-pool-mode-label"
               value={letterMode}
               label={t('settings.letterPool')}
               onChange={(e) => setLetterMode(e.target.value as 'all' | 'select')}
@@ -303,8 +306,9 @@ export function GameSettingsPanel() {
 
           {letterMode === 'select' && (
             <FormControl size="small" fullWidth>
-              <InputLabel>{t('settings.letterPool')}</InputLabel>
+              <InputLabel id="letter-pool-select-label">{t('settings.letterPool')}</InputLabel>
               <Select
+                labelId="letter-pool-select-label"
                 multiple
                 value={selectedLetters}
                 onChange={(e) => setSelectedLetters(e.target.value as string[])}
