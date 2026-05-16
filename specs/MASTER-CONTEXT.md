@@ -83,8 +83,8 @@ isim_sehir/
 │   │   └── SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md    # Locale-aware letter pool ✅
 │   └── v3.0/
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md   # Rules visibility ✅
-│       ├── SPEC-v3.0-P01-02-error-boundary-sentry.md             # Error boundary + Sentry 🔵
-│       ├── SPEC-v3.0-P01-03-pre-connection-ux-guard.md           # Pre-connection UX guard 🔵
+│       ├── SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md   # Error boundary + Sentry ✅
+│       ├── SPEC-IMPLEMENTED-v3.0-P01-03-pre-connection-ux-guard.md # Pre-connection UX guard ✅
 │       ├── SPEC-v3.0-P02-01-testing-strategy.md                  # Unit/integration/E2E tests 🔵
 │       ├── SPEC-v3.0-P02-02-ci-cd-pipeline.md                    # GitHub Actions CI/CD 🔵
 │       ├── SPEC-v3.0-P02-03-docker-compose.md                    # Docker Compose dev env 🔵
@@ -123,10 +123,18 @@ isim_sehir/
     ├── components/
     │   ├── common/
     │   │   ├── ChatBox.tsx           # Chat UI
+    │   │   ├── ConnectionStatus.tsx  # Connection health indicator (🟢🟡🔴)
     │   │   ├── CopyCode.tsx          # Room code copy button
+    │   │   ├── ErrorBoundary.tsx     # Configurable error boundary class component
+    │   │   ├── ErrorFallback.tsx     # Full-page error fallback with refresh + report
+    │   │   ├── GameErrorFallback.tsx # Game-specific error fallback with lobby nav
+    │   │   ├── InlineTip.tsx         # "i" icon with MUI Tooltip
     │   │   ├── LanguageSwitcher.tsx   # Autocomplete with flags (6 languages)
     │   │   ├── NotificationSnackbar.tsx
+    │   │   ├── PhaseIndicator.tsx    # Visual stepper of game phases
+    │   │   ├── PhaseTransitionBanner.tsx # Snackbar for phase changes
     │   │   ├── PlayerAvatar.tsx       # Avatar + ready/admin badges
+    │   │   ├── RulesPanel.tsx        # Interactive "How to Play" dialog
     │   │   ├── SessionRestore.tsx     # Session persistence dialog
     │   │   └── Timer.tsx             # Round countdown bar
     │   ├── Lobby/
@@ -136,6 +144,7 @@ isim_sehir/
     │       ├── AnswerTable.tsx        # Input fields per category
     │       ├── GradingPanel.tsx       # Peer voting UI
     │       ├── Scoreboard.tsx         # Round/game results
+    │       ├── ScoreBreakdown.tsx     # Per-category scoring drill-down
     │       └── SlotMachine.tsx        # Animated letter wheel
     │
     ├── locales/
@@ -149,12 +158,16 @@ isim_sehir/
     │
         └── utils/
             ├── categories.ts     # 33 built-in category keys + helper
+            ├── history.ts        # Game history localStorage (max 50 entries)
             ├── letters.ts        # Turkish letter pool (28 letters) + helpers
+            ├── messageValidator.ts # PeerJS message schema validation
             ├── rateLimiter.ts    # Per-peer rate limiter for message spam
+            ├── rules.ts          # Rules section metadata + localStorage flags
+            ├── sanitize.ts       # Input sanitisation / XSS prevention
             ├── scoring.ts        # Score calculation (unique=10pts, shared=5pts)
             ├── session.ts        # Persisted session (1hr TTL in localStorage)
-            ├── history.ts        # Game history localStorage (max 50 entries)
-            └── sounds.ts         # Sound manager (Web Audio API tones, localStorage toggle)
+            ├── sounds.ts         # Sound manager (Web Audio API tones, localStorage toggle)
+            └── tips.ts           # Contextual tip pool keyed by game event
 ```
 
 ---
@@ -239,26 +252,28 @@ lobby → wheel → answering → grading → round-results → wheel → ... �
 ## Peer Messaging Protocol
 
 | Message Type | Direction | Payload |
-|---|---|---|
-| `join-room` | Player→Admin & Admin→Others | `{ id, nickname }` |
-| `room-state-sync` | Admin→Joiner | `{ room: GameRoom }` |
-| `player-ready` | Player→Admin→Others | `{ playerId, ready }` |
-| `settings-update` | Admin→All | Partial GameSettings |
+|---|---|---|---|
+| `join-room` | Peer→Admin | `{ id, nickname, password?, isSpectator? }` |
+| `join-rejected` | Admin→Peer | `{ reason }` |
+| `spectate-request` | Peer→Admin | `{ playerId, nickname }` |
+| `player-ready` | Peer→Admin→All | `{ playerId, ready }` |
 | `game-start` | Admin→All | `{}` |
 | `round-start` | Admin→All | `{ letter }` |
-| `answers-submit` | Player→Admin+Others | `{ answers: Answer[] }` |
-| `vote` | Player→Admin+Others | `Vote` |
+| `answers-submit` | Peer→All | `{ answers }` |
+| `vote` | Peer→All | `{ voterId, answerId, isValid }` |
 | `round-end` | Admin→All | `{ roundScores, updatedPlayers }` |
-| `chat-message` | Player→All | `ChatMessage` |
-| `heartbeat` | Admin→All (8s interval) | `{}` |
-| `ping` | Any→All (10s interval) | `{}` |
-| `pong` | Any→Target | `{}` |
-| `player-disconnected` | Detector→All | `{ playerId }` |
-| `admin-transfer` | Detector→All | `{ newAdminId }` |
+| `settings-update` | Admin→All | Partial settings object |
+| `chat-message` | Any→All | `{ playerId, nickname, text, timestamp }` |
+| `player-disconnected` | Admin→All | `{ playerId }` |
+| `admin-transfer` | Admin→All | `{ newAdminId }` |
 | `admin-transfer-request` | Admin→All | `{ newAdminId }` |
-| `spectate-request` | Player→Admin | `{ playerId, nickname }` |
-| `reconnect` | Reconnecting→Admin | `{ playerId, nickname }` |
-| `reconnect-accepted` | Admin→Reconnecting | `{ room: GameRoom, timer: number \| null }` |
+| `room-state-sync` | Admin→Peer | `{ room }` (full state) |
+| `heartbeat` | Admin→All | `{}` (every 8s) |
+| `reconnect` | Peer→Admin | `{ playerId, nickname }` |
+| `reconnect-accepted` | Admin→Peer | `{ room, timer }` |
+| `ping/pong` | All→All | `{}` (health check, 10s interval) |
+| `countdown-sync` | Admin→All | `{ remaining }` (every 1s during countdown) |
+| `countdown-cancel` | Admin→All | `{}` |
 
 ### Network Topology
 
@@ -360,7 +375,7 @@ Navigation guards:
 - 28 Turkish letters: A B C Ç D E F G H I İ J K L M N O Ö P R S Ş T U Ü V Y Z
 - Letter `Ğ` is excluded (no words start with it)
 - Can be filtered to a subset via settings
-- **v2.2 (draft):** Default pool adapts to admin's locale — Turkish, English, German, Spanish, French, Portuguese alphabets supported
+- **v2.2:** Default pool adapts to admin's locale — Turkish, English, German, Spanish, French, Portuguese alphabets supported
 
 ---
 
@@ -378,7 +393,10 @@ Navigation guards:
 ## Key Conventions
 
 - **No CSS modules**: all styling via MUI `sx` prop or `createTheme`
-- **No comments in code** (project convention)
+- **No JSX comments** unless explaining non-obvious *why*
+- **Zustand selectors** for granular re-render control
+- **Existing locale patterns** — keys follow `section.key` convention
+- **Animations** use inline `@keyframes` in `sx` prop (not `keyframes` import)
 - **No barrel exports**: imports are direct file paths
 - **React 19**: no class components, all functional with hooks
 - **State updates propagate via PeerJS broadcast**: no server-side authoritative state
@@ -463,8 +481,8 @@ cd server && npm start   # PeerJS on :9000
 | `v2.1/SPEC-IMPLEMENTED-v2.1-P03-02-lobby-auto-start.md` | v2.1 — Countdown when all ready ✅ |
 | `v2.2/SPEC-IMPLEMENTED-v2.2-P01-01-locale-letter-pool.md` | v2.2 — Locale-aware letter pool ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md` | v3.0 — Rules visibility, phase indicators, tooltips ✅ |
-| `v3.0/SPEC-v3.0-P01-02-error-boundary-sentry.md` | v3.0 — Error boundaries + Sentry crash reporting 🔵 |
-| `v3.0/SPEC-v3.0-P01-03-pre-connection-ux-guard.md` | v3.0 — Server health probe, gated buttons, connection banner 🔵 |
+| `v3.0/SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md` | v3.0 — Error boundaries + Sentry crash reporting ✅ |
+| `v3.0/SPEC-IMPLEMENTED-v3.0-P01-03-pre-connection-ux-guard.md` | v3.0 — Server health probe, gated buttons, connection banner ✅ |
 | `v3.0/SPEC-v3.0-P02-01-testing-strategy.md` | v3.0 — Unit, integration & E2E test strategy 🔵 |
 | `v3.0/SPEC-v3.0-P02-02-ci-cd-pipeline.md` | v3.0 — GitHub Actions CI/CD pipeline 🔵 |
 | `v3.0/SPEC-v3.0-P02-03-docker-compose.md` | v3.0 — Docker Compose for local development 🔵 |
