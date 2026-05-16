@@ -43,25 +43,49 @@ export function useGame() {
     }
   }, [store.room?.phase, store.room?.currentRound])
 
-  const startGame = () => {
-    broadcastMessage({
-      type: 'game-start',
-      senderId: store.localPlayerId!,
-      payload: {},
-    } as PeerMessage)
-    store.setPhase('wheel')
-    startRound()
-  }
-
   const startRound = () => {
     const letter = getRandomLetter(store.room?.settings.letterPool)
-    broadcastMessage({
-      type: 'round-start',
-      senderId: store.localPlayerId!,
-      payload: { letter },
-    } as PeerMessage)
     store.setPendingLetter(letter)
     store.setPhase('wheel')
+    try {
+      broadcastMessage({
+        type: 'round-start',
+        senderId: store.localPlayerId!,
+        payload: { letter },
+      } as PeerMessage)
+    } catch {
+      console.warn('[Game] Failed to broadcast round-start')
+    }
+  }
+
+  const startGame = () => {
+    const letter = getRandomLetter(store.room?.settings.letterPool)
+    console.log('[Game] startGame called, letter:', letter, 'current phase:', store.room?.phase)
+    useGameStore.setState((state) => {
+      if (!state.room) return state
+      return {
+        room: {
+          ...state.room,
+          pendingLetter: letter,
+          phase: 'wheel',
+        },
+      }
+    })
+    console.log('[Game] state set, pendingLetter:', useGameStore.getState().room?.pendingLetter, 'phase:', useGameStore.getState().room?.phase)
+    try {
+      broadcastMessage({
+        type: 'game-start',
+        senderId: store.localPlayerId!,
+        payload: {},
+      } as PeerMessage)
+      broadcastMessage({
+        type: 'round-start',
+        senderId: store.localPlayerId!,
+        payload: { letter },
+      } as PeerMessage)
+    } catch {
+      console.warn('[Game] Failed to broadcast game-start')
+    }
   }
 
   const submitAnswers = () => {

@@ -143,6 +143,8 @@ export function PeerProvider({ children }: { children: ReactNode }) {
             adminPlayerIdRef.current = syncedRoom.adminId
             lastHeartbeatAtRef.current = Date.now()
             gameStore.setState({ room: syncedRoom })
+            const adminPlayer = syncedRoom.players.find((p) => p.id === syncedRoom.adminId)
+            peerToPlayerMap.current.set(connId, { playerId: syncedRoom.adminId, nickname: adminPlayer?.nickname ?? '' })
           }
           break
         }
@@ -515,7 +517,8 @@ export function PeerProvider({ children }: { children: ReactNode }) {
           const store = gameStore.getState()
           if (!store.room) return
           if (targetId !== store.room.code) return
-          const adminId = store.room.adminId
+          const mapping = peerToPlayerMap.current.get(targetId)
+          const adminId = mapping?.playerId ?? store.room.adminId
           const adminStillExists = store.room.players.some((p) => p.id === adminId)
           if (!adminStillExists) return
           const adminPlayer = store.room.players.find((p) => p.id === adminId)

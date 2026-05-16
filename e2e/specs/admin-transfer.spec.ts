@@ -8,6 +8,7 @@ test('admin transfer on disconnect', async ({ browser }) => {
   const code = await createRoom(hostPage, 'Host')
   await joinRoom(joinerPage, 'Joiner', code)
   await waitForPlayers(hostPage, 2)
+  await waitForPlayers(joinerPage, 2)
 
   // Close the host (admin) page — triggers PeerJS disconnect detection
   await hostPage.close()

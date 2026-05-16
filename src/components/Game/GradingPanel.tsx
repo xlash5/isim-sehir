@@ -32,6 +32,7 @@ const GradingPanelInner = memo(function GradingPanel({ onVote, onComplete }: Pro
   }, [])
 
   if (!room || gradingItems.length === 0) {
+    console.log('[Grading] no room or no grading items')
     return (
       <Typography sx={{ textAlign: 'center', color: 'text.secondary', py: 4 }}>
         {t('grading.noData')}
@@ -53,6 +54,22 @@ const GradingPanelInner = memo(function GradingPanel({ onVote, onComplete }: Pro
       return getVotesForAnswer(a.answerId).length >= eligible
     }),
   )
+
+  console.log('[Grading] render, localPlayerId=' + localPlayerId +
+    ' allVotes=' + allVotes.length +
+    ' complete=' + allVotesComplete +
+    ' admin=' + (room.adminId === localPlayerId) +
+    ' items=' + JSON.stringify(gradingItems.map(i => ({
+      pId: i.playerId,
+      n: i.nickname,
+      answers: i.answers.map(a => ({
+        id: a.answerId,
+        playerId: i.playerId,
+        isOwn: i.playerId === localPlayerId,
+        votes: getVotesForAnswer(a.answerId).length,
+        eligible: room.players.filter(p => p.id !== i.playerId).length
+      }))
+    }))))
 
   const playerNameMap = new Map(room.players.map((p) => [p.id, p.nickname]))
 

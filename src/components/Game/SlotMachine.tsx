@@ -20,13 +20,13 @@ function SlotMachineInner({ onComplete }: Props) {
   const [displayLetter, setDisplayLetter] = useState('?')
   const [isSpinning, setIsSpinning] = useState(true)
   const [showResult, setShowResult] = useState(false)
-  const lastLetterRef = useRef<string | null>(null)
   const onCompleteRef = useRef(onComplete)
   onCompleteRef.current = onComplete
 
   useEffect(() => {
-    if (!pendingLetter || pendingLetter === lastLetterRef.current) return
-    lastLetterRef.current = pendingLetter
+    if (!pendingLetter) return
+
+    console.log('[SlotMachine] starting animation for letter:', pendingLetter)
     setShowResult(false)
     setIsSpinning(true)
 
@@ -34,11 +34,14 @@ function SlotMachineInner({ onComplete }: Props) {
     const fastPhase = 1000
     const startTime = Date.now()
     let timeoutId: ReturnType<typeof setTimeout>
+    let cancelled = false
 
     const scheduleNext = () => {
+      if (cancelled) return
       const elapsed = Date.now() - startTime
 
       if (elapsed >= totalDuration) {
+        console.log('[SlotMachine] animation complete, letter:', pendingLetter)
         setDisplayLetter(pendingLetter)
         setIsSpinning(false)
         playSound('letter-reveal')
@@ -63,7 +66,10 @@ function SlotMachineInner({ onComplete }: Props) {
     }
 
     timeoutId = setTimeout(scheduleNext, 50)
-    return () => clearTimeout(timeoutId)
+    return () => {
+      cancelled = true
+      clearTimeout(timeoutId)
+    }
   }, [pendingLetter])
 
   return (
