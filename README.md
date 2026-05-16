@@ -115,8 +115,13 @@ npm run lint       # tsc --noEmit
 npm run test       # vitest run (163 unit + 27 integration = 190 tests)
 npm run test:watch # vitest watch mode
 npm run test:coverage # vitest with coverage report
-npm run test:e2e   # Playwright (3 E2E smoke tests — requires dev + PeerJS server)
+npm run test:e2e   # Playwright (3 E2E smoke tests — config at e2e/playwright.config.ts)
 ```
+
+E2E test suite lives in [`e2e/`](./e2e/):
+- [`e2e/playwright.config.ts`](./e2e/playwright.config.ts) — config: 2 players serial, 1 retry, auto-starts Vite dev + PeerJS server
+- [`e2e/fixtures.ts`](./e2e/fixtures.ts) — shared helpers: `createPage`, `createRoom`, `joinRoom`, `readyUp`, `startGame`
+- [`e2e/specs/`](./e2e/specs/) — 3 smoke tests: `create-and-join`, `full-game`, `admin-transfer`
 
 Signalling server:
 ```bash

@@ -53,6 +53,10 @@ jobs:
 
       - run: npm ci
 
+      - run: npm ci
+        name: Install server dependencies
+        working-directory: ./server
+
       - run: npx playwright install chromium
         name: Install Playwright browsers
 
