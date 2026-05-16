@@ -95,10 +95,11 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v3.0** | **P01** | **Pre-Connection UX Guard — server health probe, gated buttons, connection banner on home page** | ✅ |
 | **v3.0** | **P02** | **Unit testing — Vitest, 163 tests, 85%+ statement coverage across utils + stores** | ✅ |
 | **v3.0** | **P02** | **Integration testing — Vitest mock transport, 27 tests covering peer messaging, game flow, admin transfer, reconnection, rate limiting, input validation** | ✅ |
-| **v3.0** | **P02** | **CI/CD — GitHub Actions: lint → test → build on every PR and push to main** | ✅ |
+| **v3.0** | **P02** | **E2E testing — Playwright, 3 smoke tests: create+join, full game, admin disconnect** | ✅ |
+| **v3.0** | **P02** | **CI/CD — GitHub Actions: lint → test → build + E2E on every PR and push to main** | ✅ |
 
 ### Planned
-- **P02** [E2E testing](./specs/v3.0/SPEC-v3.0-P02-01C-e2e-testing.md), Docker Compose, TypeScript signalling server
+- **P02** Docker Compose, TypeScript signalling server
 - **P03** Server persistence, observability, PWA support
 - **P04** Mesh scaling alternatives
 
@@ -114,6 +115,7 @@ npm run lint       # tsc --noEmit
 npm run test       # vitest run (163 unit + 27 integration = 190 tests)
 npm run test:watch # vitest watch mode
 npm run test:coverage # vitest with coverage report
+npm run test:e2e   # Playwright (3 E2E smoke tests — requires dev + PeerJS server)
 ```
 
 Signalling server:
