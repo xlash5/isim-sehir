@@ -30,6 +30,8 @@ with a custom PeerJS signaling server on Render.
 
 ```
 isim_sehir/
+├── .github/workflows/
+│   └── ci.yml              # GitHub Actions: lint → test → build on PR/push to main
 ├── index.html              # Vite entry HTML
 ├── package.json            # Frontend deps & scripts
 ├── tsconfig.json           # Strict TS config
@@ -85,10 +87,10 @@ isim_sehir/
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md   # Rules visibility ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md   # Error boundary + Sentry ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-03-pre-connection-ux-guard.md # Pre-connection UX guard ✅
-│       ├── SPEC-v3.0-P02-01A-unit-testing.md                     # Unit tests 🔵
+│       ├── SPEC-IMPLEMENTED-v3.0-P02-01A-unit-testing.md                     # Unit tests ✅
 │       ├── SPEC-v3.0-P02-01B-integration-testing.md              # Integration tests 🔵
 │       ├── SPEC-v3.0-P02-01C-e2e-testing.md                      # E2E tests 🔵
-│       ├── SPEC-v3.0-P02-02-ci-cd-pipeline.md                    # GitHub Actions CI/CD 🔵
+│       ├── SPEC-IMPLEMENTED-v3.0-P02-02-ci-cd-pipeline.md                    # GitHub Actions CI/CD ✅
 │       ├── SPEC-v3.0-P02-03-docker-compose.md                    # Docker Compose dev env 🔵
 │       ├── SPEC-v3.0-P02-04-typescript-server.md                 # TS migration (server) 🔵
 │       ├── SPEC-v3.0-P03-01-server-persistence.md                # Server-side game history 🔵
@@ -158,7 +160,24 @@ isim_sehir/
     │   ├── fr.ts             # French translations
     │   └── de.ts             # German translations
     │
-        └── utils/
+        ├── test/
+    │   ├── setup.ts               # Vitest global setup (crypto, localStorage mock)
+    │   ├── utils/
+    │   │   ├── scoring.test.ts
+    │   │   ├── letters.test.ts
+    │   │   ├── categories.test.ts
+    │   │   ├── sanitize.test.ts
+    │   │   ├── messageValidator.test.ts
+    │   │   ├── rateLimiter.test.ts
+    │   │   ├── session.test.ts
+    │   │   ├── history.test.ts
+    │   │   └── sounds.test.ts
+    │   └── stores/
+    │       ├── useGameStore.test.ts
+    │       ├── usePeerStore.test.ts
+    │       └── useNotificationStore.test.ts
+    │
+    └── utils/
             ├── categories.ts     # 33 built-in category keys + helper
             ├── history.ts        # Game history localStorage (max 50 entries)
             ├── letters.ts        # Turkish letter pool (28 letters) + helpers
@@ -442,6 +461,9 @@ npm run dev       # Vite dev server on :5173
 npm run build     # tsc + vite build
 npm run preview   # Vite preview
 npm run lint      # tsc --noEmit (type check only, no linter)
+npm run test      # vitest run (unit + store tests)
+npm run test:watch    # vitest watch mode
+npm run test:coverage # vitest run --coverage (85%+ stmts, 70%+ branches)
 ```
 
 Server:
@@ -485,10 +507,10 @@ cd server && npm start   # PeerJS on :9000
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md` | v3.0 — Rules visibility, phase indicators, tooltips ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md` | v3.0 — Error boundaries + Sentry crash reporting ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-03-pre-connection-ux-guard.md` | v3.0 — Server health probe, gated buttons, connection banner ✅ |
-| `v3.0/SPEC-v3.0-P02-01A-unit-testing.md` | v3.0 — Unit tests (pure logic + Zustand stores) 🔵 |
+| `v3.0/SPEC-IMPLEMENTED-v3.0-P02-01A-unit-testing.md` | v3.0 — Unit tests (pure logic + Zustand stores) ✅ |
 | `v3.0/SPEC-v3.0-P02-01B-integration-testing.md` | v3.0 — Integration tests (mock peer messaging) 🔵 |
 | `v3.0/SPEC-v3.0-P02-01C-e2e-testing.md` | v3.0 — E2E tests (Playwright browser smoke tests) 🔵 |
-| `v3.0/SPEC-v3.0-P02-02-ci-cd-pipeline.md` | v3.0 — GitHub Actions CI/CD pipeline 🔵 |
+| `v3.0/SPEC-IMPLEMENTED-v3.0-P02-02-ci-cd-pipeline.md` | v3.0 — GitHub Actions CI/CD pipeline ✅ |
 | `v3.0/SPEC-v3.0-P02-03-docker-compose.md` | v3.0 — Docker Compose for local development 🔵 |
 | `v3.0/SPEC-v3.0-P02-04-typescript-server.md` | v3.0 — TypeScript migration for signalling server 🔵 |
 | `v3.0/SPEC-v3.0-P03-01-server-persistence.md` | v3.0 — Server-side game history & leaderboard 🔵 |

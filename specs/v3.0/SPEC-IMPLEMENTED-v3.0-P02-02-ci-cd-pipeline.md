@@ -2,7 +2,7 @@
 
 > **Priority:** P02 — automates quality gates
 > **Version target:** v3.0
-> **Status:** 🔵 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 

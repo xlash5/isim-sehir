@@ -2,7 +2,7 @@
 
 > **Priority:** P02 — critical for regression safety but scoped to not block P01
 > **Version target:** v3.0
-> **Status:** 🔵 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
