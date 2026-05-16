@@ -97,9 +97,10 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v3.0** | **P02** | **Integration testing — Vitest mock transport, 27 tests covering peer messaging, game flow, admin transfer, reconnection, rate limiting, input validation** | ✅ |
 | **v3.0** | **P02** | **E2E testing — Playwright, 3 smoke tests: create+join, full game, admin disconnect** | ✅ |
 | **v3.0** | **P02** | **CI/CD — GitHub Actions: lint → test → build + E2E on every PR and push to main** | ✅ |
+| **v3.0** | **P02** | **Docker Compose — single-command local development with Hot Reload + production build** | ✅ |
 
 ### Planned
-- **P02** Docker Compose, TypeScript signalling server
+- **P02** TypeScript signalling server
 - **P03** Server persistence, observability, PWA support
 - **P04** Mesh scaling alternatives
 
@@ -123,7 +124,16 @@ E2E test suite lives in [`e2e/`](./e2e/):
 - [`e2e/fixtures.ts`](./e2e/fixtures.ts) — shared helpers: `createPage`, `createRoom`, `joinRoom`, `readyUp`, `startGame`
 - [`e2e/specs/`](./e2e/specs/) — 3 smoke tests: `create-and-join`, `full-game`, `admin-transfer`
 
-Signalling server:
+### Docker Compose
+
+```bash
+docker compose up                         # Dev: Vite hot reload :5173 + signalling :9000
+docker compose -f docker-compose.prod.yml up  # Prod-like: Nginx :80 + signalling :9000
+```
+
+Bind-mounts enable hot reload without rebuilding. See [`docker-compose.yml`](./docker-compose.yml).
+
+Signalling server (standalone):
 ```bash
 cd server && npm install && npm start   # http://localhost:9000
 ```
