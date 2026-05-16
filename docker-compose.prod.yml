@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: .
+      target: prod
+    ports:
+      - "80:80"
+    environment:
+      - VITE_PEER_HOST=localhost
+      - VITE_PEER_PORT=9000
+      - VITE_PEER_PATH=/isim-sehir
+
+  signalling:
+    build: ./server
+    ports:
+      - "9000:9000"
+    environment:
+      - PORT=9000
+      - MAX_PEERS_PER_ROOM=8
+      - MAX_CONNECTIONS_PER_SEC=5
+      - CONNECTION_TIMEOUT_MS=30000
+      - ROOM_TTL_MINUTES=5
+      - ALLOWED_ORIGINS=http://localhost:80

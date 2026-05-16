@@ -2,7 +2,7 @@
 
 > **Priority:** P02 — lowers onboarding friction, enables consistent dev environment
 > **Version target:** v3.0
-> **Status:** 🔵 Draft
+> **Status:** ✅ Implemented
 
 ## Overview
 
