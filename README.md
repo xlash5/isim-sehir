@@ -93,11 +93,12 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v3.0** | **P01** | **UX Rules & Behaviour Visibility — RulesPanel, PhaseIndicator, tooltips, chat tips, scoring drill-down** | ✅ |
 | **v3.0** | **P01** | **Error Boundaries & Sentry — crash-safe React tree, Sentry monitoring** | ✅ |
 | **v3.0** | **P01** | **Pre-Connection UX Guard — server health probe, gated buttons, connection banner on home page** | ✅ |
-| **v3.0** | **P02** | **Unit testing — Vitest, 162 tests, 85% statement coverage across utils + stores** | ✅ |
+| **v3.0** | **P02** | **Unit testing — Vitest, 163 tests, 85%+ statement coverage across utils + stores** | ✅ |
+| **v3.0** | **P02** | **Integration testing — Vitest mock transport, 27 tests covering peer messaging, game flow, admin transfer, reconnection, rate limiting, input validation** | ✅ |
 | **v3.0** | **P02** | **CI/CD — GitHub Actions: lint → test → build on every PR and push to main** | ✅ |
 
 ### Planned
-- **P02** [Integration testing](./specs/v3.0/SPEC-v3.0-P02-01B-integration-testing.md), [E2E testing](./specs/v3.0/SPEC-v3.0-P02-01C-e2e-testing.md), Docker Compose, TypeScript signalling server
+- **P02** [E2E testing](./specs/v3.0/SPEC-v3.0-P02-01C-e2e-testing.md), Docker Compose, TypeScript signalling server
 - **P03** Server persistence, observability, PWA support
 - **P04** Mesh scaling alternatives
 
@@ -110,7 +111,7 @@ npm install
 npm run dev        # http://localhost:5173
 npm run build      # tsc + vite build
 npm run lint       # tsc --noEmit
-npm run test       # vitest run (162 unit + store tests)
+npm run test       # vitest run (163 unit + 27 integration = 190 tests)
 npm run test:watch # vitest watch mode
 npm run test:coverage # vitest with coverage report
 ```
