@@ -95,7 +95,7 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v3.0** | **P01** | **Pre-Connection UX Guard — server health probe, gated buttons, connection banner on home page** | ✅ |
 
 ### Planned
-- **P02** Testing strategy, CI/CD pipeline, Docker Compose, TypeScript signalling server
+- **P02** [Unit testing](./specs/v3.0/SPEC-v3.0-P02-01A-unit-testing.md), [integration testing](./specs/v3.0/SPEC-v3.0-P02-01B-integration-testing.md), [E2E testing](./specs/v3.0/SPEC-v3.0-P02-01C-e2e-testing.md), CI/CD pipeline, Docker Compose, TypeScript signalling server
 - **P03** Server persistence, observability, PWA support
 - **P04** Mesh scaling alternatives
 

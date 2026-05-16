@@ -85,7 +85,9 @@ isim_sehir/
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md   # Rules visibility ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md   # Error boundary + Sentry ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-03-pre-connection-ux-guard.md # Pre-connection UX guard ✅
-│       ├── SPEC-v3.0-P02-01-testing-strategy.md                  # Unit/integration/E2E tests 🔵
+│       ├── SPEC-v3.0-P02-01A-unit-testing.md                     # Unit tests 🔵
+│       ├── SPEC-v3.0-P02-01B-integration-testing.md              # Integration tests 🔵
+│       ├── SPEC-v3.0-P02-01C-e2e-testing.md                      # E2E tests 🔵
 │       ├── SPEC-v3.0-P02-02-ci-cd-pipeline.md                    # GitHub Actions CI/CD 🔵
 │       ├── SPEC-v3.0-P02-03-docker-compose.md                    # Docker Compose dev env 🔵
 │       ├── SPEC-v3.0-P02-04-typescript-server.md                 # TS migration (server) 🔵
@@ -483,7 +485,9 @@ cd server && npm start   # PeerJS on :9000
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md` | v3.0 — Rules visibility, phase indicators, tooltips ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md` | v3.0 — Error boundaries + Sentry crash reporting ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-03-pre-connection-ux-guard.md` | v3.0 — Server health probe, gated buttons, connection banner ✅ |
-| `v3.0/SPEC-v3.0-P02-01-testing-strategy.md` | v3.0 — Unit, integration & E2E test strategy 🔵 |
+| `v3.0/SPEC-v3.0-P02-01A-unit-testing.md` | v3.0 — Unit tests (pure logic + Zustand stores) 🔵 |
+| `v3.0/SPEC-v3.0-P02-01B-integration-testing.md` | v3.0 — Integration tests (mock peer messaging) 🔵 |
+| `v3.0/SPEC-v3.0-P02-01C-e2e-testing.md` | v3.0 — E2E tests (Playwright browser smoke tests) 🔵 |
 | `v3.0/SPEC-v3.0-P02-02-ci-cd-pipeline.md` | v3.0 — GitHub Actions CI/CD pipeline 🔵 |
 | `v3.0/SPEC-v3.0-P02-03-docker-compose.md` | v3.0 — Docker Compose for local development 🔵 |
 | `v3.0/SPEC-v3.0-P02-04-typescript-server.md` | v3.0 — TypeScript migration for signalling server 🔵 |
