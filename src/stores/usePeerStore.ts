@@ -69,17 +69,35 @@ export const usePeerStore = create<PeerState>((set, get) => ({
     set({ serverReachable: null })
     try {
       const host = import.meta.env.VITE_PEER_HOST || 'localhost'
-      const port = Number(import.meta.env.VITE_HEALTH_PORT) || Number(import.meta.env.VITE_PEER_PORT) + 1 || 9001
-      const protocol = location.protocol === 'https:' ? 'https' : 'http'
-      const res = await fetch(`${protocol}://${host}:${port}/isim-sehir/health`, {
-        signal: AbortSignal.timeout(5000),
-      })
-      set({ serverReachable: res.ok, probeRetryAttempt: 0, sustainedUnreachable: false })
+      const peerPort = Number(import.meta.env.VITE_PEER_PORT) || 9000
+      const healthPort = Number(import.meta.env.VITE_HEALTH_PORT) || peerPort + 1
+      let protocol = 'http'
+      try { protocol = location.protocol === 'https:' ? 'https' : 'http' } catch { /* node tests */ }
+
+      const tryUrl = async (url: string): Promise<boolean> => {
+        try {
+          const res = await fetch(url, { signal: AbortSignal.timeout(5000) })
+          return res.ok
+        } catch {
+          return false
+        }
+      }
+
+      const healthOk = await tryUrl(`${protocol}://${host}:${healthPort}/isim-sehir/health`)
+      if (healthOk) {
+        set({ serverReachable: true, probeRetryAttempt: 0, sustainedUnreachable: false })
+        return
+      }
+
+      const mainOk = await tryUrl(`${protocol}://${host}:${peerPort}/isim-sehir/health`)
+      if (mainOk) {
+        set({ serverReachable: true, probeRetryAttempt: 0, sustainedUnreachable: false })
+        return
+      }
+
+      set({ serverReachable: false })
     } catch {
-      const state = get()
-      const sustained = state.sustainedUnreachable
-      const wasEverReachable = state.serverReachable !== null && state.serverReachable !== undefined
-      set({ serverReachable: false, sustainedUnreachable: sustained || (wasEverReachable && state.serverReachable === false) })
+      set({ serverReachable: false })
     }
   },
 
