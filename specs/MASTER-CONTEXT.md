@@ -92,7 +92,7 @@ isim_sehir/
 │       ├── SPEC-IMPLEMENTED-v3.0-P02-01B-integration-testing.md              # Integration tests ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P02-01C-e2e-testing.md                      # E2E tests ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P02-02-ci-cd-pipeline.md                    # GitHub Actions CI/CD ✅
-│       ├── SPEC-IMPLEMENTED-v3.0-P02-03-docker-compose.md                    # Docker Compose dev env ✅
+│       ├── SPEC-v3.0-P02-03-docker-compose.md                    # Docker Compose dev env 🔵
 │       ├── SPEC-v3.0-P02-04-typescript-server.md                 # TS migration (server) 🔵
 │       ├── SPEC-v3.0-P03-01-server-persistence.md                # Server-side game history 🔵
 │       ├── SPEC-v3.0-P03-02-observability.md                     # Health + metrics + logging 🔵
@@ -515,7 +515,7 @@ cd server && npm start   # PeerJS on :9000
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P02-01B-integration-testing.md` | v3.0 — Integration tests (mock peer messaging) ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P02-01C-e2e-testing.md` | v3.0 — E2E tests (Playwright browser smoke tests) ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P02-02-ci-cd-pipeline.md` | v3.0 — GitHub Actions CI/CD pipeline ✅ |
-| `v3.0/SPEC-IMPLEMENTED-v3.0-P02-03-docker-compose.md` | v3.0 — Docker Compose for local development ✅ |
+| `v3.0/SPEC-v3.0-P02-03-docker-compose.md` | v3.0 — Docker Compose for local development 🔵 |
 | `v3.0/SPEC-v3.0-P02-04-typescript-server.md` | v3.0 — TypeScript migration for signalling server 🔵 |
 | `v3.0/SPEC-v3.0-P03-01-server-persistence.md` | v3.0 — Server-side game history & leaderboard 🔵 |
 | `v3.0/SPEC-v3.0-P03-02-observability.md` | v3.0 — Health endpoint, metrics, structured logging 🔵 |
