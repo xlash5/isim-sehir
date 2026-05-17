@@ -203,6 +203,14 @@ const fr: Record<string, string> = {
   'tooltip.connecting': 'Vérification de la connexion au serveur, veuillez patienter…',
   'tooltip.serverDown': 'Serveur inaccessible. Veuillez réessayer une fois la connexion établie.',
   'tooltip.serverDownAction': 'Le serveur est hors service. Veuillez réessayer une fois connecté.',
+  'tooltip.serverDownSustained': 'Le serveur est inaccessible depuis un moment. Vérifiez votre connexion ou réessayez plus tard.',
+  'connection.idle': 'Non connecté à une partie',
+  'connection.serverDown': 'Serveur de signalisation inaccessible',
+  'connection.peerCount': '{count} pair(s)',
+  'connection.unstable': 'Connexion instable — tentative de reconnexion…',
+  'connection.unstableRestored': 'Connexion rétablie.',
+  'connection.reconnectingAttempt': 'Reconnexion… tentative {attempt}/{max}',
+  'connection.troubleshoot': 'Essayez d\'actualiser la page. Si le problème persiste, le serveur est peut-être en maintenance.',
 
   'home.howToPlay': 'Comment Jouer',
 
