@@ -1,3 +1,5 @@
+export type ConnectionStatus = 'idle' | 'connected' | 'reconnecting' | 'disconnected'
+
 export type GamePhase =
   | 'lobby'
   | 'wheel'

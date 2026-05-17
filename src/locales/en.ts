@@ -270,5 +270,13 @@ const en: Record<string, string> = {
   'tooltip.connecting': 'Checking server connection, please wait…',
   'tooltip.serverDown': 'Server unreachable. Please try again when the connection is established.',
   'tooltip.serverDownAction': 'Server is down. Please try again once connected.',
+  'tooltip.serverDownSustained': 'Server has been unreachable for a while. Check your connection or try again later.',
+  'connection.idle': 'Not connected to a game',
+  'connection.serverDown': 'Signalling server unreachable',
+  'connection.peerCount': '{count} peer(s)',
+  'connection.unstable': 'Connection unstable — attempting to reconnect…',
+  'connection.unstableRestored': 'Connection restored.',
+  'connection.reconnectingAttempt': 'Reconnecting… attempt {attempt}/{max}',
+  'connection.troubleshoot': 'Try refreshing the page. If the issue persists, the server may be under maintenance.',
 }
 export default en

@@ -27,6 +27,37 @@ function formatPlayerDisconnected(nickname: string): string {
   return locale === 'en' ? `${nickname} left the game.` : `${nickname} oyundan ayrıldı.`
 }
 
+function getLocaleConnectionText(key: string): string {
+  const locale = (typeof localStorage !== 'undefined' ? localStorage.getItem('locale') : null) || 'tr'
+  const texts: Record<string, Record<string, string>> = {
+    tr: {
+      'connection.unstable': 'Bağlantı kararsız — yeniden bağlanmaya çalışılıyor…',
+      'connection.unstableRestored': 'Bağlantı yeniden kuruldu.',
+    },
+    en: {
+      'connection.unstable': 'Connection unstable — attempting to reconnect…',
+      'connection.unstableRestored': 'Connection restored.',
+    },
+    es: {
+      'connection.unstable': 'Conexión inestable — intentando reconectar…',
+      'connection.unstableRestored': 'Conexión restablecida.',
+    },
+    pt: {
+      'connection.unstable': 'Conexão instável — tentando reconectar…',
+      'connection.unstableRestored': 'Conexão restaurada.',
+    },
+    fr: {
+      'connection.unstable': 'Connexion instable — tentative de reconnexion…',
+      'connection.unstableRestored': 'Connexion rétablie.',
+    },
+    de: {
+      'connection.unstable': 'Verbindung instabil — versuche erneute Verbindung…',
+      'connection.unstableRestored': 'Verbindung wiederhergestellt.',
+    },
+  }
+  return texts[locale]?.[key] ?? texts.en[key] ?? key
+}
+
 interface PeerContextType {
   createPeer: (id?: string) => void
   connectToPeer: (peerId: string, password?: string, isSpectator?: boolean) => void
@@ -60,6 +91,8 @@ export function PeerProvider({ children }: { children: ReactNode }) {
   const reconnectAttemptsRef = useRef(0)
   const reconnectIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const rateLimiterRef = useRef<RateLimiter>(new RateLimiter())
+  const lastConnectionSnackbarRef = useRef(0)
+  const prevConnectionStatusRef = useRef<import('../stores/usePeerStore').ConnectionStatus>('idle')
 
   const gameStore = useGameStore
   const peerStore = usePeerStore
@@ -797,7 +830,7 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       const now = Date.now()
 
       if (!gStore.room) {
-        pStore.setConnectionStatus('connected')
+        pStore.setConnectionStatus('idle')
         return
       }
 
@@ -816,24 +849,48 @@ export function PeerProvider({ children }: { children: ReactNode }) {
       }
 
       const currentStatus = pStore.connectionStatus
+      const prevStatus = prevConnectionStatusRef.current
+      prevConnectionStatusRef.current = currentStatus
 
       if (allRecent) {
         if (currentStatus !== 'connected') {
           pStore.setConnectionStatus('connected')
+          if (gStore.room && prevStatus === 'reconnecting') {
+            const now = Date.now()
+            if (now - lastConnectionSnackbarRef.current > 10000) {
+              lastConnectionSnackbarRef.current = now
+              useNotificationStore.getState().show(getLocaleConnectionText('connection.unstableRestored'), 'success')
+            }
+          }
           reconnectAttemptsRef.current = 0
           if (reconnectIntervalRef.current) {
             clearInterval(reconnectIntervalRef.current)
             reconnectIntervalRef.current = null
           }
         }
-      } else if (anyStale && currentStatus === 'connected') {
+      } else if (anyStale && (currentStatus === 'connected' || currentStatus === 'idle')) {
         pStore.setConnectionStatus('reconnecting')
+        if (gStore.room) {
+          const now = Date.now()
+          if (now - lastConnectionSnackbarRef.current > 10000) {
+            lastConnectionSnackbarRef.current = now
+            useNotificationStore.getState().show(getLocaleConnectionText('connection.unstable'), 'warning')
+          }
+        }
         if (!reconnectIntervalRef.current) {
           reconnectAttemptsRef.current = 0
           reconnectIntervalRef.current = setInterval(() => {
             reconnectAttemptsRef.current++
             if (reconnectAttemptsRef.current > 6) {
               peerStore.getState().setConnectionStatus('disconnected')
+              if (gStore.room) {
+                const now2 = Date.now()
+                if (now2 - lastConnectionSnackbarRef.current > 10000) {
+                  lastConnectionSnackbarRef.current = now2
+                  const lostText = (typeof localStorage !== 'undefined' ? localStorage.getItem('locale') : null) === 'tr' ? 'Bağlantı koptu.' : 'Connection lost.'
+                  useNotificationStore.getState().show(lostText, 'error')
+                }
+              }
               if (reconnectIntervalRef.current) {
                 clearInterval(reconnectIntervalRef.current)
                 reconnectIntervalRef.current = null

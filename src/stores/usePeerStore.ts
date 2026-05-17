@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import type Peer from 'peerjs'
 import type { DataConnection } from 'peerjs'
 
-export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected'
+export type ConnectionStatus = 'idle' | 'connected' | 'reconnecting' | 'disconnected'
 
 interface PeerState {
   peer: Peer | null
@@ -11,6 +11,8 @@ interface PeerState {
   peerId: string | null
   connectionStatus: ConnectionStatus
   serverReachable: boolean | null
+  probeRetryAttempt: number
+  sustainedUnreachable: boolean
 
   setPeer: (peer: Peer) => void
   setPeerId: (id: string) => void
@@ -20,6 +22,8 @@ interface PeerState {
   setConnectionStatus: (status: ConnectionStatus) => void
   disconnect: () => void
   probeServer: () => Promise<void>
+  retryProbe: () => Promise<void>
+  resetProbeState: () => void
 }
 
 export const usePeerStore = create<PeerState>((set, get) => ({
@@ -27,8 +31,10 @@ export const usePeerStore = create<PeerState>((set, get) => ({
   connections: new Map(),
   isConnected: false,
   peerId: null,
-  connectionStatus: 'disconnected',
+  connectionStatus: 'idle',
   serverReachable: null,
+  probeRetryAttempt: 0,
+  sustainedUnreachable: false,
 
   setPeer: (peer) => set({ peer }),
 
@@ -56,25 +62,55 @@ export const usePeerStore = create<PeerState>((set, get) => ({
     const state = get()
     state.connections.forEach((conn) => conn.close())
     state.peer?.destroy()
-    set({ peer: null, connections: new Map(), isConnected: false, peerId: null, connectionStatus: 'disconnected' })
+    set({ peer: null, connections: new Map(), isConnected: false, peerId: null, connectionStatus: 'idle' })
   },
 
   probeServer: async () => {
     set({ serverReachable: null })
     try {
       const host = import.meta.env.VITE_PEER_HOST || 'localhost'
-      const port = Number(import.meta.env.VITE_PEER_PORT) || 9000
-      const protocol = location.protocol === 'https:' ? 'https' : 'http'
-      const controller = new AbortController()
-      const id = setTimeout(() => controller.abort(), 3000)
-      await fetch(`${protocol}://${host}:${port}/`, {
-        signal: controller.signal,
-        mode: 'no-cors',
-      })
-      clearTimeout(id)
-      set({ serverReachable: true })
+      const peerPort = Number(import.meta.env.VITE_PEER_PORT) || 9000
+      const healthPort = Number(import.meta.env.VITE_HEALTH_PORT) || peerPort + 1
+      let protocol = 'http'
+      try { protocol = location.protocol === 'https:' ? 'https' : 'http' } catch { /* node tests */ }
+
+      const tryUrl = async (url: string): Promise<boolean> => {
+        try {
+          const res = await fetch(url, { signal: AbortSignal.timeout(5000) })
+          return res.ok
+        } catch {
+          return false
+        }
+      }
+
+      const healthOk = await tryUrl(`${protocol}://${host}:${healthPort}/isim-sehir/health`)
+      if (healthOk) {
+        set({ serverReachable: true, probeRetryAttempt: 0, sustainedUnreachable: false })
+        return
+      }
+
+      const mainOk = await tryUrl(`${protocol}://${host}:${peerPort}/isim-sehir/health`)
+      if (mainOk) {
+        set({ serverReachable: true, probeRetryAttempt: 0, sustainedUnreachable: false })
+        return
+      }
+
+      set({ serverReachable: false })
     } catch {
       set({ serverReachable: false })
     }
   },
+
+  retryProbe: async () => {
+    const backoff = [0, 2000, 5000, 10000]
+    const attempt = get().probeRetryAttempt ?? 0
+    const delay = backoff[Math.min(attempt, backoff.length - 1)]
+    set({ probeRetryAttempt: attempt + 1 })
+    if (delay > 0) {
+      await new Promise(r => setTimeout(r, delay))
+    }
+    await get().probeServer()
+  },
+
+  resetProbeState: () => set({ probeRetryAttempt: 0, sustainedUnreachable: false }),
 }))

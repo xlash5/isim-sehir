@@ -203,6 +203,14 @@ const pt: Record<string, string> = {
   'tooltip.connecting': 'Verificando conexão com o servidor, aguarde…',
   'tooltip.serverDown': 'Servidor inacessível. Tente novamente quando a conexão for estabelecida.',
   'tooltip.serverDownAction': 'O servidor está offline. Tente novamente quando estiver conectado.',
+  'tooltip.serverDownSustained': 'O servidor está inacessível há um tempo. Verifique sua conexão ou tente novamente mais tarde.',
+  'connection.idle': 'Não conectado a um jogo',
+  'connection.serverDown': 'Servidor de sinalização inacessível',
+  'connection.peerCount': '{count} par(es)',
+  'connection.unstable': 'Conexão instável — tentando reconectar…',
+  'connection.unstableRestored': 'Conexão restaurada.',
+  'connection.reconnectingAttempt': 'Reconectando… tentativa {attempt}/{max}',
+  'connection.troubleshoot': 'Tente atualizar a página. Se o problema persistir, o servidor pode estar em manutenção.',
 
   'home.howToPlay': 'Como Jogar',
 
