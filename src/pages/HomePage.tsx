@@ -35,7 +35,7 @@ export function HomePage() {
   const [loading, setLoading] = useState(false)
   const [peerError, setPeerError] = useState<string | null>(null)
   const serverReachable = usePeerStore((s) => s.serverReachable)
-  const { probeServer, retryProbe, resetProbeState, sustainedUnreachable } = usePeerStore()
+  const { probeServer } = usePeerStore()
   const peerId = usePeerStore((s) => s.peerId)
   const { createPeer, connectToPeer, sendMessage } = usePeer()
   const setLocalPlayer = useGameStore((s) => s.setLocalPlayer)
@@ -58,61 +58,8 @@ export function HomePage() {
 
   useEffect(() => {
     probeServer()
-    const interval30s = setInterval(probeServer, 30000)
-    let accelerated: ReturnType<typeof setInterval> | null = null
-    let sustainedTimer: ReturnType<typeof setTimeout> | null = null
-    let acceleratedCount = 0
-
-    const unsub = usePeerStore.subscribe((state, prev) => {
-      if (prev.serverReachable === true && state.serverReachable === false) {
-        acceleratedCount = 0
-        if (!accelerated) {
-          accelerated = setInterval(() => {
-            acceleratedCount++
-            if (acceleratedCount >= 3) {
-              if (accelerated) clearInterval(accelerated)
-              accelerated = null
-              return
-            }
-            usePeerStore.getState().probeServer()
-          }, 10000)
-        }
-      }
-      if (state.serverReachable === true) {
-        if (accelerated) {
-          clearInterval(accelerated)
-          accelerated = null
-        }
-        if (sustainedTimer) {
-          clearTimeout(sustainedTimer)
-          sustainedTimer = null
-        }
-        acceleratedCount = 0
-      }
-    })
-
-    const sustainedUnsub = usePeerStore.subscribe((state) => {
-      if (state.serverReachable === false) {
-        if (!sustainedTimer) {
-          sustainedTimer = setTimeout(() => {
-            usePeerStore.setState({ sustainedUnreachable: true })
-          }, 60000)
-        }
-      } else {
-        if (sustainedTimer) {
-          clearTimeout(sustainedTimer)
-          sustainedTimer = null
-        }
-      }
-    })
-
-    return () => {
-      clearInterval(interval30s)
-      if (accelerated) clearInterval(accelerated)
-      if (sustainedTimer) clearTimeout(sustainedTimer)
-      unsub()
-      sustainedUnsub()
-    }
+    const interval = setInterval(probeServer, 30000)
+    return () => clearInterval(interval)
   }, [probeServer])
 
   useEffect(() => {
@@ -321,7 +268,7 @@ export function HomePage() {
           <Alert
             severity="error"
             action={
-              <Button size="small" color="inherit" onClick={retryProbe}>
+              <Button size="small" color="inherit" onClick={probeServer}>
                 {t('connection.retry')}
               </Button>
             }
@@ -373,9 +320,7 @@ export function HomePage() {
               serverReachable === null
                 ? t('tooltip.connecting')
                 : serverReachable === false
-                  ? sustainedUnreachable
-                    ? t('tooltip.serverDownSustained')
-                    : t('tooltip.serverDown')
+                  ? t('tooltip.serverDown')
                   : ''
             }
             arrow
@@ -450,9 +395,7 @@ export function HomePage() {
               serverReachable === null
                 ? t('tooltip.connecting')
                 : serverReachable === false
-                  ? sustainedUnreachable
-                    ? t('tooltip.serverDownSustained')
-                    : t('tooltip.serverDown')
+                  ? t('tooltip.serverDown')
                   : ''
             }
             arrow

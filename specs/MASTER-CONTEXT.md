@@ -87,7 +87,6 @@ isim_sehir/
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md   # Rules visibility ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md   # Error boundary + Sentry ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P01-03-pre-connection-ux-guard.md # Pre-connection UX guard ✅
-│       ├── SPEC-IMPLEMENTED-v3.0-P00-P01-connection-reliability-ux.md        # Connection reliability & UX overhaul ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P02-01A-unit-testing.md                     # Unit tests ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P02-01B-integration-testing.md              # Integration tests ✅
 │       ├── SPEC-IMPLEMENTED-v3.0-P02-01C-e2e-testing.md                      # E2E tests ✅
@@ -452,7 +451,6 @@ Navigation guards:
 | `CONNECTION_TIMEOUT_MS` | `30000` | Idle peer expiry in ms |
 | `ROOM_TTL_MINUTES` | `5` | Stale peer cleanup threshold in minutes |
 | `ALLOWED_ORIGINS` | `http://localhost:5173,https://isim-sehir-phi.vercel.app` | CORS-allowed origins (comma-separated) |
-| `HEALTH_PORT` | `9001` | Health check HTTP server port (default: PORT + 1) |
 
 ---
 
@@ -510,7 +508,6 @@ cd server && npm start   # PeerJS on :9000
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-01-ux-rules-visibility.md` | v3.0 — Rules visibility, phase indicators, tooltips ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-02-error-boundary-sentry.md` | v3.0 — Error boundaries + Sentry crash reporting ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P01-03-pre-connection-ux-guard.md` | v3.0 — Server health probe, gated buttons, connection banner ✅ |
-| `v3.0/SPEC-IMPLEMENTED-v3.0-P00-P01-connection-reliability-ux.md` | v3.0 — Reliable health probe, meaningful connection indicator, throttled snackbar, idle/server-down dot states ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P02-01A-unit-testing.md` | v3.0 — Unit tests (pure logic + Zustand stores) ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P02-01B-integration-testing.md` | v3.0 — Integration tests (mock peer messaging) ✅ |
 | `v3.0/SPEC-IMPLEMENTED-v3.0-P02-01C-e2e-testing.md` | v3.0 — E2E tests (Playwright browser smoke tests) ✅ |

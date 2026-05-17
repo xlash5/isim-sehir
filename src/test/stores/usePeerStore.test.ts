@@ -13,7 +13,7 @@ describe('usePeerStore', () => {
       connections: new Map(),
       isConnected: false,
       peerId: null,
-      connectionStatus: 'idle',
+      connectionStatus: 'disconnected',
       serverReachable: null,
     })
   })
@@ -24,7 +24,41 @@ describe('usePeerStore', () => {
     expect(state.connections.size).toBe(0)
     expect(state.isConnected).toBe(false)
     expect(state.peerId).toBeNull()
-    expect(state.connectionStatus).toBe('idle')
+    expect(state.connectionStatus).toBe('disconnected')
+    expect(state.serverReachable).toBeNull()
+  })
+
+  it('setPeer updates peer', () => {
+    const fakePeer = {} as any
+    usePeerStore.getState().setPeer(fakePeer)
+    expect(usePeerStore.getState().peer).toBe(fakePeer)
+  })
+
+  it('setPeerId updates id', () => {
+    usePeerStore.getState().setPeerId('abc123')
+    expect(usePeerStore.getState().peerId).toBe('abc123')
+  })
+
+  it('addConnection adds and sets isConnected', () => {
+    const fakeConn = { close: vi.fn() } as any
+    usePeerStore.getState().addConnection('p1', fakeConn)
+    const state = usePeerStore.getState()
+    expect(state.connections.get('p1')).toBe(fakeConn)
+    expect(state.isConnected).toBe(true)
+  })
+
+  it('removeConnection removes and updates isConnected', () => {
+    const fakeConn = { close: vi.fn() } as any
+    usePeerStore.getState().addConnection('p1', fakeConn)
+    usePeerStore.getState().removeConnection('p1')
+    const state = usePeerStore.getState()
+    expect(state.connections.has('p1')).toBe(false)
+    expect(state.isConnected).toBe(false)
+  })
+
+  it('setConnected updates isConnected', () => {
+    usePeerStore.getState().setConnected(true)
+    expect(usePeerStore.getState().isConnected).toBe(true)
   })
 
   it('setConnectionStatus updates status', () => {
@@ -49,7 +83,7 @@ describe('usePeerStore', () => {
     expect(state.connections.size).toBe(0)
     expect(state.isConnected).toBe(false)
     expect(state.peerId).toBeNull()
-    expect(state.connectionStatus).toBe('idle')
+    expect(state.connectionStatus).toBe('disconnected')
   })
 
   it('probeServer sets serverReachable to false on failure', async () => {

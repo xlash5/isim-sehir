@@ -58,12 +58,6 @@ letter across ~33 categories. Peers grade each other's answers.
 - Per-round scoring drill-down with verdict breakdown (v3.0)
 - Contextual chat tips on game events (v3.0)
 - Pre-connection server health probe with connection banner, gated action buttons, and retry mechanism (v3.0)
-- Reliable health probe: correct endpoint (`/isim-sehir/health`), no `no-cors`, exponential backoff on retry, accelerated recovery probe (v3.0)
-- Meaningful connection status dot: grey when idle, green with peer count, orange pulse on reconnection attempt count, solid red on genuine loss, red+`!` when server is unreachable (v3.0)
-- Clickable connection details popover with status description, peer count, retry button, and troubleshoot hint (v3.0)
-- Throttled snackbar notifications on connection state transitions (unstable, restored, lost) in lobby/game (v3.0)
-- `idle` connection state replaces misleading `disconnected` on home page (v3.0)
-- Sustained unreachability detection with graduated tooltip text on action buttons (v3.0)
 
 ## Architecture
 
@@ -99,7 +93,6 @@ letter across ~33 categories. Peers grade each other's answers.
 | **v3.0** | **P01** | **UX Rules & Behaviour Visibility — RulesPanel, PhaseIndicator, tooltips, chat tips, scoring drill-down** | ✅ |
 | **v3.0** | **P01** | **Error Boundaries & Sentry — crash-safe React tree, Sentry monitoring** | ✅ |
 | **v3.0** | **P01** | **Pre-Connection UX Guard — server health probe, gated buttons, connection banner on home page** | ✅ |
-| **v3.0** | **P00** | **Connection Reliability & UX Overhaul — reliable health probe, meaningful dot, snackbar, idle state** | ✅ |
 | **v3.0** | **P02** | **Unit testing — Vitest, 163 tests, 85%+ statement coverage across utils + stores** | ✅ |
 | **v3.0** | **P02** | **Integration testing — Vitest mock transport, 27 tests covering peer messaging, game flow, admin transfer, reconnection, rate limiting, input validation** | ✅ |
 | **v3.0** | **P02** | **E2E testing — Playwright, 3 smoke tests: create+join, full game, admin disconnect** | ✅ |
@@ -154,7 +147,6 @@ cd server && npm install && npm start   # http://localhost:9000
 | `VITE_PEER_HOST` | `localhost` | PeerJS server host |
 | `VITE_PEER_PORT` | `9000` | PeerJS server port |
 | `VITE_PEER_PATH` | `/isim-sehir` | PeerJS server path |
-| `VITE_HEALTH_PORT` | `9001` | Health check server port (default: VITE_PEER_PORT + 1) |
 | `VITE_SENTRY_DSN` | — | Sentry project DSN (optional, no-op if absent) |
 | `VITE_SENTRY_TRACES_SAMPLE_RATE` | `0` | Performance tracing sample rate (0-1) |
 | `VITE_SENTRY_REPLAY_SAMPLE_RATE` | `0` | Session replay sample rate (0-1) |
@@ -169,4 +161,3 @@ cd server && npm install && npm start   # http://localhost:9000
 | `CONNECTION_TIMEOUT_MS` | `30000` | Idle peer expiry in ms |
 | `ROOM_TTL_MINUTES` | `5` | Stale peer cleanup threshold in minutes |
 | `ALLOWED_ORIGINS` | `http://localhost:5173,https://isim-sehir-phi.vercel.app` | CORS-allowed origins (comma-separated) |
-| `HEALTH_PORT` | `9001` | Health check HTTP server port (default: PORT + 1) |

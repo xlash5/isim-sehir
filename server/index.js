@@ -1,8 +1,6 @@
 import { PeerServer } from 'peer'
-import http from 'http'
 
 const PORT = parseInt(process.env.PORT || '9000', 10)
-const HEALTH_PORT = parseInt(process.env.HEALTH_PORT || String(PORT + 1), 10)
 const MAX_PEERS_PER_ROOM = parseInt(process.env.MAX_PEERS_PER_ROOM || '8', 10)
 const MAX_CONNECTIONS_PER_SEC = parseInt(process.env.MAX_CONNECTIONS_PER_SEC || '5', 10)
 const CONNECTION_TIMEOUT_MS = parseInt(process.env.CONNECTION_TIMEOUT_MS || '30000', 10)
@@ -176,27 +174,9 @@ setInterval(() => {
   }
 }, 60000).unref()
 
-const healthServer = http.createServer((req, res) => {
-  if (req.url === '/isim-sehir/health' && req.method === 'GET') {
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    })
-    res.end(JSON.stringify({ status: 'ok', uptime: process.uptime() }))
-  } else {
-    res.writeHead(404)
-    res.end()
-  }
-})
-
-healthServer.listen(HEALTH_PORT, () => {
-  console.log(`Health check server listening on port ${HEALTH_PORT}`)
-})
-
 console.log(`PeerJS signaling server starting on port ${PORT}`)
-console.log(`  Allowed origins:        ${ALLOWED_ORIGINS.join(', ')}`)
-console.log(`  Max peers per room:     ${MAX_PEERS_PER_ROOM}`)
+console.log(`  Allowed origins:       ${ALLOWED_ORIGINS.join(', ')}`)
+console.log(`  Max peers per room:    ${MAX_PEERS_PER_ROOM}`)
 console.log(`  Max connections/sec/IP: ${MAX_CONNECTIONS_PER_SEC}`)
-console.log(`  Connection timeout:     ${CONNECTION_TIMEOUT_MS}ms`)
-console.log(`  Room TTL:               ${ROOM_TTL_MINUTES}m`)
-console.log(`  Health port:            ${HEALTH_PORT}`)
+console.log(`  Connection timeout:    ${CONNECTION_TIMEOUT_MS}ms`)
+console.log(`  Room TTL:              ${ROOM_TTL_MINUTES}m`)

@@ -270,13 +270,5 @@ const tr: Record<string, string> = {
   'tooltip.connecting': 'Sunucu kontrol ediliyor, lütfen bekleyin…',
   'tooltip.serverDown': 'Sunucuya bağlanılamadı. Bağlantı kurulduğunda tekrar deneyin.',
   'tooltip.serverDownAction': 'Sunucu kapalı. Bağlantı kurulduğunda tekrar deneyin.',
-  'tooltip.serverDownSustained': 'Sunucu bir süredir erişilemez durumda. Bağlantınızı kontrol edin veya daha sonra tekrar deneyin.',
-  'connection.idle': 'Bir oyuna bağlı değil',
-  'connection.serverDown': 'Sinyal sunucusuna erişilemiyor',
-  'connection.peerCount': '{count} eş',
-  'connection.unstable': 'Bağlantı kararsız — yeniden bağlanmaya çalışılıyor…',
-  'connection.unstableRestored': 'Bağlantı yeniden kuruldu.',
-  'connection.reconnectingAttempt': 'Yeniden bağlanıyor… deneme {attempt}/{max}',
-  'connection.troubleshoot': 'Sayfayı yenilemeyi deneyin. Sorun devam ederse sunucu bakımda olabilir.',
 }
 export default tr
