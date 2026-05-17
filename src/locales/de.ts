@@ -203,6 +203,14 @@ const de: Record<string, string> = {
   'tooltip.connecting': 'Serververbindung wird geprüft, bitte warten…',
   'tooltip.serverDown': 'Server nicht erreichbar. Bitte versuchen Sie es erneut, wenn die Verbindung hergestellt ist.',
   'tooltip.serverDownAction': 'Server nicht erreichbar. Bitte versuchen Sie es erneut, wenn eine Verbindung besteht.',
+  'tooltip.serverDownSustained': 'Server seit einiger Zeit nicht erreichbar. Überprüfen Sie Ihre Verbindung oder versuchen Sie es später erneut.',
+  'connection.idle': 'Nicht mit einem Spiel verbunden',
+  'connection.serverDown': 'Signalserver nicht erreichbar',
+  'connection.peerCount': '{count} Peer(s)',
+  'connection.unstable': 'Verbindung instabil — versuche erneute Verbindung…',
+  'connection.unstableRestored': 'Verbindung wiederhergestellt.',
+  'connection.reconnectingAttempt': 'Wiederverbinde… Versuch {attempt}/{max}',
+  'connection.troubleshoot': 'Versuchen Sie, die Seite zu aktualisieren. Wenn das Problem weiterhin besteht, wird der Server möglicherweise gewartet.',
 
   'home.howToPlay': 'Spielanleitung',
 
